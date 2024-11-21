@@ -1,0 +1,300 @@
+﻿@{
+    ViewBag.Title = "DMS - Approve Print Request";
+}
+<div class="row">
+    <div class="col-lg-12 col-sm-12 col-xs-12">
+        <div class="widget">
+            <div class="cuwidget-header bordered-bottom bordered-blue">
+                <span class="cuwidget-caption" style="font-size:25px !important;"><b>Approve Print Request</b></span>
+                <div style="display:inline-block;line-height:36px;background-color:antiquewhite;">
+                    <span class="cuwidget-caption" style="font-size:24px !important;padding-left:5px;padding-right:5px;"> <b>Pending Stage - @ViewBag.Data.CurrentStage</b></span>
+                </div>
+            </div>
+            <div class="widget-body">
+                @using (var f = Html.Bootstrap().Begin(new Form().Type(FormType.Horizontal)))
+                {
+                    if (ViewBag.Data != null)
+                    {
+                <div style="display:none;">
+                    <div id="divPrintRequestID">@ViewBag.Data.ID</div>
+                    <div id="divDocumentID">@ViewBag.Data.DocumentID</div>
+                    <div id="divDocumentNo">@ViewBag.Data.DocumentNo</div>
+                    <div id="divEditableDocumentName">@ViewBag.Data.EditableDocumentName</div>
+                    <div id="divReadableDocumentName">@ViewBag.Data.ReadableDocumentName</div>
+                    <div id="divEditableFilePath">@ViewBag.Data.EditableFilePath</div>
+                    <div id="divReadableFilePath">@ViewBag.Data.ReadableFilePath</div>
+                    <div id="divRevisionNo">@ViewBag.Data.RevisionNo</div>
+                    <div id="divWorkflowID">@ViewBag.Data.WorkflowID</div>
+                    <div id="divExecutionID">@ViewBag.Data.ExecutionID</div>
+                    <div id="divCurrentStageID">@ViewBag.Data.CurrentStageID</div>
+                    <div id="divCurrentStage">@ViewBag.Data.CurrentStage</div>
+                    <div id="divProjectTypeID">@ViewBag.Data.ProjectTypeID</div>
+                    <div id="divProjectID">@ViewBag.Data.ProjectID</div>
+                    <div id="divProjectTypeCode">@ViewBag.Data.ProjectTypeCode</div>
+                    <div id="divSectionID">@ViewBag.Data.SectionID</div>
+                    <div id="divDocumentLevel">@ViewBag.Data.DocumentLevel</div>
+                    <div id="divRequestorID">@ViewBag.Data.RequestorID</div>
+
+
+                    @*<div id="divAct">@ViewBag.Data.Action</div>
+        <div id="divUploadedUserID">@ViewBag.Data.UploadedUserID</div>
+        <div id="divDocumentCategoryCode">@ViewBag.Data.DocumentCategoryCode</div>
+        <div id="divDocumentCategoryName">@ViewBag.Data.DocumentCategoryName</div>
+
+        <div id="divFunctionCode">@ViewBag.Data.FunctionCode</div>
+        <div id="divFunctionName">@ViewBag.Data.FunctionName</div>
+        <div id="divDepartmentCode">@ViewBag.Data.DepartmentCode</div>
+        <div id="divDepartmentName">@ViewBag.Data.DepartmentName</div>
+        <div id="divSectionCode">@ViewBag.Data.SectionCode</div>
+        <div id="divSectionName">@ViewBag.Data.SectionName</div>
+        <div id="divProjectCode">@ViewBag.Data.ProjectCode</div>
+        <div id="divProjectName">@ViewBag.Data.ProjectName</div>
+
+        <div id="divFileTypes">@ViewBag.FileTypes</div>
+        <div id="divFormsFileTypes">@ViewBag.FormsFileTypes</div>
+        <div id="divReadableFileTypes">@ViewBag.ReadableFileTypes</div>
+        <div id="divAllowedFileSize">@ViewBag.AllowedFileSize</div>
+        <div id="divRevisionReason">@ViewBag.Data.RevisionReason</div>
+        <div id="divIsMultipleApprovers">@ViewBag.Data.IsMultipleApprovers</div>
+        <div id="divMultipleApprovers">@Html.Raw(Json.Encode(@ViewBag.Data.MultipleApprovers))</div>
+        <div id="divMultipleApproversDisplay">@Html.Raw(Json.Encode(@ViewBag.Data.MultipleApproversDisplay))</div>*@
+                </div>
+                <div>
+                    @Html.Partial("PrintRequestDetailsView")
+                </div>                        
+                <div>
+                    <div class="row" style="margin-bottom:10px;">
+                        <div class="col-lg-3 col-sm-3 col-xs-12">
+                        </div>
+                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                            <button class="btn btn-azure " type="submit" id="btnApprove">Approve</button>
+                            <button class="btn btn-redcolor " type="submit" id="btnReject">Reject</button>
+                        </div>
+                    </div>
+                    <div class="row" id="divSection1" style="display:none">
+                        <div class="col-lg-12 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label" style=""><strong><span id="spanComments">Comments</span> </strong></label>
+                                <div class="col-lg-9" style="">
+                                    <textarea class="form-control" rows="4" placeholder="Comments..." style="resize:none;" id="txtComments"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="divSection2" style="display:none">
+                        <div class="col-lg-12 col-sm-12 col-xs-12">
+                            <div style="float:right;margin-right:150px;">
+                                <button class="btn btn-azure " type="submit" id="btnSubmit">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    }
+                }
+            </div>
+            <div>
+                @Html.Partial("WFHistoryView")
+            </div>
+        </div>
+    </div>
+</div>
+
+@section PageScripts{
+    <link href="~/assets/css/dataTables.bootstrap.css" rel="stylesheet" />
+    <script src="~/assets/js/datatable/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/datatable/ZeroClipboard.js"></script>
+    <script src="~/assets/js/datatable/dataTables.tableTools.min.js"></script>
+    <script src="~/assets/js/datatable/dataTables.bootstrap.min.js"></script>
+    <script src="~/assets/js/datatable/datatables-init.js"></script>
+    <script src="~/assets/js/bootbox/bootbox.js"></script>
+
+    <script>
+        var action = '';
+        $(document).ready(function () {
+            InitiatePrintWFHistoryDataTable.init();           
+        });
+
+        function SubmitPrintRequest(action) {            
+            var fileData = new FormData();
+
+            fileData.append("ID", $("#divPrintRequestID").text());
+            fileData.append("DocumentID", $("#divDocumentID").text());
+            fileData.append("DocumentNo", $("#divDocumentNo").text());
+            fileData.append('CurrentStageID', $("#divCurrentStageID").text());
+            fileData.append('CurrentStage', $("#divCurrentStage").text());
+            fileData.append('ExecutionID', $("#divExecutionID").text());
+            fileData.append('WorkflowID', $("#divWorkflowID").text());
+            fileData.append('ProjectTypeID', $("#divProjectTypeID").text());
+            fileData.append('ProjectID', $("#divProjectID").text());
+            fileData.append('ProjectTypeCode', $("#divProjectTypeCode").text());
+            fileData.append('SectionID', $("#divSectionID").text());
+            fileData.append('DocumentLevel', $("#divDocumentLevel").text());
+            fileData.append('ActionComments', $("#txtComments").val().trim()); 
+            fileData.append('RequestorID', $("#divRequestorID").text());
+            fileData.append('Action', action);
+                        
+            $.ajax({
+                url: "/ApprovePrintRequest/SubmitPrintRequest",
+                dataType: "json",
+                type: "POST",
+                beforeSend: function () {
+                    $("#overlay").show();
+                    $("#overlay").addClass('modal-backdrop fade in');
+                    $("#sidebar").addClass('modal-backdrop fade in');
+                },
+                complete: function () {
+                    $("#overlay").hide();
+                    $("#overlay").removeClass('modal-backdrop fade in');
+                    $("#sidebar").removeClass('modal-backdrop fade in');
+                },
+                contentType: false,
+                processData: false,
+                cache: false,
+                data: fileData,
+                success: function (data) {
+                    if (data.success) {
+                        if (data.message == 'failed') {
+                            $('.btn-danger').trigger('click');
+                            $('.modal-body').html(data.message);
+                        }
+                        else {
+                            $('.btn-success').trigger('click');
+                            if (action.toLowerCase() === 'approved') {
+                                $('.modal-body').html('Document Approved Successfully.');
+                            } else if (action.toLowerCase() === 'rejected') {
+                                $('.modal-body').html('Document Rejected Successfully.');
+                            }
+                            $("#DOCFile").val('');
+                            $("#txtComments").val('');
+                            // Redirect after success alert close
+                            $('#modal-success').on('hide.bs.modal', function () {
+                                window.location = '/Inbox';
+                            });
+                        }                        
+                    }
+                    else {
+                        $('.btn-danger').trigger('click');
+                        $('.modal-body').html(data.message);
+                    }
+                },
+                error: function (xhr) {
+                    $('.btn-danger').trigger('click');
+                    $('.modal-body').html('Error while approving document.');
+                }
+            });
+            return false;
+        }        
+
+        $("#btnApprove").click(function () {            
+            $("#spanComments").html('Comments (Optional)');
+            $("#txtComments").removeClass("manfieldredborder");
+            action = 'approve';
+            $("#divSection1").show(); $("#divSection2").show();
+            return false;
+        });
+
+        function RejectRequest() {
+            if ($("#txtComments").val() != '') {
+                $("#txtComments").removeClass("manfieldredborder");
+                bootbox.confirm("Are you sure to Reject the Request?", function (result) {
+                    if (result) {
+                        var comments = $("#txtComments").val().trim();
+                        var docguid = $("#divDocumentID").text();
+                        var CurrentStageID = $("#divCurrentStageID").text();
+                        var CurrentStage = $("#divCurrentStage").text();
+                        var exeID = $("#divWFExecutionID").text();
+                        var uplodUserID = $("#divUploadedUserID").text();
+                        var docNumber = $("#divDocumentNo").text();
+                        var docDesc = $("#DocumentDescription").val().trim();
+                        var DocumentName = $("#divDocumentName").text();
+                        var DraftVersion = $("#divDraftVersion").text();
+                        var EditVersion = $("#divEditVersion").text();
+                        var OriginalVersion =  $("#divOriginalVersion").text();
+                        SubmitRequest(docNumber, docguid, comments, CurrentStageID, CurrentStage, exeID, uplodUserID, 'Document Rejected Successfully...',
+                            docDesc, DocumentName, DraftVersion, EditVersion, OriginalVersion);
+                    }
+                });
+            }
+            else {
+                $("#txtComments").addClass("manfieldredborder");
+                $('.btn-warning').trigger('click');
+                $('.modal-body').html('Comments is Mandatory while Rejecting...');
+            }
+            return false;
+        }
+
+        $("#btnReject").click(function () {
+            if ($("#divCurrentStage").text() == "QMS Reviewer") {
+                HideMultiApprovers();
+            }
+
+            $("#spanComments").html('Comments (Mandatory)');
+            $("#txtComments").addClass("manfieldredborder");
+            action = 'reject';
+            $("#divSection1").show(); $("#divSection2").show();
+            return false;
+        });
+
+        $("#btnRejectDocument").click(function () {
+            
+            if ($("#txtComments").val() != '') {
+                $("#txtComments").removeClass("manfieldredborder");
+                bootbox.confirm("Are you sure to Reject the Request?", function (result) {
+                    if (result) {
+                        debugger;
+                        var comments = $("#txtComments").val().trim();
+                        var docguid = $("#divDocumentID").text();
+                        var CurrentStageID = $("#divCurrentStageID").text();
+                        var CurrentStage = $("#divCurrentStage").text();
+                        var exeID = $("#divWFExecutionID").text();
+                        var uplodUserID = $("#divUploadedUserID").text();
+                        var docNumber = $("#divDocumentNo").text();
+                        var docDesc = $("#divDocumentDescription").text();
+                        var DocumentName = $("#divDocumentName").text();
+                        var DraftVersion = $("#divDraftVersion").text();
+                        var EditVersion = $("#divEditVersion").text();
+                        var OriginalVersion = $("#divOriginalVersion").text();
+                        SubmitRequest(docNumber, docguid, comments, CurrentStageID, CurrentStage, exeID, uplodUserID, 'Document Rejected Successfully...',
+                            docDesc, DocumentName, DraftVersion, EditVersion, OriginalVersion);
+                    }
+                });
+            }
+            else {
+                $("#txtComments").addClass("manfieldredborder");
+                $('.btn-warning').trigger('click');
+                $('.modal-body').html('Comments is Mandatory while Rejecting...');
+            }
+
+            return false;
+        });
+
+        $("#btnSubmit").click(function () {
+            if (action == 'approve') {
+                SubmitPrintRequest("Approved");
+            }
+            else if (action == 'reject') {
+                if ($("#txtComments").val() != '') {
+                    $("#txtComments").removeClass("manfieldredborder");
+                    bootbox.confirm("Are you sure to Reject the Request?", function (result) {
+                        if (result) {
+                            SubmitPrintRequest("Rejected");
+                        }
+                    });
+                }
+                else {
+                    $("#txtComments").addClass("manfieldredborder");
+                    $('.btn-warning').trigger('click');
+                    $('.modal-body').html('Comments is Mandatory while Rejecting...');
+                }
+                
+            }
+            else if (action == 'publish') {
+                //PublishRequest();
+            }
+            return false;
+        });
+
+       
+    </script>
+}
+

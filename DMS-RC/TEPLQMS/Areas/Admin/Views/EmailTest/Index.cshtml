@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "Email Test";
+}
+
+<body>
+    <div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px;">
+        <h2 style="text-align: center;">Send Email</h2>
+        <div>
+            <label for="fromAddress" style="display: block; font-weight: bold; margin-bottom: 5px;">From Address</label>
+            <input type="text" id="fromAddress" name="fromAddress" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 3px;" required>
+        </div>
+        <br>
+        <div>
+            <label for="toAddress" style="display: block; font-weight: bold; margin-bottom: 5px;">To Address</label>
+            <input type="text" id="toAddress" name="toAddress" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 3px;" required>
+        </div>
+        <br>
+        <div>
+            <label for="messageBox" style="display: block; font-weight: bold; margin-bottom: 5px;">Message</label>
+            <textarea id="messageBox" name="messageBox" rows="5" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 3px;" required></textarea>
+        </div>
+        <br>
+        <div style="text-align: center;">
+            <button type="button" id="sendEmailButton" style="padding: 10px 20px; background-color: #007BFF; color: white; border: none; border-radius: 3px;">Send Email</button>
+        </div>
+        <div>
+            <label>Upload<span class="text-danger">*</span></label>
+            <input type="file" id="file" name="file" class="form-control" accept=".xlsx, .xls">
+        </div>
+        <br />
+        <div>
+            <div>
+                <button type="button" id="uploadusers" class="btn btn-block-custom btn-azure" style="width:60%;margin-left:0px;">Upload</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+@section PageScripts{
+    <link href="~/assets/css/multiple-select.css" rel="stylesheet" />
+    <link href="~/assets/css/sol.css" rel="stylesheet" />
+
+    <script src="~/Scripts/multiple-select.js"></script>
+    <script src="~/Scripts/sol.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!--Bootstrap Tags Input-->
+    <script src="~/assets/js/tagsinput/bootstrap-tagsinput.js"></script>
+
+    <link href="~/assets/css/dataTables.bootstrap.css" rel="stylesheet" />
+    <script src="~/assets/js/datatable/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/datatable/ZeroClipboard.js"></script>
+    <script src="~/assets/js/datatable/dataTables.tableTools.min.js"></script>
+    <script src="~/assets/js/datatable/dataTables.bootstrap.min.js"></script>
+    <script src="~/assets/js/datatable/datatables-init.js"></script>
+    <script src="~/assets/js/bootbox/bootbox.js"></script>
+    <!--Bootstrap Date Picker-->
+    <script src="~/assets/js/datetime/bootstrap-datepicker.js"></script>
+    <!--Bootstrap Time Picker-->
+    <script src="~/assets/js/datetime/bootstrap-timepicker.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#sendEmailButton').click(function () {
+                var from = $('#fromAddress').val();
+                var to = $('#toAddress').val();
+                var message = $('#messageBox').val();
+                $.ajax({
+                    url: '/Emailtest/SendEmail',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ FromAddress: from, ToAddress: to, Message: message }),
+                    success: function (response) {
+                        alert(response);
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error sending email: ' + error);
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        //This script is used to Upload Bulk User .
+        $(document).ready(function () {
+            $('#uploadusers').click(function () {
+                var fileInput = $('#file')[0];
+                var file = fileInput.files[0];
+                if (file) {
+                    var formData = new FormData();
+                    formData.append('file', file);
+                    $.ajax({
+                        url: '/Emailtest/Upload',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            $('#file').val('');
+                            if (response === "File uploaded successfully.") {
+                                alert(response);
+                            } 
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.log("Error response:", jqXHR, textStatus, errorThrown);
+                            swal({
+                                title: "Error!",
+                                text: "File upload failed due to an internal server error.",
+                                icon: "error",
+                            });
+                        }
+                    });
+                } else {
+                    swal('Please select a file to upload.');
+                }
+            });
+        });
+
+    </script>
+
+}
+
+

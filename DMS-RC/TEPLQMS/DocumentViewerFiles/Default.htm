@@ -1,0 +1,190 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    
+    <title></title>
+    <style type="text/css">
+        #pdf_container {
+            background: #ccc;
+            text-align: center;
+            display: none;
+            padding: 5px;
+            height: 820px;
+            overflow: auto;
+        }
+        #zoom_controls {
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 5px 10px;
+            margin-right: 10px;
+        }
+
+        .zoom-button {
+            background-color: #2dc3e8;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .zoom-button:hover {
+            background-color: #2dc3e8;
+        }
+
+        .zoom-button i {
+            font-size: 20px;
+        }
+
+        #zoom_controls {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }        
+    </style>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <meta http-equiv='cache-control' content='no-cache' />
+    <meta http-equiv='expires' content='0' />
+    <meta http-equiv='pragma' content='no-cache' />
+    <!--<input type="button" id="btnPreview" value="Preview PDF Document" onclick="LoadPdfFromUrl('PDFs/Sample.pdf')" />
+    <hr />-->
+    <div id="zoom_controls">
+        <button id="zoom_out" class="zoom-button"><span style="font:100px;">&#10134;</span></button>
+        <button id="zoom_in" class="zoom-button"><span style="font:100px;">&#10133;</span></button>
+    </div>
+    <div id="pdf_container">
+    </div>
+    <script type="text/javascript" src="pdf.min.js"></script>
+    <link href="pdf_viewer.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        //https://www.aspsnippets.com/Articles/3551/Display-View-PDF-file-without-downloading-using-JavaScript/
+        //Disable right click on the page
+        document.addEventListener('contextmenu', event => {
+            event.preventDefault();
+        });
+        document.onkeydown = function (e) {
+            return false;
+        }
+        //disable print screen - start - https://codepen.io/sartaj-husain/pen/NYRKGQ
+        document.addEventListener("keyup", function (e) {
+            var keyCode = e.keyCode ? e.keyCode : e.which;
+            if (keyCode == 44) {
+                stopPrntScr();
+            }
+        });
+        function stopPrntScr() {
+            var inpFld = document.createElement("input");
+            inpFld.setAttribute("value", ".");
+            inpFld.setAttribute("width", "0");
+            inpFld.style.height = "0px";
+            inpFld.style.width = "0px";
+            inpFld.style.border = "0px";
+            document.body.appendChild(inpFld);
+            inpFld.select();
+            document.execCommand("copy");
+            inpFld.remove(inpFld);
+        }
+        function AccessClipboardData() {
+            try {
+                window.clipboardData.setData('text', "Access   Restricted");
+            } catch (err) {
+            }
+        }
+        //setInterval("AccessClipboardData()", 0);
+        //disable print screen - end
+
+        LoadPdfFromUrl('');
+        var pdfjsLib = window['pdfjs-dist/build/pdf'];
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js';
+        var pdfDoc = null;
+        var scale = 1; //Set Scale for zooming PDF.
+        var resolution = 2; //Set Resolution to Adjust PDF clarity.
+
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+            get: (searchParams, prop) => searchParams.get(prop),
+        });
+        // Get the value of "some_key" in eg "https://example.com/?some_key=some_value"
+        let value = params.some_key; // "some_value"
+
+        function LoadPdfFromUrl(url) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const myParam = urlParams.get('documentURL');
+            //alert(myParam);
+            url = myParam;
+            //Read PDF from URL.
+            pdfjsLib.getDocument(url).promise.then(function (pdfDoc_) {
+                pdfDoc = pdfDoc_;
+
+                //Reference the Container DIV.
+                var pdf_container = document.getElementById("pdf_container");
+                pdf_container.style.display = "block";
+
+                RenderPages();
+            });
+        };
+
+        function RenderPages() {
+            var pdf_container = document.getElementById("pdf_container");
+            pdf_container.innerHTML = ''; // Clear the container before re-rendering.
+
+            // Loop and render all pages.
+            for (var i = 1; i <= pdfDoc.numPages; i++) {
+                RenderPage(pdf_container, i);
+            }
+        }
+
+        function RenderPage(pdf_container, num) {
+            pdfDoc.getPage(num).then(function (page) {
+                var canvas = document.createElement('canvas');
+                canvas.id = 'pdf-' + num;
+                var ctx = canvas.getContext('2d');
+                pdf_container.appendChild(canvas);
+
+                var spacer = document.createElement("div");
+                spacer.style.height = "20px";
+                pdf_container.appendChild(spacer);
+
+                var viewport = page.getViewport({ scale: scale });
+                canvas.height = resolution * viewport.height;
+                canvas.width = resolution * viewport.width;
+
+                var renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport,
+                    transform: [resolution, 0, 0, resolution, 0, 0]
+                };
+
+                page.render(renderContext);
+            });
+        }
+
+        // Zoom In/Out Functionality
+        document.getElementById('zoom_in').addEventListener('click', function () {
+            scale += 0.2; // Increase the scale
+            RenderPages(); // Re-render pages with updated scale
+        });
+
+        document.getElementById('zoom_out').addEventListener('click', function () {
+            if (scale > 0.2) {
+                scale -= 0.2; // Decrease the scale
+                RenderPages(); // Re-render pages with updated scale
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,547 @@
+﻿@{
+    ViewBag.Title = "DMS - Print Request";
+}
+
+<div class="row">
+    <div class="col-lg-12 col-sm-12 col-xs-12">
+        <div class="widget">
+            <div class="cuwidget-header bordered-bottom bordered-blue">
+                <span class="cuwidget-caption" style="font-size:25px !important;"><b>Document Print Request</b></span>
+            </div>
+            <div style="display:none;">
+                <div id="divDocumentCategoryCode"></div>
+                <div id="divProjectTypeID"></div>
+                <div id="divProjectTypeCode"></div>
+                <div id="divProjectID"></div>
+                <div id="divDocumentLevel"></div>
+                <div id="divSectionID"></div>
+                <div id="divDocNumber"></div>
+                <div id="divDocGUID"></div>
+                <div id="DocumentPublishID"></div>
+                @*<div id="divWFExecutionID"></div>
+        <div id="divDraftVersion"></div>
+        <div id="divEditVersion"></div>
+        <div id="divProjectTypeID"></div>
+        <div id="divProjectTypeCode"></div>
+        <div id="divProjectID"></div>
+        <div id="divDepartmentID"></div>
+        <div id="divSectionID"></div>
+        <div id="divDocumentCategoryID"></div>
+        <div id="divFunctionID"></div>*@
+                <div id="divPublishedFolder">@TEPL.QMS.Common.Constants.QMSConstants.PublishedFolder</div>
+            </div>
+            <div class="widget-body">
+                @using (var f = Html.Bootstrap().Begin(new Form().Type(FormType.Horizontal)))
+                {
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12 col-xs-12">
+                            <div class="row">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-4"><strong>Document Number</strong><span class="mandatory">*</span></label>
+                                            <div class=" col-lg-6">
+                                                <input title="Document Number" class="form-control manfield" id="DocumentNo" name="Number" type="text" value="">
+                                            </div>
+                                            <div class=" col-lg-2">
+                                                <button class="btn btn-azure " type="button" id="btnGetDetails">Get</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-6 col-xs-12 frmFields">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-4"><strong>Document Description</strong></label>
+                                            <div class=" col-lg-7 control-label text-align-left" style="padding-left:0px; padding-top:0px;">
+                                                <label id="lblDocumentDescription" class="col-lg-7 control-label text-align-left"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="frmFields">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="col-lg-4 control-label"><strong>Document Category</strong></label>
+                                                <label id="lblDocCategory" class="col-lg-7 control-label text-align-left"></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="col-lg-4 control-label"><strong>Project</strong></label>
+                                                <label id="lblProject" class="col-lg-7 control-label text-align-left"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="col-lg-4 control-label"><strong>Department</strong></label>
+                                                <label id="lblDepartment" class="col-lg-7 control-label text-align-left"></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="col-lg-4 control-label"><strong>Section</strong></label>
+                                                <label id="lblSection" class="col-lg-7 control-label text-align-left"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        @*<div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="col-lg-4 control-label"><strong>Function</strong></label>
+                                                <label id="lblFunction" class="col-lg-7 control-label text-align-left"></label>
+                                            </div>
+                                        </div>*@
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-lg-4"><strong>Last Published Version</strong></label>
+                                                <div class=" col-lg-7">
+                                                    <label id="lblLastVersion" class="col-lg-7 control-label text-align-left"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="col-lg-4 control-label"><strong>Readable Document</strong></label>
+                                                <label class="col-lg-7 control-label text-align-left">
+                                                    <a id="ancPDFDocument" title="View Document" target="_blank" style="text-decoration:underline;" href=''></a>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-lg-4"><strong>Print Location</strong><span class="mandatory">*</span></label>
+                                                <div class="col-lg-6">
+                                                    <select class="form-control manfield" title="Location" name="Location" data-bv-field="Function" id="ddlLocation">
+                                                        <option value="0">Select a value</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-lg-4"><strong>Print Copies</strong><span class="mandatory">*</span></label>
+                                                <div class=" col-lg-6">
+                                                    <input title="Print Copies" class="form-control manfield numeric-input" id="PrintCopies" name="PrintCopies" type="text" value="" placeholder="Print Copies">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-lg-4"><strong>Print Page</strong><span class="mandatory">*</span></label>
+                                                <div class="col-lg-6">
+                                                    <div style="display: flex;">
+                                                        <div class="radio" style="flex: 1;">
+                                                            <label>
+                                                                <input type="radio" name="form-field-radio" id="PrintPageAll" value="All" checked>
+                                                                <span class="text">All</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio" style="flex: 1;">
+                                                            <label>
+                                                                <input type="radio" name="form-field-radio" id="PrintPageSelected" value="PrintPageSelected">
+                                                                <span class="text">Pages</span>
+                                                            </label>
+                                                        </div>
+                                                        <div style="flex: 2;">
+                                                            <input type="text" class="form-control manfield numericandcomma-input" id="PrintPageInput" name="Number"
+                                                                   placeholder="e.g. 1,2,5,6 or 1-5">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-lg-4"><strong>Paper Size</strong><span class="mandatory">*</span></label>
+                                                <div class=" col-lg-6">
+                                                    <select class="form-control manfield" title="Paper Size" name="PaperSize" id="ddlPaperSize">
+                                                        <option value="0">Select a value</option>
+                                                        <option value="A4">A3</option>
+                                                        <option value="A3">A4</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-lg-4"><strong>Reason For Print</strong><span class="mandatory">*</span></label>
+                                                <div class="col-lg-7">
+                                                    <textarea class="form-control manfield" rows="3" id="PrintReason" style="resize:none;" placeholder="Reason for Print..."></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="col-lg-4 control-label" style=""><strong>Comments</strong></label>
+                                                <div class="col-lg-7" style="">
+                                                    <textarea class="form-control" rows="3" id="txtComments" style="resize:none;" placeholder="Comments..."></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @*<div class="row">
+            <div class="col-lg-12 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-2"><strong>Reason For Print</strong><span class="mandatory">*</span></label>
+                    <div class="col-lg-9">
+                        <textarea class="form-control manfield" rows="2" id="PrintReason" style="resize:none;" placeholder="Reason for Print..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label class="col-lg-2 control-label" style=""><strong>Comments</strong></label>
+                    <div class="col-lg-9" style="">
+                        <textarea class="form-control" rows="4" id="txtComments" style="resize:none;" placeholder="Comments..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+                                    <div class="row">
+                                        <div class="col-lg-2 col-sm-12 col-xs-12">
+
+                                        </div>
+                                        <div class="col-lg-8 col-sm-12 col-xs-12">
+                                            <table class="table table-striped table-hover table-bordered" id="ApprovalUsers">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="3" class="table-bordered btn-azure" style="text-align:center">Approval Stages</th>
+                                                    </tr>
+                                                    <tr role="row">
+                                                        <th>
+                                                            S No
+                                                        </th>
+                                                        <th>
+                                                            Stage
+                                                        </th>
+                                                        <th>
+                                                            Approval User
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="ApprovalUsersBody">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-lg-2 col-sm-12 col-xs-12">
+
+
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-sm-12 col-xs-12">
+                                            <div style="float:right;margin-right:135px;">
+                                                <button class="btn btn-azure" type="submit" id="btnSubmit">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section PageScripts{
+    <script src="~/assets/js/bootbox/bootbox.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.frmFields').hide();
+            BindDropDownBoxes("/PrintRequest/GetDropDownBoxes", $('#ddlLocation'), '', '', '', 'Select a value');
+        });
+        document.querySelectorAll('.numeric-input').forEach(function (element) {
+            element.addEventListener('input', function (e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+        document.querySelectorAll('.numericandcomma-input').forEach(function (element) {
+            element.addEventListener('input', function (e) {
+                this.value = this.value.replace(/[^0-9,-]/g, '');
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to toggle visibility and focus of the input field
+            function toggleInputField() {
+                var printPageOption = document.querySelector('input[name="form-field-radio"]:checked').id;
+                var printPageInput = document.getElementById('PrintPageInput');
+
+                if (printPageOption === 'PrintPageSelected') {
+                    printPageInput.classList.remove('hidden');
+                    printPageInput.focus();
+                } else {
+                    printPageInput.classList.add('hidden');
+                }
+            }
+            toggleInputField();
+            document.querySelectorAll('input[name="form-field-radio"]').forEach(function (radio) {
+                radio.addEventListener('change', toggleInputField);
+            });
+        });
+        $("#btnGetDetails").click(function () {
+            $("#ApprovalUsersBody").empty();
+            if ($('#DocumentNo').val().trim() != '') {
+                BindDocumentDetails("/PrintRequest/GetDocumentDetails", $('#DocumentNo').val());
+            }
+            else {
+                $('.btn-warning').trigger('click');
+                $('.modal-body').html('Document Number is Mandatory');
+            }
+        });
+
+        function BindDocumentDetails(cururl, docNumber) {
+            $.ajax({
+                url: cururl,
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                beforeSend: ShowProgressBar(),
+                complete: HideProgressBar(),
+                cache: false,
+                async: true,
+                data: JSON.stringify({ documentNumber: docNumber }),
+                success: function (data) {
+                    if (data.success) {
+                        if (data.message == 'invalid') {
+                            $('.frmFields').hide();
+                            $('.btn-warning').trigger('click');
+                            $('.modal-body').html('Invalid Document Number.');
+                        }
+                        else if (data.message == 'noaccess') {
+                            $('.frmFields').hide();
+                            $('.btn-warning').trigger('click');
+                            $('.modal-body').html('You are not authorized to modify this document');
+                        }
+                        else if (data.message[1].WFStatus == 'invalid') {
+                            $('.frmFields').hide();
+                            $('.btn-warning').trigger('click');
+                            $('.modal-body').html('Invalid Document Number.');
+                        }
+                        else if (data.message[1].WFStatus == 'notfound') {
+                            $('.frmFields').hide();
+                            $('.btn-warning').trigger('click');
+                            $('.modal-body').html('Document Archived OR Document Number Not Found');
+                        }
+                        else if (data.message[1].WFStatus == 'inprogress') {
+                            $('.frmFields').hide();
+                            $('.btn-warning').trigger('click');
+                            $('.modal-body').html('Workflow is in progress for the Document Number.');
+                        }
+                        else if (data.message[1].WFStatus == 'alreadyexists') {
+                            $('.frmFields').hide();
+                            $('.btn-warning').trigger('click');
+                            $('.modal-body').html('Print Request Already Exists.');
+                        }
+                        else {
+
+                            var isMissing = data.message[0];
+                            var docDetails = data.message[1];
+                            var arrayApproval = data.message[2];
+
+                            if (isMissing == true) {
+                                $('.btn-warning').trigger('click');
+                                $('.modal-body').html('Not able to Submit as Approvers Missing...');
+                            }
+                            else {
+
+                                for (var z = 0; z < arrayApproval.length; z++) {
+                                    var userNames = '';
+                                    if (arrayApproval[z].WFUsers != null) {
+                                        for (j = 0; j < arrayApproval[z].WFUsers.length; j++) {
+                                            userNames += arrayApproval[z].WFUsers[j].DisplayName + ',';
+                                        }
+                                    }
+                                    $('#ApprovalUsersBody').append('<tr><td>' + (z + 1) + '</td><td>' + arrayApproval[z].StageName + '</td><td>' + userNames + '</td></tr>');
+                                }
+
+                                $('.frmFields').show();
+                                $("#lblDocCategory").text(docDetails.DocumentCategoryName);
+                                $("#lblProject").text(docDetails.ProjectName);
+                                $("#lblDepartment").text(docDetails.DepartmentName);
+                                $("#lblSection").text(docDetails.SectionName);
+                                $("#lblFunction").text(docDetails.FunctionName);
+                                $("#divDocumentLevel").text(docDetails.DocumentLevel);
+                                $("#divProjectTypeID").text(docDetails.ProjectTypeID);
+                                $("#divProjectTypeCode").text(docDetails.ProjectTypeCode);
+                                $("#divProjectID").text(docDetails.ProjectID);
+                                $("#divSectionID").text(docDetails.SectionID);
+                                $("#divDocumentCategoryCode").text(docDetails.DocumentCategoryCode);
+                                $("#divDocNumber").text(docDetails.DocumentNo);
+                                $("#divDocGUID").text(docDetails.DocumentID);
+                                $("#DocumentPublishID").text(docDetails.DocumentPublishID);
+                                //$("#divWFExecutionID").text(docDetails.WFExecutionID);
+                                //$("#divDraftVersion").text(docDetails.DraftVersion);
+                                //$("#divEditVersion").text(docDetails.EditVersion);
+                                $("#lblDocumentDescription").text(docDetails.DocumentDescription);
+                                $("#lblLastVersion").text(docDetails.DraftVersion);
+
+                                var anchref = '/PDFViewer/ConfigureDocumentURL?docURL=' + $("#divPublishedFolder").text() + '/' + docDetails.ReadableFilePath + '/' + docDetails.ReadableDocumentName;
+                                //alert(anchref);
+                                $("#ancPDFDocument").prop('title', docDetails.ReadableDocumentName);
+                                $("#ancPDFDocument").html(docDetails.ReadableDocumentName);
+                                $("#ancPDFDocument").prop('href', anchref);
+
+                            }
+                        }
+                    }
+                },
+                error: function (xhr) {
+                    alert('error ' + xhr.message);
+                }
+            });
+        }
+
+        $("#btnSubmit").click(function () {
+            if ($("#PrintReason").val().trim() != '' && $("#ddlLocation").val() != '0' && $("#PrintCopies").val().trim() != '' &&
+                $("#ddlPaperSize").val() != '0' /*&& $("#PrintPageInput").val().trim() != ''*/) {
+
+                $("#PrintReason").removeClass("manfieldredborder"); $("#ddlLocation").removeClass("manfieldredborder");
+                $("#PrintCopies").removeClass("manfieldredborder"); $("#ddlPaperSize").removeClass("manfieldredborder"); $("#PrintPageInput").removeClass("manfieldredborder");
+
+                var fileData = new FormData();
+                var printPageOption = $('input[name="form-field-radio"]:checked').val();
+                var printPageInputValue = $('#PrintPageInput').val().trim();
+                var printPageOptionValue;
+                // the value to append based on the selected radio button
+                if (printPageOption === 'PrintPageSelected') {
+                    printPageOptionValue = printPageInputValue;
+                } else {
+                    printPageOptionValue = 'All';
+                }
+                fileData.append("PrintPageOption", printPageOptionValue);   
+                fileData.append("DocumentID", $("#divDocGUID").text());
+                fileData.append("DocumentPublishID", $("#DocumentPublishID").text());
+                fileData.append("DocumentNo", $("#divDocNumber").text()); 
+                fileData.append("RevisionNo", $("#lblLastVersion").text());
+                fileData.append("PrintLocationID", $("#ddlLocation").val());
+                fileData.append("PrintReason", $("#PrintReason").val().trim());
+                fileData.append("PrintCopies", $("#PrintCopies").val().trim());
+                fileData.append("PaperSize", $("#ddlPaperSize").val());
+                fileData.append("ActionComments", $("#txtComments").val());
+
+                fileData.append("DocumentLevel", $("#divDocumentLevel").text());
+                fileData.append("DocumentCategoryCode", $("#divDocumentCategoryCode").text());
+                fileData.append("ProjectTypeID", $("#divProjectTypeID").text());
+                fileData.append("ProjectTypeCode", $("#divProjectTypeCode").text());
+                fileData.append("ProjectID", $("#divProjectID").text());
+                fileData.append("SectionID", $("#divSectionID").text());
+
+                $.ajax({
+                    url: "/PrintRequest/SubmitPrintRequest",
+                    dataType: "json",
+                    type: "POST",
+                    beforeSend: function () {
+                        $("#overlay").show();
+                        $("#overlay").addClass('modal-backdrop fade in');
+                        $("#sidebar").addClass('modal-backdrop fade in');
+                    },
+                    complete: function () {
+                        $("#overlay").hide();
+                        $("#overlay").removeClass('modal-backdrop fade in');
+                        $("#sidebar").removeClass('modal-backdrop fade in');
+                    },
+                    contentType: false,
+                    processData: false,
+                    cache: false,
+                    data: fileData,
+                    success: function (data) {
+                        if (data.success) {
+                            if (data.message == 'failed') {
+                                $('.btn-danger').trigger('click');
+                                $('.modal-body').html('Error While Saving the Document.');
+                            }
+                            else if (data.message == 'itemexists') {
+                                $('.btn-warning').trigger('click');
+                                $('.modal-body').html('Document already exists');
+                            }
+                            else {
+                                $('.btn-success').trigger('click');
+                                $('.modal-body').html('Document Submitted Successfully.');
+                                $("#DOCFile").val(''); $("#txtComments").val();
+                                //redirect after success altert close
+                                $('#modal-success').on('hide.bs.modal', function () {
+                                    window.location = '/Inbox';
+                                })
+                            }
+                        }
+                    },
+                    error: function (xhr) {
+                        $('.btn-danger').trigger('click');
+                        $('.modal-body').html('Error while saving Print Request.');
+                    }
+                });
+            }
+            else {
+                $("#ddlLocation").removeClass("manfieldredborder");
+                $("#PrintReason").removeClass("manfieldredborder"); 
+                $("#PrintCopies").removeClass("manfieldredborder");
+                $("#ddlPaperSize").removeClass("manfieldredborder");
+                var ermsg = '';
+                if ($("#ddlLocation").val() == "0") {
+                    $("#ddlLocation").addClass("manfieldredborder");
+                    ermsg = 'Print Location';
+                }
+                if ($("#PrintCopies").val().trim() == '') {
+                    $("#PrintCopies").addClass("manfieldredborder");
+                    ermsg += '<br />'
+                    ermsg += 'Print Copies';
+                }
+                var printPageOption = $('input[name="form-field-radio"]:checked').val();
+                var printPageInputValue = $('#PrintPageInput').val().trim();
+                if (printPageOption === 'PrintPageSelected') {
+                    if (printPageInputValue == '') {
+                        $('#PrintPageInput').addClass("manfieldredborder");
+                        ermsg += '<br />'
+                        ermsg += 'Print Page Numbers';
+                    }
+                    else {
+                        $('#PrintPageInput').removeClass("manfieldredborder");
+                    }
+                }
+                if ($("#ddlPaperSize").val() == '0') {
+                    $("#ddlPaperSize").addClass("manfieldredborder");
+                    ermsg += '<br />'
+                    ermsg += 'Paper Size';
+                }
+                if ($("#PrintReason").val().trim() == '') {
+                    $("#PrintReason").addClass("manfieldredborder");
+                    ermsg += '<br />'
+                    ermsg += 'Print Reason';
+                }
+                $('.btn-warning').trigger('click');
+                $('.modal-body').html(ermsg);
+                return false;
+            }
+            return false;
+        });
+
+        function clearFields() {
+            $("#DOCFile").val(''); $("#DOCFile2").val('');
+            $("#txtComments").val('');
+        }
+
+        $.fn.center = function () {
+            this.css("position", "absolute");
+            this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) +
+                $(window).scrollTop()) + "px");
+            this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) +
+                $(window).scrollLeft()) + "px");
+            return this;
+        }
+    </script>
+}

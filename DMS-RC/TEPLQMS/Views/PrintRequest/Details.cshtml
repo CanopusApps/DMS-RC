@@ -1,0 +1,65 @@
+﻿@{
+    ViewBag.Title = "DMS - Print Request Details";
+}
+<div class="row">
+    <div class="col-lg-12 col-sm-12 col-xs-12">
+        <div class="widget">
+            <div class="cuwidget-header bordered-bottom bordered-blue">
+                <span class="cuwidget-caption" style="font-size:25px !important;"><b>Print Request Details</b></span>
+                <div style="display:inline-block;line-height:36px;background-color:antiquewhite;">
+                    <span class="cuwidget-caption" style="font-size:24px !important;padding-left:5px;padding-right:5px;"> <b>Pending Stage - @ViewBag.Data.CurrentStage</b></span>
+                </div>
+            </div>
+            <div class="widget-body">
+                @using (var f = Html.Bootstrap().Begin(new Form().Type(FormType.Horizontal)))
+                {
+                    if (ViewBag.Data != null)
+                    {
+                @*<div style="display:none;">
+                    <div id="divPrintRequestID">@ViewBag.Data.ID</div>
+                    <div id="divDocumentID">@ViewBag.Data.DocumentID</div>
+                    <div id="divDocumentNo">@ViewBag.Data.DocumentNo</div>
+                    <div id="divEditableDocumentName">@ViewBag.Data.EditableDocumentName</div>
+                    <div id="divReadableDocumentName">@ViewBag.Data.ReadableDocumentName</div>
+                    <div id="divEditableFilePath">@ViewBag.Data.EditableFilePath</div>
+                    <div id="divReadableFilePath">@ViewBag.Data.ReadableFilePath</div>
+                    <div id="divRevisionNo">@ViewBag.Data.RevisionNo</div>
+                    <div id="divWorkflowID">@ViewBag.Data.WorkflowID</div>
+                    <div id="divExecutionID">@ViewBag.Data.ExecutionID</div>
+                    <div id="divCurrentStageID">@ViewBag.Data.CurrentStageID</div>
+                    <div id="divCurrentStage">@ViewBag.Data.CurrentStage</div>
+                    <div id="divProjectTypeID">@ViewBag.Data.ProjectTypeID</div>
+                    <div id="divProjectID">@ViewBag.Data.ProjectID</div>
+                    <div id="divProjectTypeCode">@ViewBag.Data.ProjectTypeCode</div>
+                    <div id="divSectionID">@ViewBag.Data.SectionID</div>
+                    <div id="divDocumentLevel">@ViewBag.Data.DocumentLevel</div>
+                </div>*@
+                <div>
+                    @Html.Partial("../ApprovePrintRequest/PrintRequestDetailsView")
+                </div>                        
+                    }
+                }
+            </div>
+            <div>
+                @Html.Partial("../ApprovePrintRequest/WFHistoryView")
+            </div>
+        </div>
+    </div>
+</div>
+
+@section PageScripts{
+    <link href="~/assets/css/dataTables.bootstrap.css" rel="stylesheet" />
+    <script src="~/assets/js/datatable/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/datatable/ZeroClipboard.js"></script>
+    <script src="~/assets/js/datatable/dataTables.tableTools.min.js"></script>
+    <script src="~/assets/js/datatable/dataTables.bootstrap.min.js"></script>
+    <script src="~/assets/js/datatable/datatables-init.js"></script>
+    <script src="~/assets/js/bootbox/bootbox.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            InitiatePrintWFHistoryDataTable.init();           
+        });
+    </script>
+}
+

@@ -1,0 +1,161 @@
+﻿<div class="row">
+    <div class="col-lg-12 col-sm-12 col-xs-12">
+        <div class="row">
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-4"><strong>Document Number</strong></label>
+                    <label class=" col-lg-7 control-label text-align-left">
+                        @ViewBag.Data.DocumentNo
+                    </label>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-4"><strong>Document Description</strong></label>
+                    <label class="col-lg-7 control-label text-align-left">
+                        @ViewBag.Data.DocumentDescription
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="col-lg-4 control-label"><strong>Document Category</strong></label>
+                    <label class="col-lg-7 control-label text-align-left">
+                        @ViewBag.Data.DocumentCategoryName
+                    </label>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="col-lg-4 control-label"><strong>Project</strong></label>
+                    <label class="col-lg-7 control-label text-align-left">
+                        @ViewBag.Data.ProjectName
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="col-lg-4 control-label"><strong>Department</strong></label>
+                    <label class="col-lg-7 control-label text-align-left">@ViewBag.Data.DepartmentName</label>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="col-lg-4 control-label"><strong>Section</strong></label>
+                    <label class="col-lg-7 control-label text-align-left">
+                        @ViewBag.Data.SectionName
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="col-lg-4 control-label"><strong>Function</strong></label>
+                    <label class="col-lg-7 control-label text-align-left">
+                        @ViewBag.Data.FunctionName
+                    </label>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-4"><strong>Version No</strong></label>
+                    <label class=" col-lg-7 control-label text-align-left">
+                        @ViewBag.Data.RevisionNo
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="col-lg-4 control-label"><strong>Readable Document</strong></label>
+                    <label class="col-lg-7 control-label text-align-left">
+                        <a title="View Document" target="_blank" style="text-decoration:underline;" href='~/PDFViewer/ConfigureDocumentURL?docURL=@TEPL.QMS.Common.Constants.QMSConstants.DraftFolder/@ViewBag.Data.ReadableFilePath/@ViewBag.Data.ReadableDocumentName'> @ViewBag.Data.ReadableDocumentName </a>
+                        @if (ViewBag.DisplayDownload != null)
+                        {
+                            if (ViewBag.DisplayDownload == true)
+                            {
+                                <a title="Download Document" style="text-decoration:underline;" href='@Url.Action("DownloadDocument", "Dashboard", new { folderPath = @ViewBag.Data.ReadableFilePath, folder = TEPL.QMS.Common.Constants.QMSConstants.PublishedFolder, versionNo= @ViewBag.Data.RevisionNo, fileName= @ViewBag.Data.ReadableDocumentName })'><i class="menu-icon glyphicon glyphicon-download eye-open-font-size"></i></a>
+                            }
+                        }
+                    </label>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-4"><strong>Print Location</strong></label>
+                    <label class=" col-lg-7 control-label text-align-left">
+                        @ViewBag.Data.PrintLocationName
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row">
+                <div class="col-lg-6 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label class="control-label col-lg-4"><strong>Print Copies</strong></label>
+                        <label class=" col-lg-7 control-label text-align-left">
+                            @ViewBag.Data.PrintCopies
+                        </label>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label class="control-label col-lg-4"><strong>Print Pages</strong></label>
+                        <label class=" col-lg-7 control-label text-align-left">
+                            @ViewBag.Data.PrintPage
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label class="control-label col-lg-4" style=""><strong>Paper Size</strong></label>
+                        <label class=" col-lg-7 control-label text-align-left">
+                            @ViewBag.Data.PaperSize
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-4"><strong>Requested By</strong></label>
+                    <label class=" col-lg-7 control-label text-align-left">
+                        @ViewBag.Data.RequestorName
+                    </label>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-4"><strong>Requested Date</strong></label>
+                    <label class=" col-lg-7 control-label text-align-left">
+                        @ViewBag.Data.RequestedDate
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-4" style=""><strong>Print Reason</strong></label>
+                    <label class=" col-lg-7 control-label text-align-left">
+                        @ViewBag.Data.PrintReason
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+</div>

@@ -1,0 +1,31 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/slnx.sqlite
+/packages
+/.vs
+/DMS-Jasmine/TEPLQDMSWS/.vs
+/DMS-Jasmine/TEPLQDMSWS/bin/Debug
+/DMS-Jasmine/TEPLQDMSWS/obj/Debug
+/DMS-Jasmine/TEPL.QMS.Common/.vs
+/DMS-Jasmine/TEPL.QMS.Common/bin/Debug
+/DMS-Jasmine/TEPL.QMS.Common/obj/Debug
+/DMS-Jasmine/TEPL.QMS.Workflow/.vs
+/DMS-Jasmine/TEPL.QMS.Workflow/bin/Debug
+/DMS-Jasmine/TEPL.QMS.Workflow/obj/Debug
+/DMS-Jasmine/TEPL.QMS.DAL/.vs
+/DMS-Jasmine/TEPL.QMS.DAL/bin/Debug
+/DMS-Jasmine/TEPL.QMS.DAL/obj/Debug
+/DMS-Jasmine/TEPL.QMS.BLL/.vs
+/DMS-Jasmine/TEPL.QMS.BLL/bin/Debug
+/DMS-Jasmine/TEPL.QMS.BLL/obj/Debug
+/DMS-Jasmine/.vs/TEPLQMS/config
+/DMS-Jasmine/.vs/TEPLQMS/FileContentIndex
+/DMS-Jasmine/.vs/TEPLQMS/v17
+/DMS-Jasmine/packages
+/DMS-Jasmine/TEPLQDMSWS/TEPLQDMSWS.csproj.user
+/Jasmine DMS changes.txt
+/Publish
+/Publish_0710_12PM.zip
+*.zip

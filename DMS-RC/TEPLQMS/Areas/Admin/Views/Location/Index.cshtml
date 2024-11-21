@@ -1,0 +1,335 @@
+﻿
+@{
+    ViewBag.Title = "DMS - Location";
+}
+
+<div class="row">
+    <div class="col-xs-12 col-md-12">
+        <div class="widget">
+            <div class="widget-header">
+                <span class="widget-caption topfocus" tabindex='1' style="font-size:25px !important;"><b><span id="spanTitle">Location</span></b></span>
+                <div class="widget-buttons">
+                    <div>
+                        <a id="ancbacktoList" href="/Admin/Location" class="btn btn-azure btn-xs" style="font-size:13px;font-weight:bold;">
+                            <i class="fa fa-arrow-circle-left"></i> Back to list
+                        </a>
+
+                        <a id="ancaddNew" href="javascript:displayAddDiv();" class="btn btn-azure btn-xs add" style="font-size:13px;font-weight:bold;">
+                            <i class="fa fa-plus-circle"></i> Add Location
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="widget-body" id="addDiv">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12 col-xs-12">
+                            <div id="ID" style="display:none;"></div>
+                            <div class="col-lg-4 col-sm-4 col-xs-12">
+                                <div class="form-group">
+                                    <label><strong>Location Code</strong><span class="mandatory">*</span></label>
+                                    <input title="Location Code" class="form-control" id="LocationCode" name="Name" type="text" value="">
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-sm-4 col-xs-12">
+                                <div class="form-group">
+                                    <label><strong>Location Name</strong><span class="mandatory">*</span></label>
+                                    <input title="Location Name" class="form-control" id="LocationName" name="Name" type="text" value="">
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-sm-4 col-xs-12">
+                                <div class="form-group" id="divCheckbox">
+                                    <label><strong>Active</strong></label>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input id="chk1" type="checkbox" checked="checked">
+                                            <span class="text"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12 col-xs-12">
+                            <div class="col-lg-1 col-sm-1 col-xs-12">
+                                <div class="form-group">
+                                    @*<label style="color:white;">TEPL</label>*@
+                                    <button class="btn btn-azure" id="btnAdd" type="button">Add</button>
+                                    <button class="btn btn-azure" id="btnUpdate" type="button">Update</button>
+                                </div>
+                            </div>
+                            <div class="col-lg-1 col-sm-1 col-xs-12">
+                                <div class="form-group">
+                                    @*<label style="color:white;">TEPL</label>*@
+                                    <button class="btn btn-azure" id="btnCancel" type="button">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="widget-body" id="tableDiv">
+                <table class="table table-striped table-hover table-bordered" id="editabledatatable">
+                    <thead>
+                        <tr role="row">
+                            <th>
+                                ID
+                            </th>
+                            <th>
+                                Location Code
+                            </th>
+                            <th>
+                                Location Name
+                            </th>
+                            <th>
+                                Is Active
+                            </th>
+                            <th>
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var txt in ViewBag.Data)
+                        {
+                            <tr>
+                                <td>@txt.ID</td>
+                                <td>@txt.Code</td>
+                                <td>@txt.Title</td>
+                                <td>@txt.Active</td>
+                                <td>
+
+                                    <a href="#" class="btn btn-azure btn-xs edit" onclick="EditLocation('@txt.ID','@txt.Code','@txt.Title','@txt.Active')"><i class="fa fa-edit"></i> Edit</a>
+                                    <a href="#" class="btn btn-redcolor btn-xs delete" onclick="DeleteLocation('@txt.ID','@txt.Title')"><i class="fa fa-trash-o"></i> Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section PageScripts{
+
+    <!--Bootstrap Tags Input-->
+    <script src="~/assets/js/tagsinput/bootstrap-tagsinput.js"></script>
+
+    <link href="~/assets/css/dataTables.bootstrap.css" rel="stylesheet" />
+    <script src="~/assets/js/datatable/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/datatable/ZeroClipboard.js"></script>
+    <script src="~/assets/js/datatable/dataTables.tableTools.min.js"></script>
+    <script src="~/assets/js/datatable/dataTables.bootstrap.min.js"></script>
+    <script src="~/assets/js/datatable/datatables-init.js"></script>
+    <script src="~/assets/js/bootbox/bootbox.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#addDiv").hide(); $("#ancbacktoList").hide(); $("#btnUpdate").hide(); $("#divCheckbox").hide();
+            InitiateLocationDataTable.init();
+        });
+        function displayAddDiv() {
+            $("#addDiv").show();
+            $("#ancbacktoList").show();
+            $("#tableDiv").hide();
+            $("#ancaddNew").hide();
+            $("#divCheckbox").hide();
+
+
+            $("#ID").text('');
+            $("#LocationCode").val('').prop("disabled", "");
+            $("#LocationName").val('');
+
+        }
+        function EditLocation(ID, Code, Name, flgActive) {
+            $("#addDiv").show();
+            $("#ancbacktoList").show();
+            $("#tableDiv").hide();
+            $("#ancaddNew").hide();
+            $("#divCheckbox").show();
+
+            $("#btnUpdate").show();
+            $("#btnAdd").hide();
+
+            $("#ID").text(ID);
+            $("#LocationCode").val(Code).prop("disabled", "disabled");
+            $("#LocationName").val(Name);
+
+            if (flgActive)
+                $("#chk1").prop("checked", "checked");
+            else
+                $("#chk1").prop("checked", "");
+
+        }
+        function ValidateFields() {
+            $("#LocationCode").removeClass("manfieldredborder");
+            $("#LocationName").removeClass("manfieldredborder");
+            var errmsg = '';
+            if ($("#LocationCode").val().trim() == '') {
+                $("#LocationCode").addClass("manfieldredborder");
+                errmsg += 'Location Code <br />';
+            }
+            else {
+                $("#LocationCode").removeClass("manfieldredborder");
+            }
+            if ($("#LocationName").val().trim() == '') {
+                $("#LocationName").addClass("manfieldredborder");
+                errmsg += 'Location Name';
+            }
+            else {
+                $("#LocationName").removeClass("manfieldredborder");
+            }
+            if (errmsg != '') {
+                $('.btn-warning').trigger('click');
+                $('.modal-body').html(errmsg);
+                return false;
+            }
+            return true;
+        }
+        $("#btnAdd").click(function () {
+            if (ValidateFields()) {
+                var fileData = new FormData();
+                fileData.append("LocationCode", $("#LocationCode").val().trim());
+                fileData.append("LocationName", $("#LocationName").val().trim());
+
+                $.ajax({
+                    url: "/Location/AddLocation",
+                    dataType: "json",
+                    type: "POST",
+                    beforeSend: function () {
+                        $("#overlay").show();
+                        $("#overlay").addClass('modal-backdrop fade in');
+                        $("#sidebar").addClass('modal-backdrop fade in');
+                    },
+                    complete: function () {
+                        $("#overlay").hide();
+                        $("#overlay").removeClass('modal-backdrop fade in');
+                        $("#sidebar").removeClass('modal-backdrop fade in');
+                    },
+                    contentType: false,
+                    processData: false,
+                    cache: false,
+                    data: fileData,
+                    success: function (data) {
+                        if (data.success) {
+                            if (data.message == 'failed') {
+                                $('.btn-danger').trigger('click');
+                                $('.modal-body').html('Error While Saving the Location.');
+                            }
+                            else if (data.message.indexOf("exists") > 0) {
+                                $('.btn-warning').trigger('click');
+                                $('.modal-body').html(data.message);
+                            }
+                            else {
+                                $('.btn-success').trigger('click');
+                                $('.modal-body').html(data.message);
+                                $('#modal-success').on('hide.bs.modal', function () {
+                                    window.location = '/Admin/Location';
+                                })
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        $("#btnUpdate").click(function () {
+            //alert($("#chk1").prop("checked"));
+            if (ValidateFields()) {
+                var fileData = new FormData();
+                fileData.append("ID", $("#ID").text().trim());
+                fileData.append("LocationCode", $("#LocationCode").val().trim());
+                fileData.append("LocationName", $("#LocationName").val().trim());
+                if ($("#chk1").prop("checked"))
+                    fileData.append("Active", true);
+                else
+                    fileData.append("Active", false);
+
+                $.ajax({
+                    url: "/Location/UpdateLocation",
+                    dataType: "json",
+                    type: "POST",
+                    beforeSend: function () {
+                        $("#overlay").show();
+                        $("#overlay").addClass('modal-backdrop fade in');
+                        $("#sidebar").addClass('modal-backdrop fade in');
+                    },
+                    complete: function () {
+                        $("#overlay").hide();
+                        $("#overlay").removeClass('modal-backdrop fade in');
+                        $("#sidebar").removeClass('modal-backdrop fade in');
+                    },
+                    contentType: false,
+                    processData: false,
+                    cache: false,
+                    data: fileData,
+                    success: function (data) {
+                        if (data.success) {
+                            if (data.message == 'failed') {
+                                $('.btn-danger').trigger('click');
+                                $('.modal-body').html('Error While updating the Location.');
+                            }
+                            else {
+                                $('.btn-success').trigger('click');
+                                $('.modal-body').html(data.message);
+                                $('#modal-success').on('hide.bs.modal', function () {
+                                    window.location = '/Admin/Location';
+                                })
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        $("#btnCancel").click(function () {
+            window.location = '/Admin/Location';
+        });
+
+        function DeleteLocation(ID, Name) {
+            bootbox.confirm("Are you sure to Delete?", function (result) {
+                if (result) {
+                    var fileData = new FormData();
+                    fileData.append("ID", ID);
+
+                    /*debugger;*/
+                    $.ajax({
+                        url: "/Location/DeleteLocation",
+                        dataType: "json",
+                        type: "POST",
+                        beforeSend: function () {
+                            $("#overlay").show();
+                            $("#overlay").addClass('modal-backdrop fade in');
+                            $("#sidebar").addClass('modal-backdrop fade in');
+                        },
+                        complete: function () {
+                            $("#overlay").hide();
+                            $("#overlay").removeClass('modal-backdrop fade in');
+                            $("#sidebar").removeClass('modal-backdrop fade in');
+                        },
+                        contentType: false,
+                        processData: false,
+                        cache: false,
+                        data: fileData,
+                        success: function (data) {
+                            if (data.success) {
+                                if (data.message == 'failed') {
+                                    $('.btn-danger').trigger('click');
+                                    $('.modal-body').html('Error While Deleting the Location.');
+                                }
+                                else {
+                                    $('.btn-success').trigger('click');
+                                    $('.modal-body').html(data.message);
+                                    $('#modal-success').on('hide.bs.modal', function () {
+                                        window.location = '/Admin/Location';
+                                    })
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}
