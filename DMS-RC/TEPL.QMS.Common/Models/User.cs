@@ -13,7 +13,7 @@ namespace TEPL.QMS.Common.Models
         public string DisplayName { get; set; }
         public string EmailID { get; set; }
         public string DepartmentName { get; set; }
-        public Guid DepartmentID { get; set; }
+        public Guid? DepartmentID { get; set; }
         public bool IsProjectAdmin { get; set; }
         public bool IsQMSAdmin { get; set; }
         public Guid ProjectTypeID { get; set; }

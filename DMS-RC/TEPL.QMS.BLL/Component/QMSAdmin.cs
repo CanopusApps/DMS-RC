@@ -1463,10 +1463,10 @@ namespace TEPL.QMS.BLL.Component
             return strReturn;
         }
 
-        public string UpdateUser(Guid ID, string LoginID, string DisplayName, string Email, bool IsQMSAdmin, bool IsActive, Guid CreatedID)
+        public string UpdateUser(Guid ID, string LoginID, string DisplayName, string Email, bool IsQMSAdmin, bool IsActive, Guid CreatedID, Guid DeptID)
         {
             string strReturn = string.Empty;
-            strReturn = objAdmin.UpdateUser(ID, LoginID, DisplayName, Email, IsQMSAdmin, IsActive, CreatedID);
+            strReturn = objAdmin.UpdateUser(ID, LoginID, DisplayName, Email, IsQMSAdmin, IsActive, CreatedID, DeptID);
             return strReturn;
         }
         public string DeleteUser(Guid UserID)

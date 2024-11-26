@@ -26,6 +26,8 @@ namespace TEPL.QMS.Workflow.Constants
         public static string spCopyWFApprovalMatrix = "spCopyWFApprovalMatrix";
         public static string spGetWFApprover = "spGetWFApprover";
         public static string spGetWFApprovers = "spGetWFApprovers";
+        public static string spGetWFApproversForPrint = "spGetWFApproversForPrint";
+        public static string spGetDcoumentApproverForPrint = "spGetDcoumentApproverForPrint";
         public static string spInsertWFApprovalMatrix = "spInsertWFApprovalMatrix";
         public static string spUpdateWFApprovalMatrix = "spUpdateWFApprovalMatrix";
         public static string spUpdateWFApprovalMatrixApprovers = "spUpdateWFApprovalMatrixApprovers";

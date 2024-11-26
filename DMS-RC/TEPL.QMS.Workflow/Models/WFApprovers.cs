@@ -10,6 +10,10 @@ namespace TEPL.QMS.Workflow.Models
     {
         public Guid ID { get; set; }
         public string StageName { get; set; }
+
+        public int StageOrder { get; set; }
+       // public string ConditionName { get; set; }
+       // public string WFUser { get; set; }
         public List<WFCondition> Condition { get; set; }
         public string ApprovalUser { get; set; }
         public List<WFUser> WFUsers{ get; set; }
@@ -20,4 +24,5 @@ namespace TEPL.QMS.Workflow.Models
         public string Section { get; set; }
 
     }
+
 }

@@ -1594,7 +1594,7 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             return strReturn; ;
         }
-        public string UpdateUser(Guid id, string LoginID, string DisplayName, string Email, bool IsQMSAdmin, bool IsActive, Guid CreatedID)
+        public string UpdateUser(Guid id, string LoginID, string DisplayName, string Email, bool IsQMSAdmin, bool IsActive, Guid CreatedID, Guid DeptID)
         {
             string strReturn = string.Empty;
             DataTable dt = new DataTable();
@@ -1612,6 +1612,7 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.Parameters.Add("@IsQMSAdmin", SqlDbType.Bit).Value = IsQMSAdmin;
                         cmd.Parameters.Add("@Active", SqlDbType.Bit).Value = IsActive;
                         cmd.Parameters.Add("@CreatedID", SqlDbType.UniqueIdentifier).Value = CreatedID;
+                        cmd.Parameters.Add("@DepartmentID", SqlDbType.UniqueIdentifier).Value = DeptID;
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
                             sda.Fill(dt);
@@ -2291,7 +2292,7 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             return dt;
         }
-        public (DataTable, int) GetPendingDocuments_ServerSide(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string DocumentDescription, Guid UserID, int skip, int pageSize)
+        public (DataTable, int) GetPendingDocuments_ServerSide(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string Documentno, string DocumentDescription, Guid UserID, int skip, int pageSize, string sortColumn, string sortDirection)
         {
             DataTable dt = new DataTable();
             int totalRows = 0;
@@ -2302,15 +2303,18 @@ namespace TEPL.QMS.DAL.Database.Component
                     using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetpendingDocumentsfromServer, con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@DepartmentCode", SqlDbType.NVarChar, 10).Value = DepartmentCode;
-                        cmd.Parameters.Add("@SectionCode", SqlDbType.NVarChar, 10).Value = SectionCode;
-                        cmd.Parameters.Add("@ProjectCode", SqlDbType.NVarChar, 10).Value = ProjectCode;
-                        cmd.Parameters.Add("@DocumentCategoryCode", SqlDbType.NVarChar, 10).Value = DocumentCategoryCode;
-                        cmd.Parameters.Add("@DocumentDescription", SqlDbType.NVarChar, 500).Value = DocumentDescription;
+                        cmd.Parameters.Add("@DepartmentCode", SqlDbType.NVarChar, 10).Value = string.IsNullOrEmpty(DepartmentCode) ? "" : DepartmentCode;
+                        cmd.Parameters.Add("@SectionCode", SqlDbType.NVarChar, 10).Value = string.IsNullOrEmpty(SectionCode) ? "" : SectionCode;
+                        cmd.Parameters.Add("@ProjectCode", SqlDbType.NVarChar, 10).Value = string.IsNullOrEmpty(ProjectCode) ? "" : ProjectCode;
+                        cmd.Parameters.Add("@DocumentCategoryCode", SqlDbType.NVarChar, 10).Value = string.IsNullOrEmpty(DocumentCategoryCode) ? "" : DocumentCategoryCode;
+                        cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 500).Value = string.IsNullOrEmpty(Documentno) ? "" : Documentno;
+                        cmd.Parameters.Add("@DocumentDescription", SqlDbType.NVarChar, 500).Value = string.IsNullOrEmpty(DocumentDescription) ? "" : DocumentDescription;
 
                         cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserID;
                         cmd.Parameters.Add("@PageNumber", SqlDbType.Int).Value = skip;
                         cmd.Parameters.Add("@PageSize", SqlDbType.Int).Value = pageSize;
+                        cmd.Parameters.Add("@SortColumn", SqlDbType.NVarChar, 500).Value = sortColumn;
+                        cmd.Parameters.Add("@SortDirection", SqlDbType.NVarChar, 500).Value = sortDirection;
 
                         SqlParameter totalRowsParam = new SqlParameter("@TotalRows", SqlDbType.Int);
                         totalRowsParam.Direction = ParameterDirection.Output;
@@ -2321,6 +2325,47 @@ namespace TEPL.QMS.DAL.Database.Component
                             totalRows = (totalRowsParam.Value != DBNull.Value) ? (int)totalRowsParam.Value : 0;
                             //totalRows = (int)totalRowsParam.Value;
                         }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return (dt, totalRows);
+        }
+        public (DataTable, int) GetPublishedDocuments_ServerSide(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode,string Documentno, string DocumentDescription, Guid UserID, int skip, int pageSize, string sortColumn, string sortDirection)
+        {
+            DataTable dt = new DataTable();
+            int totalRows = 0;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetPublishedDocuments_ServerSide, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@DepartmentCode", SqlDbType.NVarChar, 10).Value = string.IsNullOrEmpty(DepartmentCode) ? "" : DepartmentCode;
+                        cmd.Parameters.Add("@SectionCode", SqlDbType.NVarChar, 10).Value = string.IsNullOrEmpty(SectionCode) ? "" : SectionCode;
+                        cmd.Parameters.Add("@ProjectCode", SqlDbType.NVarChar, 10).Value = string.IsNullOrEmpty(ProjectCode) ? "" : ProjectCode;
+                        cmd.Parameters.Add("@DocumentCategoryCode", SqlDbType.NVarChar, 10).Value = string.IsNullOrEmpty(DocumentCategoryCode) ? "" : DocumentCategoryCode;
+                        cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 500).Value = string.IsNullOrEmpty(Documentno) ? "" : Documentno;
+                        cmd.Parameters.Add("@DocumentDescription", SqlDbType.NVarChar, 500).Value = string.IsNullOrEmpty(DocumentDescription) ? "" : DocumentDescription;
+
+                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserID;
+                        cmd.Parameters.Add("@PageNumber", SqlDbType.Int).Value = skip;
+                        cmd.Parameters.Add("@PageSize", SqlDbType.Int).Value = pageSize;
+                        cmd.Parameters.Add("@SortColumn", SqlDbType.NVarChar, 500).Value = sortColumn;
+                        cmd.Parameters.Add("@SortDirection", SqlDbType.NVarChar, 500).Value = sortDirection;
+
+                        SqlParameter totalRowsParam = new SqlParameter("@TotalRows", SqlDbType.Int);
+                        totalRowsParam.Direction = ParameterDirection.Output;
+                        cmd.Parameters.Add(totalRowsParam);
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                        totalRows = (totalRowsParam.Value != DBNull.Value) ? (int)totalRowsParam.Value : 0;
                     }
                 }
             }

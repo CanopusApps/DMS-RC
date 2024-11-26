@@ -397,7 +397,7 @@
                 else {
                     arrData[5] = false;
                 }
-
+                arrData[6] = $("#ddlDepartment").val();
                 $.ajax({
                     url: '/Users/InsertRecord',
                     dataType: "json",

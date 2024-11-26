@@ -166,7 +166,8 @@ namespace TEPLQMS.Areas.Admin.Controllers
                     isActive = true;
                 else
                     isActive = false;
-                strReturn = objBLL.UpdateUser(new Guid(arr[0].ToString()), arr[1].ToString(), arr[2].ToString(), arr[3].ToString(), IsQMSAdmin, isActive, LoggedInUserID);
+                strReturn = objBLL.UpdateUser(new Guid(arr[0].ToString()), arr[1].ToString(), arr[2].ToString(), arr[3].ToString(), 
+                    IsQMSAdmin, isActive, LoggedInUserID, new Guid(arr[6].ToString()));
             }
             catch
             {

@@ -87,35 +87,23 @@ namespace TEPLQMS.Areas.Admin.Controllers
         public ActionResult GetPendingDocumentDataFromServerSide()
         {
             int pageLength = Convert.ToInt16(ConfigurationManager.AppSettings["PageLength"]);
-            var draw = Convert.ToInt32(Request.Form["draw"]); // The draw parameter for DataTables
-            var start = Convert.ToInt32(Request.Form["start"]); // The starting row for pagination
-            var length = Convert.ToInt32(Request.Form["length"]); // The number of records per page
+            int draw = DatatableCall.GetRequestValue<int>("draw", Request);
+            int start = DatatableCall.GetRequestValue<int>("start", Request);
+            int length = DatatableCall.GetRequestValue<int>("length", Request);
             if (start < 0) start = 0;
-            if (length <= 0) length = pageLength; // Default to 10 if length is 0 or negative
+            if (length <= 0) length = 10;
             int pageNumber = (start / length) + 1;
-            string searchValue = DatatableCall.GetRequestValue<string>("search[value]", Request);
-            var sortColumnIndex = Convert.ToInt32(Request.Form["order[0][column]"]);
+            string sortColumnIndex = DatatableCall.GetRequestValue<string>("order[0][column]", Request);
             string sortColumn = DatatableCall.GetRequestValue<string>($"columns[{sortColumnIndex}][data]", Request);
-            var sortDirection = Request.Form["order[0][dir]"];
-            if (sortColumnIndex < 0) sortColumnIndex = 0; 
+            string sortDirection = DatatableCall.GetRequestValue<string>("order[0][dir]", Request);
+            string searchValue = DatatableCall.GetRequestValue<string>("search[value]", Request);
 
-            if (sortDirection != "asc" && sortDirection != "desc")
-            {
-                sortDirection = "asc"; // Default to ascending if the direction is not valid
-            }
-
-            var filters = new Dictionary<string, string>
-            {
-                { "DepartmentCode", DatatableCall.GetRequestValue < string >("department", Request) },
-                { "SectionCode", DatatableCall.GetRequestValue < string >("section", Request) },
-                { "ProjectCode", DatatableCall.GetRequestValue < string >("project", Request) },
-                { "DocumentCategoryName", DatatableCall.GetRequestValue < string >("category", Request) },
-                { "DocumentDescription", DatatableCall.GetRequestValue < string >("description", Request) }
-            };
-
-
-
-            // Get data from your data source (e.g., database)
+            string DepartmentCode = DatatableCall.GetRequestValue<string>("department", Request);
+            string SectionCode = DatatableCall.GetRequestValue<string>("section", Request);
+            string ProjectCode = DatatableCall.GetRequestValue<string>("project", Request);
+            string DocumentCategoryCode = DatatableCall.GetRequestValue<string>("category", Request);
+            string Documentno = DatatableCall.GetRequestValue<string>("documentno", Request);
+            string DocumentDescription = DatatableCall.GetRequestValue<string>("description", Request);
 
             Guid LoggedInUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
             QMSAdmin objQMSAdmin = new QMSAdmin();
@@ -125,23 +113,18 @@ namespace TEPLQMS.Areas.Admin.Controllers
             else ViewBag.isQMSAdmin = false;
 
             DocumentUpload obj = new DocumentUpload();
-            (List<DraftDocument> data, int totalpage) = obj.GetPendingDocumentFromServer("","","","","",LoggedInUserID, true, pageNumber, length);
-            
-
-            // Apply filters, sorting, and paging
-            data = DatatableCall.ApplyFilters(data, filters).ToList();
-            data = DatatableCall.ApplySorting(data, sortColumn, sortDirection).ToList();
-            var recordsTotal = totalpage;
+            (List<DraftDocument> data, int totalpage) = obj.GetPendingDocumentFromServer(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode, Documentno, DocumentDescription, LoggedInUserID, true, pageNumber, length, sortColumn, sortDirection);
+            var recordsTotal = totalpage;//data.Count();
             data = DatatableCall.ApplyPaging(data, start, length).ToList();
-
-            // Prepare the response
-            return Json(new
+            var response = new
             {
                 draw = draw,
-                recordsTotal = recordsTotal, // Total records (without filtering)
-                recordsFiltered = recordsTotal, // For this example, filtered count equals total count
-                data = data // The list of documents for this page
-            }, JsonRequestBehavior.AllowGet);
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data
+            };
+
+            return Json(response, JsonRequestBehavior.AllowGet);
 
         }
     }

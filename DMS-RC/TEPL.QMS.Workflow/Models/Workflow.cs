@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TEPL.QMS.Workflow.Models;
 
 namespace TEPL.QMS.Workflow.Models
 {
@@ -21,5 +22,6 @@ namespace TEPL.QMS.Workflow.Models
         public string NextStage { set; get; }
         public bool IsDocumentLevelRequired { get; set; }
         public bool IsDepartmentRequired { get; set; }
+        public bool DocumentApprover { get; set; }
     }
 }

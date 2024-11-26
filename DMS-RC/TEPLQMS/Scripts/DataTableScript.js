@@ -2446,6 +2446,10 @@ var InitiateSystemUsersTable = function () {
                                     $("#chk1").prop('checked', true);
                                 else
                                     $("#chk1").prop('checked', false);
+
+                                if (retmsg[0].DepartmentID != null) {
+                                    $("#ddlDepartment").val(retmsg[0].DepartmentID);
+                                }
                             }
                         },
                         error: function (xhr) {

@@ -22,6 +22,7 @@ using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 using System.Linq;
 
+
 namespace TEPL.QMS.BLL.Component
 {
     public class DocumentUpload
@@ -333,8 +334,29 @@ namespace TEPL.QMS.BLL.Component
                     objRequest.DocumentLevel = GetDocumentLevel(objRequest.DocumentCategoryCode);
                 else
                     objRequest.DocumentLevel = "";
-                DocumentApprover objApprover = GetDocumentApprover(objRequest.ProjectTypeID, objRequest.ProjectID, objSt.NextStageID, objRequest.DocumentLevel, objRequest.SectionID);
-                                
+                DocumentApprover objApprover;
+
+                if (objSt.DocumentApprover)
+                {
+                    objApprover = GetDocumentApprover(
+                        objRequest.ProjectTypeID,
+                        objRequest.ProjectID,
+                        objSt.NextStageID,
+                        objRequest.DocumentLevel,
+                        objRequest.SectionID
+                    );
+                   
+                }
+                else                
+                {
+
+                    objApprover = GetPrintDocumentApprover(objRequest.RequestorID);
+                }
+
+                
+                //DocumentApprover objApprover = GetDocumentApprover(objRequest.ProjectTypeID, objRequest.ProjectID, objSt.NextStageID, objRequest.DocumentLevel, objRequest.SectionID);
+                //DocumentApprover objApprover = GetPrintDocumentApprover(objRequest.RequestorID);
+
                 objWF.CreateActionForPrintRequest(new Guid(respoIDs[0]), new Guid(respoIDs[1]), objSt.NextStageID, objApprover.ApprovalUser,objRequest.RequestorID);
                 
 
@@ -936,6 +958,14 @@ namespace TEPL.QMS.BLL.Component
 
             return objApprovers[0];
         }
+        private DocumentApprover GetPrintDocumentApprover(Guid RequestorID)
+        {
+            WorkflowActions objWF = new WorkflowActions();
+
+            List<DocumentApprover> objApprovers = objWF.GetPrintWorkflowApprover(RequestorID);
+
+            return objApprovers[0];
+        }
         public List<DraftDocument> GetRequestedDocuments(Guid CreatedID)
         {
             List<DraftDocument> objDocuments = null;
@@ -1114,28 +1144,90 @@ namespace TEPL.QMS.BLL.Component
             }
             return ArrayOfObjects;
         }
+        //public Object[] GetDocumentDetailsForPrintRequest(string DocumentNo, Guid UserID)
+        //{
+
+        //    Object[] ArrayOfObjects = new Object[3];
+        //    try
+        //    {
+        //        string docNumberString = string.Empty;
+        //        Boolean isMissingApprovals = false;
+        //        DraftDocument objDocuments = null;
+        //        string strReturn = docOperObj.GetDocumentDetailsForPrintRequest(DocumentNo, UserID);
+        //        List<DraftDocument> objDraft = BindModels.ConvertJSON<DraftDocument>(strReturn);
+        //        if (objDraft != null)
+        //            objDocuments = objDraft[0];
+
+        //        string DocumentLevel = GetDocumentLevel(objDocuments.DocumentCategoryCode);
+        //        WorkflowActions objWFA = new WorkflowActions();
+        //        List<WFApprovers> objApprovers = objWFA.GetWorkflowApprovers(QMSConstants.PrintWorkflowID, objDocuments.ProjectTypeID, objDocuments.ProjectID, DocumentLevel, objDocuments.SectionID);
+
+        //        foreach (WFApprovers wfApp in objApprovers)
+        //        {
+        //            if (string.IsNullOrEmpty(wfApp.ApprovalUser))
+        //            { isMissingApprovals = true; break; }
+        //        }
+        //        ArrayOfObjects[0] = isMissingApprovals;
+        //        ArrayOfObjects[1] = objDocuments;
+        //        ArrayOfObjects[2] = objApprovers;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LoggerBlock.WriteTraceLog(ex);
+        //        throw ex;
+        //    }
+        //    return ArrayOfObjects;
+        //}
+
         public Object[] GetDocumentDetailsForPrintRequest(string DocumentNo, Guid UserID)
         {
-
             Object[] ArrayOfObjects = new Object[3];
             try
             {
-                string docNumberString = string.Empty;
-                Boolean isMissingApprovals = false;
+                bool isMissingApprovals = false;
                 DraftDocument objDocuments = null;
+
+                // Fetch document details
                 string strReturn = docOperObj.GetDocumentDetailsForPrintRequest(DocumentNo, UserID);
                 List<DraftDocument> objDraft = BindModels.ConvertJSON<DraftDocument>(strReturn);
                 if (objDraft != null)
+                {
                     objDocuments = objDraft[0];
+                }
 
+                // Fetch the logged-in user's department ID from the session
+                string userID = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID].ToString();
+                if (string.IsNullOrEmpty(userID))
+                {
+                    throw new Exception("User's department ID is not available.");
+                }
+                Guid LoggedInDepartmentID = new Guid(userID);
+
+                // Determine document level
                 string DocumentLevel = GetDocumentLevel(objDocuments.DocumentCategoryCode);
+
+                // Fetch workflow approvers
                 WorkflowActions objWFA = new WorkflowActions();
-                List<WFApprovers> objApprovers = objWFA.GetWorkflowApprovers(QMSConstants.PrintWorkflowID, objDocuments.ProjectTypeID, objDocuments.ProjectID, DocumentLevel, objDocuments.SectionID);
+                List<WFApprovers> objApprovers = objWFA.GetWkflowApprovers(
+                    QMSConstants.PrintWorkflowID,
+                    objDocuments.ProjectTypeID,
+                    objDocuments.ProjectID,
+                    DocumentLevel,
+                    objDocuments.SectionID,
+                    LoggedInDepartmentID // Pass the department ID
+                );
+
+                // Check if approvals are missing
                 foreach (WFApprovers wfApp in objApprovers)
                 {
                     if (string.IsNullOrEmpty(wfApp.ApprovalUser))
-                    { isMissingApprovals = true; break; }
+                    {
+                        isMissingApprovals = true;
+                        break;
+                    }
                 }
+
+                // Prepare the return objects
                 ArrayOfObjects[0] = isMissingApprovals;
                 ArrayOfObjects[1] = objDocuments;
                 ArrayOfObjects[2] = objApprovers;
@@ -1143,10 +1235,11 @@ namespace TEPL.QMS.BLL.Component
             catch (Exception ex)
             {
                 LoggerBlock.WriteTraceLog(ex);
-                throw ex;
+                throw;
             }
             return ArrayOfObjects;
         }
+
         public DraftDocument GetDocumentDetailsByNoForRequest(string DocumentNo)
         {
             DraftDocument objDocuments = null;
@@ -1604,8 +1697,7 @@ namespace TEPL.QMS.BLL.Component
                 throw ex;
             }
             return objDocList;
-        }
-
+        }        
 
         public DraftDocument DocumentDirectUpload(DraftDocument objDoc)
         {
@@ -1661,13 +1753,13 @@ namespace TEPL.QMS.BLL.Component
             }
             return objDoc;
         }
-        public (List<DraftDocument>, int) GetPendingDocumentFromServer(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string DocumentDescription, Guid UserID, bool IsProjectActive, int skip, int pageSize)
+        public (List<DraftDocument>, int) GetPendingDocumentFromServer(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string Documentno , string DocumentDescription, Guid UserID, bool IsProjectActive, int skip, int pageSize, string sortCoulmn, string sortDirection)
         {
             List<DraftDocument> objDocList = null;
             int totalRows = 0;
             try
             {
-                (DataTable dt, int totalRow) = objAdminDAL.GetPendingDocuments_ServerSide(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode, DocumentDescription, UserID, skip, pageSize);
+                (DataTable dt, int totalRow) = objAdminDAL.GetPendingDocuments_ServerSide(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode, Documentno, DocumentDescription, UserID, skip, pageSize, sortCoulmn, sortDirection);
                 totalRows = totalRow;
                 objDocList = new List<DraftDocument>();
                 objDocList = GetDocuments(dt, IsProjectActive);
@@ -1679,6 +1771,25 @@ namespace TEPL.QMS.BLL.Component
             }
             return (objDocList, totalRows);
         }
+        public (List<DraftDocument>, int) GetNewPublishedDocuments(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string Documentno, string DocumentDescription, Guid UserID, bool IsProjectActive, int skip, int pageSize, string sortCoulmn, string sortDirection)
+        {
+            List<DraftDocument> objDocList = null;
+            int totalRows = 0;
+            try
+            {
+                (DataTable dt, int totalRow) = objAdminDAL.GetPublishedDocuments_ServerSide(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode, Documentno, DocumentDescription, UserID, skip, pageSize, sortCoulmn, sortDirection);
+                totalRows = totalRow;
+                objDocList = new List<DraftDocument>();
+                objDocList = GetDocuments(dt, IsProjectActive);
+                //GetApprovalMailTempate();
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return (objDocList, totalRows);
+        }
+
 
     }
 }
