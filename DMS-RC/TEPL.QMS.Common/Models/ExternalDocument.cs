@@ -22,7 +22,9 @@ namespace TEPL.QMS.Common.Models
         public string Organization { get; set; }
         public Guid ResponsibleUserID { get; set; }
         public string ResponsibleUser { get; set; }
-        public string Department { get; set; }
+        public Guid Department { get; set; }
+        public Guid DepartmentID { get; set; }
+        public string DepartmentName { get; set; }
         public string DocumentName { get; set; }
         public string FileName { get; set; }
         public string FilePath { get; set; }

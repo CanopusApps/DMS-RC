@@ -8,6 +8,7 @@ namespace TEPL.QMS.Common.Models
 {
     public class DraftDocument
     {
+        public string DocumentName { get; set; }
         public int SeqNo { get; set; }
         public int RNo { get; set; }
         public Guid DocumentID { get; set; }
@@ -32,9 +33,9 @@ namespace TEPL.QMS.Common.Models
         public Guid DocumentCategoryID { get; set; }
         public string DocumentCategoryCode { get; set; }
         public string DocumentCategoryName { get; set; }
-        //public Guid FunctionID { get; set; }
-        //public string FunctionCode { get; set; }
-        //public string FunctionName { get; set; }
+        public Guid FunctionID { get; set; }
+        public string FunctionCode { get; set; }
+        public string FunctionName { get; set; }
         public string EditableDocumentName { get; set; }
         public string EditableFilePath { get; set; }
         public byte[] EditableByteArray { get; set; }

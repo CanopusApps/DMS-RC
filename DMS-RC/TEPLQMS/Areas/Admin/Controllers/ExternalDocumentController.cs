@@ -193,9 +193,8 @@ namespace TEPLQMS.Areas.Admin.Controllers
                 if (Request.Form["ResponsibleUser"].ToString() != "")
                     obj.ResponsibleUserID = new Guid(Request.Form["ResponsibleUser"].ToString());
                 if (Request.Form["Department"].ToString() != "")
-                    obj.Department = Request.Form["Department"].ToString();
-                else
-                    obj.Department = "";
+                    obj.Department = new Guid(Request.Form["Department"].ToString());
+               
                 obj.FileURL = Request.Form["FileURL"].ToString();
                 obj.CreatedBy = new Guid(System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID].ToString());
                 obj.DocumentName = "";
@@ -274,8 +273,8 @@ namespace TEPLQMS.Areas.Admin.Controllers
                     obj.VersionDate = DateTime.Parse(Request.Form["VersionDate"].ToString());
                 obj.Organization = Request.Form["Organization"].ToString();
                 if (Request.Form["ResponsibleUserID"].ToString() != "")
-                    obj.ResponsibleUserID = new Guid(Request.Form["ResponsibleUserID"].ToString());
-                obj.Department = Request.Form["Department"].ToString();
+                    obj.ResponsibleUserID = new Guid(Request.Form["ResponsibleUserID"].ToString());               
+                //obj.DepartmentName = Request.Form["Department"].ToString();
                 obj.FileURL = Request.Form["FileURL"].ToString();
                 obj.ModifiedBy = new Guid(System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID].ToString());
                 obj.FileName = Request.Form["OLDFileName"].ToString();

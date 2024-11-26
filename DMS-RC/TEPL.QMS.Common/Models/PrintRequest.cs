@@ -19,7 +19,8 @@ namespace TEPL.QMS.Common.Models
         public byte[] ReadableByteArray { get; set; }
         public string DocumentDescription { get; set; }
         public string RevisionReason { get; set; }
-
+        public bool IsHistory { get; set; }
+        public bool IsLatest { get; set; }
         public Guid ProjectTypeID { get; set; }
         public string ProjectTypeCode { get; set; }
         public string ProjectType { get; set; }

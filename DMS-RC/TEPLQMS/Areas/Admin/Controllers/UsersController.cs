@@ -14,14 +14,14 @@ namespace TEPLQMS.Areas.Admin.Controllers
     public class UsersController : Controller
     {
         // GET: ProjectUsers
-        [CustomAuthorize(Roles = "QADM")]
+        [CustomAuthorize(Roles = "QADM")]       
+
         public ActionResult Index()
         {
             QMSAdmin objAdm = new QMSAdmin();
             ViewBag.Data = objAdm.GetUsers();
             return View();
         }
-
         [HttpPost]
         public JsonResult GetUsersFromADUsingDirectorySearch(string Name)
         {
@@ -88,8 +88,7 @@ namespace TEPLQMS.Areas.Admin.Controllers
             }
 
             return Json(new { success = true, message = result }, JsonRequestBehavior.AllowGet);
-        }
-
+        }       
         private string InsertEntity(List<string> arr)
         {
             string strReturn = string.Empty;
@@ -97,10 +96,28 @@ namespace TEPLQMS.Areas.Admin.Controllers
             {
                 Guid LoggedInUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
                 QMSAdmin objBLL = new QMSAdmin();
+
+                // Extract IsQMSAdmin
                 bool IsQMSAdmin = false;
                 if (arr[4].ToString().ToLower() == "true")
                     IsQMSAdmin = true;
-                strReturn = objBLL.AddUser(arr[1].ToString(), arr[2].ToString(), arr[3].ToString(), IsQMSAdmin, LoggedInUserID);
+
+                // Extract DepartmentID
+                Guid DepartmentID;
+                if (!Guid.TryParse(arr[5], out DepartmentID))
+                {
+                    throw new ArgumentException("Invalid DepartmentID. It must be a valid GUID.");
+                }
+
+                // Pass DepartmentID to AddUser
+                strReturn = objBLL.AddUser(
+                    arr[1].ToString(), // LoginID
+                    arr[2].ToString(), // DisplayName
+                    arr[3].ToString(), // EmailID
+                    IsQMSAdmin,        // IsQMSAdmin
+                    LoggedInUserID,    // LoggedInUserID
+                    DepartmentID       // Pass DepartmentID
+                );
             }
             catch (Exception ex)
             {
@@ -109,6 +126,10 @@ namespace TEPLQMS.Areas.Admin.Controllers
             }
             return strReturn;
         }
+
+
+
+
         [HttpPost]
         public ActionResult DeleteUser(string UserID)
         {
@@ -145,13 +166,22 @@ namespace TEPLQMS.Areas.Admin.Controllers
                     isActive = true;
                 else
                     isActive = false;
-                strReturn = objBLL.UpdateUser(new Guid(arr[0].ToString()), arr[1].ToString(), arr[2].ToString(), arr[3].ToString(), IsQMSAdmin, isActive, LoggedInUserID);
+                strReturn = objBLL.UpdateUser(new Guid(arr[0].ToString()), arr[1].ToString(), arr[2].ToString(), arr[3].ToString(), 
+                    IsQMSAdmin, isActive, LoggedInUserID, new Guid(arr[6].ToString()));
             }
             catch
             {
                 throw;
             }
             return strReturn;
+        }
+
+        public ActionResult GetDataForExcel()
+        {
+            DocumentUpload obj = new DocumentUpload();
+            byte[] fileContent = obj.GetUsersDataForExcel();
+            string base64 = Convert.ToBase64String(fileContent, 0, fileContent.Length);
+            return Content(base64);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿@{
     ViewBag.Title = "DMS - Pending Documents";
 }
+
 <div class="row">
     <div class="col-xs-12 col-md-12">
         <div class="widget">
@@ -49,6 +50,12 @@
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <div class="col-lg-3 col-sm-3 col-xs-12">
                                         <div class="form-group">
+                                            <label>Document No</label>
+                                            <input type="text" value="" class="form-control" name="documentno" id="txtDocumentno" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-3 col-xs-12">
+                                        <div class="form-group">
                                             <label>Document Description</label>
                                             <input type="text" value="" class="form-control" name="description" id="txtDescription" />
                                         </div>
@@ -75,36 +82,6 @@
             <div class="widget-body" id="divPendingDocuments">
                 <table class="table table-striped table-hover table-bordered" id="editabledatatable_1">
                     <thead>
-                        <tr role="row">
-                            <th>ID</th>
-                            <th>
-                                Document Number
-                            </th>
-                            <th nowrap>
-                                Document Description
-                            </th>
-                            <th>
-                                Stage
-                            </th>
-                            <th>
-                                Pending Days
-                            </th>
-                            <th nowrap>
-                                Pending With
-                            </th>
-                            <th>
-                                Department
-                            </th>
-                            <th>
-                                Section
-                            </th>
-                            <th>
-                                Category
-                            </th>
-                            <th>
-                                Project
-                            </th>
-                        </tr>
                     </thead>
                     <tbody>
                     </tbody>
@@ -127,14 +104,68 @@
     <script src="~/assets/js/datatable/dataTables.bootstrap.min.js"></script>
     <script src="~/assets/js/datatable/datatables-init.js"></script>
     <script src="~/assets/js/bootbox/bootbox.js"></script>
-
+    <script src="~/Scripts/GenericDatatable.js"></script>
     <script>
-
         $(document).ready(function () {
-            InitiatePendingDataTable.init();
-            GetPendingDocuments('', '', '', '',true);
-            BindDropDownBoxes("/PendingDocuments/GetDropDownBoxes", $('#ddlDepartment'), $('#ddlDocCategory'), $('#ddlProject'),'', 'All',true);
+            //InitiatePendingDataTable.init();
+            BindDropDownBoxes("/PendingDocuments/GetDropDownBoxes", $('#ddlDepartment'), $('#ddlDocCategory'), $('#ddlProject'), '', 'All', true);
             $("#editabledatatable_1_filter").find('input[type="search"]').css("width", "250px");
+            var titleMapping = {
+                "DocumentID":"ID",
+                "DocumentNo": "Document Number",
+                "DocumentDescription": "Document Description",
+                "CurrentStage": "Stage",
+                "PendingDays": "Pending Days",
+                "ActionByName": "Pending With",
+                "DepartmentName": "Department",
+                "SectionName": "Section",
+                "DocumentCategoryName": "Category",
+                "ProjectName": "Project"
+            };
+            loadTable();
+            function loadTable()
+            {
+                debugger;
+                var columns = [];
+                $.each(titleMapping, function (key, value) {
+                    var columnConfig = {
+                        data: key,
+                        title: titleMapping[key] || key.replace(/([A-Z])/g, ' $1').trim(),
+                        className: 'dt-' + key.toLowerCase()
+                    };
+                    if (key === "DocumentID") {
+                        columnConfig.visible = false;
+                    }
+                    if (key === "DocumentNo") {
+                        columnConfig.render = function (data, type, row) {
+                            return '<a style="text-decoration:underline; white-space:nowrap;" href="#" onclick="showPendingDetails(\'' + row.DocumentID + '\'); return false;">' + data + '</a>';
+                        };
+                    }
+                    columns.push(columnConfig);
+                });
+                var pageLength = @ViewBag.PageLength;
+                initializeDataTable(
+                    '#editabledatatable_1',
+                    '@Url.Action("GetPendingDocumentDataFromServerSide", "PendingDocuments")',
+                    function () {
+                        return {
+                            Department: $("#ddlDepartment option:selected").attr('code') || "",
+                            Section: $("#ddlSection option:selected").attr('code') || "",
+                            Project: $("#ddlProject option:selected").attr('code') || "",
+                            Category: $("#ddlDocCategory option:selected").attr('code') || "",
+                            documentno: $("#txtDocumentno").val().trim() || "", 
+                            description: $("#txtDescription").val().trim() || ""
+                        };
+                    },
+                    columns, pageLength
+                );
+
+            }
+            $("#btnGetData").click(function () {
+                loadTable();
+            });
+
+            //GetPendingDocuments('', '', '', '',true);
         });
         $("#ddlDepartment").change(function () {
             if ($('#ddlDepartment').val() != 0)
@@ -145,19 +176,19 @@
                 $('#ddlSection').append('<option title="All" value="0">All</option>');
             }
         });
-        $("#btnGetData").click(function () {
-           var dept = ''; var sec = ''; var category = ''; var project = '';
-            if ($("#ddlDepartment option:selected").text() != 'All')
-                dept = $("#ddlDepartment option:selected").attr('code');
-            if ($("#ddlSection option:selected").text() != 'All')
-                sec = $("#ddlSection option:selected").attr('code');
-            if ($("#ddlDocCategory option:selected").text() != 'All')
-                category = $("#ddlDocCategory option:selected").attr('code');
-            if ($("#ddlProject option:selected").text() != 'All')
-                project = $("#ddlProject option:selected").attr('code');
+        //$("#btnGetData").click(function () {
+        //   var dept = ''; var sec = ''; var category = ''; var project = '';
+        //    if ($("#ddlDepartment option:selected").text() != 'All')
+        //        dept = $("#ddlDepartment option:selected").attr('code');
+        //    if ($("#ddlSection option:selected").text() != 'All')
+        //        sec = $("#ddlSection option:selected").attr('code');
+        //    if ($("#ddlDocCategory option:selected").text() != 'All')
+        //        category = $("#ddlDocCategory option:selected").attr('code');
+        //    if ($("#ddlProject option:selected").text() != 'All')
+        //        project = $("#ddlProject option:selected").attr('code');
 
-            GetPendingDocuments(dept, sec, category, project,true);
-        });
+        //    //GetPendingDocuments(dept, sec, category, project,true);
+        //});
         $("#btnExportData").click(function () {
             var dept = ''; var sec = ''; var category = ''; var project = '';
             if ($("#ddlDepartment option:selected").text() != 'All')

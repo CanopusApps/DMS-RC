@@ -49,6 +49,18 @@
                             <div class="row ">
                                 <div class="col-lg-6 col-sm-6 col-xs-12">
                                     <div class="form-group">
+                                        <label class="control-label col-lg-4">Department</label>
+                                        <div class=" col-lg-8">
+                                            <select class="form-control" name="Department" data-bv-field="Department" id="ddlDepartment" title="Department">
+                                                <option value="0">Select a value</option>
+                                                <!-- Other options will be added here dynamically -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-sm-6 col-xs-12">
+                                    <div class="form-group">
                                         <label class="control-label col-lg-4">Title<span class="mandatory">*</span></label>
                                         <div class=" col-lg-8">
                                             <input title="Title" class="form-control manfield" id="txtTitle" name="txtTitle" type="text" maxlength="200" placeholder="Title">
@@ -56,171 +68,157 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-4">Organization<span class="mandatory">*</span></label>
-                                        <div class=" col-lg-8">
-                                            <input title="Organization" class="form-control manfield" id="txtOrganization" name="txtVersion" type="text" maxlength="200" placeholder="Organization">
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row ">
-                                <div class="col-lg-6 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-4">TEPL Document No<span class="mandatory">*</span></label>
-                                        <div class=" col-lg-8">
-                                            <input title="Document No" class=" form-control manfield" id="txtDocumentNo" name="txtDocumentNo"
-                                                   type="text" maxlength="100" placeholder="Document No" value="@ViewBag.DocumentNumber" readonly="readonly">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-4">External Document No</label>
-                                        <div class=" col-lg-8">
-                                            <input title="External Document No" class=" form-control manfield" id="txtExternalDocumentNo" name="txtExternalDocumentNo" type="text" maxlength="100" placeholder="External Document No">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row ">
-                                <div class="col-lg-6 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-4">Version<span class="mandatory">*</span></label>
-                                        <div class=" col-lg-8">
-                                            <input title="Version" class="form-control manfield" id="txtVersion" name="txtVersion" type="text" maxlength="5" placeholder="Version">
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-4">Version Date<span class="mandatory">*</span></label>
-                                        <div class=" col-lg-6" style="padding-right:0px;">
-                                            <input readonly="readonly" class="form-control date-picker" id="date1" type="text"
-                                                   data-date-format="dd-mm-yyyy" placeholder="Version Date">
-                                        </div>
-                                        <div class=" col-lg-1" style="padding-left:0px;">
-                                            <span class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-
-
-
-                                </div>
-
 
                             </div>
-                            <div class="row ">
-                                <div class="col-lg-6 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-4">Department SPOC<span class="mandatory">*</span></label>
-                                        <div class=" col-lg-8">
-                                            <input title="Department SPOC" class="form-control manfield" id="txtResponsibleUser" name="txtResponsibleUser" type="text" maxlength="100" placeholder="Department SPOC">
-
+                                <div class="row ">
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-4">TCPL Document No<span class="mandatory">*</span></label>
+                                            <div class=" col-lg-8">
+                                                <input title="Document No" class=" form-control manfield" id="txtDocumentNo" name="txtDocumentNo"
+                                                       type="text" maxlength="100" placeholder="Document No" value="@ViewBag.DocumentNumber" readonly="readonly">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-4">External Document No</label>
+                                            <div class=" col-lg-8">
+                                                <input title="External Document No" class=" form-control manfield" id="txtExternalDocumentNo" name="txtExternalDocumentNo" type="text" maxlength="100" placeholder="External Document No">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-4">Department</label>
-                                        <div class=" col-lg-8">
-                                            <input title="Department" class="form-control manfield" id="txtDepartment"
-                                                   name="txtDepartment" type="text" maxlength="100" placeholder="Department">
+                                <div class="row ">
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-4">Revision<span class="mandatory">*</span></label>
+                                            <div class=" col-lg-8">
+                                                <input title="Revision" class="form-control manfield" id="txtVersion" name="txtVersion" type="text" maxlength="5" placeholder="Revision">
 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-4">Revision Date<span class="mandatory">*</span></label>
+                                            <div class=" col-lg-6" style="padding-right:0px;">
+                                                <input readonly="readonly" class="form-control date-picker" id="date1" type="text"
+                                                       data-date-format="dd-mm-yyyy" placeholder="Revision Date">
+                                            </div>
+                                            <div class=" col-lg-1" style="padding-left:0px;">
+                                                <span class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row ">
-                                <div class="col-lg-6 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-4">Document Source<span class="mandatory">*</span></label>
-                                        <div class=" col-lg-8">
-                                            <div class="control-group">
-                                                <div class="col-lg-4 col-sm-2 col-xs-2">
-                                                    <div class="radio"><label><input checked="checked" name="listtype" type="radio" id="rbnUpload" value="upload"><span class="text"> Upload </span></label></div>
+                                <div class="row ">
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-4">Department SPOC<span class="mandatory">*</span></label>
+                                            <div class=" col-lg-8">
+                                                <input title="Department SPOC" class="form-control manfield" id="txtResponsibleUser" name="txtResponsibleUser" type="text" maxlength="100" placeholder="Department SPOC">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-4">Organization<span class="mandatory">*</span></label>
+                                            <div class=" col-lg-8">
+                                                <input title="Organization" class="form-control manfield" id="txtOrganization" name="txtVersion" type="text" maxlength="200" placeholder="Organization">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row ">
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-4">Document Source<span class="mandatory">*</span></label>
+                                            <div class=" col-lg-8">
+                                                <div class="control-group">
+                                                    <div class="col-lg-4 col-sm-2 col-xs-2">
+                                                        <div class="radio"><label><input checked="checked" name="listtype" type="radio" id="rbnUpload" value="upload"><span class="text"> Upload </span></label></div>
+                                                    </div>
+                                                    <div class="col-lg-4 col-sm-2 col-xs-2">
+                                                        <div class="radio"><label><input name="listtype" type="radio" id="rbnURL" value="url"><span class="text"> URL </span></label></div>
+                                                    </div>
                                                 </div>
-                                                <div class="col-lg-4 col-sm-2 col-xs-2">
-                                                    <div class="radio"><label><input name="listtype" type="radio" id="rbnURL" value="url"><span class="text"> URL </span></label></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                                        <div class="form-group" id="divUpload">
+                                            <label class="control-label col-lg-4">Upload Document<span class="mandatory">*</span></label>
+                                            <div class=" col-lg-8">
+                                                <input class="form-control manfield" id="DOCFile" name="DOC" type="file" value="" title="Upload Document">
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="divURL">
+                                            <label class="control-label col-lg-4">File URL<span class="mandatory">*</span></label>
+                                            <div class=" col-lg-8">
+                                                <input title="File URL" class="form-control manfield" id="txtFileURL" name="txtFileURL" type="text"
+                                                       maxlength="999" placeholder="File URL">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row ">
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
+
+                                    </div>
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
+
+                                    </div>
+                                </div>
+                                <div class="row " style="display:none;">
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-4">File</label>
+                                            <div class=" col-lg-8" style="margin-top:7px;">
+                                                <input id="File" name="File" type="File" value="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-4">Is Active</label>
+                                            <div class=" col-lg-8">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input id="chk1" type="checkbox">
+                                                        <span class="text"></span>
+
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-sm-6 col-xs-12">
-                                    <div class="form-group" id="divUpload">
-                                        <label class="control-label col-lg-4">Upload Document<span class="mandatory">*</span></label>
-                                        <div class=" col-lg-8">
-                                            <input class="form-control manfield" id="DOCFile" name="DOC" type="file" value="" title="Upload Document">
+                                <div class="row ">
+                                    <div class="col-lg-4 col-sm-4 col-xs-12">
+                                        <div class="form-group">
+
                                         </div>
                                     </div>
-                                    <div class="form-group" id="divURL">
-                                        <label class="control-label col-lg-4">File URL<span class="mandatory">*</span></label>
-                                        <div class=" col-lg-8">
-                                            <input title="File URL" class="form-control manfield" id="txtFileURL" name="txtFileURL" type="text"
-                                                   maxlength="999" placeholder="File URL">
+                                    <div class="col-lg-4 col-sm-4 col-xs-12">
+                                        <div class="form-group">
+
                                         </div>
                                     </div>
-                                </div>
-
-                            </div>
-                            <div class="row ">
-                                <div class="col-lg-6 col-sm-6 col-xs-12">
-
-                                </div>
-                                <div class="col-lg-6 col-sm-6 col-xs-12">
-
-                                </div>
-                            </div>
-                            <div class="row " style="display:none;">
-                                <div class="col-lg-6 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-4">File</label>
-                                        <div class=" col-lg-8" style="margin-top:7px;">
-                                            <input id="File" name="File" type="File" value="">
+                                    <div class="col-lg-4 col-sm-4 col-xs-12">
+                                        <div class="col-sm-offset-4 col-sm-12" style=" margin-left: 40%;">
+                                            <button class="btn btn-azure" id="btnCreate" type="button">Create</button>
+                                            <button class="btn" id="btnCancel" type="button">Cancel</button>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-4">Is Active</label>
-                                        <div class=" col-lg-8">
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input id="chk1" type="checkbox">
-                                                    <span class="text"></span>
 
-                                                </label>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row ">
-                                <div class="col-lg-4 col-sm-4 col-xs-12">
-                                    <div class="form-group">
-
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-sm-4 col-xs-12">
-                                    <div class="form-group">
-
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-sm-4 col-xs-12">
-                                    <div class="col-sm-offset-4 col-sm-12" style=" margin-left: 40%;">
-                                        <button class="btn btn-azure" id="btnCreate" type="button">Create</button>
-                                        <button class="btn" id="btnCancel" type="button">Cancel</button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -243,6 +241,8 @@
         $('.date-picker').datepicker();
 
         $(document).ready(function () {
+            BindDropDownBoxes("/DocumentInitiate/GetDropDownBoxes", $('#ddlDepartment'), '', '', '', 'Select a value');
+           
             
             $("#divUpload").show(); $("#divURL").hide();
 
@@ -467,7 +467,7 @@
                 fileData.append("ExternalDocumentNo", $("#txtExternalDocumentNo").val());
                 fileData.append("Organization", $("#txtOrganization").val());
                 fileData.append("ResponsibleUser", $("#divselectedUserID").text()); //$("#txtResponsibleUser").val()
-                fileData.append("Department", $("#txtDepartment").val());
+                fileData.append("Department", $("#ddlDepartment").val());
                 fileData.append("Isactive", $("#chk1").prop("checked"));
                 fileData.append("SequenceNumber", $("#divSeqNumber").text());
                 
@@ -552,7 +552,7 @@
             $("#date1").val('');
             $("#txtOrganization").val('');
             $("#txtResponsibleUser").val('');
-            $("#txtDepartment").val('');
+            $("#ddlDepartment").val('0');
             $("#txtFileURL").val('');
             $("#DOCFile").val('');
             $("#divselectedUserID").text('');

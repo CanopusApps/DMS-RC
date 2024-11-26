@@ -312,6 +312,23 @@ namespace TEPLQMS.Areas.Admin.Controllers
                 return Json(new { success = true, message = "" }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        [HttpPost]
+        public ActionResult GetPendingWorkflowsForUser(string UserID, string projectTypeID, string projectID)
+        {
+            try
+            {
+                WFAdminBLL objWFAdm = new WFAdminBLL();
+                List<DraftDocument> list = objWFAdm.GetPendingWorkflowsForUser(new Guid(UserID), new Guid(projectID), true);
+                return Json(new { success = true, message = list }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                return Json(new { success = true, message = "" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         [HttpPost]
         public ActionResult GetUserApprovalItemsForReplace(string strCondition, string UserID)
         {
@@ -338,6 +355,22 @@ namespace TEPLQMS.Areas.Admin.Controllers
                 WFAdminBLL objWFAdm = new WFAdminBLL();
                 //List<ApprovalMatrix> list = BindModels.ConvertDataTable<ApprovalMatrix>(objWFAdm.GetApprovalMatrixForUser(new Guid(UserID)));
                 string message = objWFAdm.UpdateUserApprovalItemsForReplace(strCondition, new Guid(CurrentUserID), new Guid(NewUserID));
+                return Json(new { success = true, message = message }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                return Json(new { success = true, message = "" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult ReplaceUserForWorkflows(string IDs, string CurrentUserID, string NewUserID)
+        {
+            try
+            {
+                WFAdminBLL objWFAdm = new WFAdminBLL();
+                string message = objWFAdm.ReplaceUserForWorkflows(IDs, new Guid(CurrentUserID), new Guid(NewUserID));
                 return Json(new { success = true, message = message }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

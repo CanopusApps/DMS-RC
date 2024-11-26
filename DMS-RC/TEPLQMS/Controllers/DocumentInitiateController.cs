@@ -14,7 +14,6 @@ using TEPL.QMS.Common;
 using System.Text;
 using System.Net.Mail;
 using System.Security.Cryptography;
-using MvcSiteMapProvider.Collections;
 
 namespace TEPLQMS.Controllers
 {
@@ -54,21 +53,68 @@ namespace TEPLQMS.Controllers
             }
         }
 
+        public ActionResult GetUserDepartment()
+        {
+            try
+            {
+                // Retrieve the LoggedInUserID from session
+                Guid LoggedInUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];               
+                QMSAdmin objAdm = new QMSAdmin();
+                // Fetch the department based on the LoggedInUserID
+                List<Departments> departments = objAdm.GetUserDepartments(LoggedInUserID);
+                
+                return Json(new { success = true, departments = departments }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                return Json(new { success = false, message = "An error occurred while fetching department information." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        //public ActionResult GetSectionsForDepartment(string deptID)
+        //{
+        //    try
+        //    {
+        //        QMSAdmin objAdm = new QMSAdmin();
+        //        List<Sections> list1 = objAdm.GetSectionsForDept(new Guid(deptID));
+        //        return Json(new { success = true, message1 = list1 }, JsonRequestBehavior.AllowGet);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LoggerBlock.WriteTraceLog(ex);
+        //        return Json(new { success = true, message = "" }, JsonRequestBehavior.AllowGet);
+        //    }
+        //}      
         [HttpPost]
         public ActionResult GetSectionsForDepartment(string deptID)
         {
             try
             {
+                if (string.IsNullOrEmpty(deptID))
+                {
+                    return Json(new { success = false, message = "Department ID is missing." }, JsonRequestBehavior.AllowGet);
+                }
+
                 QMSAdmin objAdm = new QMSAdmin();
                 List<Sections> list1 = objAdm.GetSectionsForDept(new Guid(deptID));
+
+                if (list1 == null || list1.Count == 0)
+                {
+                    return Json(new { success = false, message = "No sections found for the selected department." }, JsonRequestBehavior.AllowGet);
+                }
+
                 return Json(new { success = true, message1 = list1 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LoggerBlock.WriteTraceLog(ex);
-                return Json(new { success = true, message = "" }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = false, message = "An error occurred while fetching sections." }, JsonRequestBehavior.AllowGet);
             }
         }
+
+
         [HttpPost]
         public ActionResult GenerateDocumentNumber()
         {
@@ -125,31 +171,19 @@ namespace TEPLQMS.Controllers
             string result = "";
             try
             {
-                LoggerBlock.WriteLog("SubmitDocument function called.");
-
                 StringBuilder strMessage = new StringBuilder();
                 DraftDocument objDoc = CommonMethods.GetDocumentObject(Request.Form);
 
-                LoggerBlock.WriteLog("Document object created.");
-                
-
                 objDoc.CompanyCode = QMSConstants.CompanyCode;
                 objDoc.UploadedUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
-
-
                 strMessage.AppendLine("UploadedUserID - " + objDoc.UploadedUserID.ToString() + ". ");
                 objDoc.UploadedUserName = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserDisplayName].ToString();
-
-                
-
                 strMessage.AppendLine("DocumentID - " + objDoc.DocumentID.ToString() + ". ");
                 strMessage.AppendLine("WFExecutionID - " + objDoc.WFExecutionID.ToString() + ". ");
                 objDoc.RevisionReason = "";
                 objDoc.CurrentStageID = CurrentStageID;
                 objDoc.DraftVersion = 0.001m;
                 objDoc.Action = "Submitted";
-                LoggerBlock.WriteLog("DraftDocument fields populated.");
-
                 //DraftDocument objDoc1 =(DraftDocument)BindModels.GetObject(Request.Form);
                 //save image to images folder
                 HttpFileCollectionBase files = Request.Files;
@@ -169,15 +203,12 @@ namespace TEPLQMS.Controllers
                         flname = file.FileName;
                         byte[] fileByteArray = new byte[file.ContentLength];
                         file.InputStream.Read(fileByteArray, 0, file.ContentLength);
-                        
                         if (i == 0)
                         {
                             objDoc.EditableByteArray = fileByteArray;
                             objDoc.EditableDocumentName = objDoc.DocumentNo + Path.GetExtension(file.FileName);
                             //objDoc.EditableFilePath = CommonMethods.CombineUrl(objDoc.ProjectID.ToString(), QMSConstants.EditableFolder, objDoc.DepartmentID.ToString(), objDoc.SectionID.ToString(), objDoc.DocumentCategoryID.ToString());
                             objDoc.EditableFilePath = CommonMethods.CombineUrl(objDoc.ProjectID.ToString(), QMSConstants.EditableFolder);
-                            LoggerBlock.WriteLog("Editable file saved");
-                           
                         }
                         else if (i == 1)
                         {
@@ -185,14 +216,12 @@ namespace TEPLQMS.Controllers
                             objDoc.ReadableDocumentName = objDoc.DocumentNo + Path.GetExtension(file.FileName);
                             //objDoc.ReadableFilePath = CommonMethods.CombineUrl(objDoc.ProjectID.ToString(), QMSConstants.ReadableFolder, objDoc.DepartmentID.ToString(), objDoc.SectionID.ToString(), objDoc.DocumentCategoryID.ToString());
                             objDoc.ReadableFilePath = CommonMethods.CombineUrl(objDoc.ProjectID.ToString(), QMSConstants.ReadableFolder);
-                            LoggerBlock.WriteLog("Readable file saved");
-                            
                         }
                     }
                 }
+
                 DocumentUpload bllOBJ = new DocumentUpload();
                 bllOBJ.SubmitDocument(objDoc);
-                LoggerBlock.WriteLog("Document submitted successfully.");
 
                 result = "sucess";
             }

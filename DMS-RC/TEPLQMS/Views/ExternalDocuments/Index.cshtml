@@ -9,10 +9,15 @@
     <div class="col-xs-12 col-md-12">
         <div class="widget">
             <div class="widget-header">
-                <span class="widget-caption topfocus" tabindex='1'><b>External Document List</b></span>
+                <span class="widget-caption topfocus" tabindex='1'>
+                    <b>External Document List</b>
+                </span>
                 <div class="widget-buttons">
                     <div>
-
+                        @if (ViewBag.isQMSAdmin == true)
+                        {
+                            <span class="badge badge-info">Admin View</span>
+                        }
                     </div>
                 </div>
             </div>
@@ -23,11 +28,9 @@
                             <th>ID</th>
                             <th>Category</th>
                             <th>Sub Category</th>
-                            <th>
-                                Title
-                            </th>
+                            <th>Title</th>
                             <th>Document No</th>
-                            <th>Version</th>                            
+                            <th>Revision</th>
                             <th>Responsible User</th>
                             <th>Department</th>
                             <th>File or URL</th>
@@ -36,46 +39,31 @@
                     <tbody>
                         @foreach (var txt in ViewBag.Data)
                         {
-
-                        <tr>
-                            <td>@txt.ID</td>
-                            <td>@txt.CategoryName</td>
-                            <td>@txt.SubCategoryName</td>
-                            <td>
-                                @txt.Title
-                                @*<a href="/Admin/ExternalDocument/Details?ID=@txt.ID">@txt.Title</a>*@
-                            </td>
-                            <td>@txt.DocumentNo</td>
-                            <td>@txt.Version</td>
-                            @*<td>
-                                @if (@txt.VersionDate != null)
-                                {
-                                    @txt.VersionDate.ToString().Substring(0, 10)
-                                }
-                            </td>
-                            <td>@txt.Organization</td>*@
-                            <td>@txt.ResponsibleUser</td>
-                            <td>@txt.Department</td>
-                            <td>
-                                @*<a style="text-decoration:underline" href="@txt.FileURL" target="_blank">Download</a>*@
-                                @if (@txt.FileName != "")
-                                {
-                                    @*<a style="text-decoration:underline" href="@txt.FileName" target="_blank">@txt.FileName</a>
-            <a style="text-decoration:underline;white-space:nowrap;" href='@Url.Action("DownloadDocument", "ExternalDocument", new { filePath = @txt.FilePath,fileName=@txt.FileName })'>@txt.DocumentName</a>*@
-                                    <a title="View Document" target="_blank" style="text-decoration:underline;" href='~/PDFViewer/ConfigureDocumentURL?docURL=@TEPL.QMS.Common.Constants.QMSConstants.ExtDocumentFolder/@txt.FilePath/@txt.FileName'> View </a>
-                                }
-                                else
-                                {
-                                    <a style="text-decoration:underline" href="@txt.FileURL" target="_blank">@txt.FileURL</a>
-                                }
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>@txt.ID</td>
+                                <td>@txt.CategoryName</td>
+                                <td>@txt.SubCategoryName</td>
+                                <td>@txt.Title</td>
+                                <td>@txt.DocumentNo</td>
+                                <td>@txt.Version</td>
+                                <td>@txt.ResponsibleUser</td>
+                                <td>@txt.DepartmentName</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(txt.FileName))
+                                    {
+                                        <a title="View Document" target="_blank" style="text-decoration:underline;" href='~/PDFViewer/ConfigureDocumentURL?docURL=@TEPL.QMS.Common.Constants.QMSConstants.ExtDocumentFolder/@txt.FilePath/@txt.FileName'> View </a>
+                                    }
+                                    else
+                                    {
+                                        <a style="text-decoration:underline" href="@txt.FileURL" target="_blank">@txt.FileURL</a>
+                                    }
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
-
     </div>
 </div>
 

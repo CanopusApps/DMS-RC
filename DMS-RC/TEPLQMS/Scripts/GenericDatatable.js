@@ -1,4 +1,4 @@
-﻿function initializeDataTable(tableId, ajaxUrl, additionalData, columns) {
+﻿function initializeDataTable(tableId, ajaxUrl, additionalData, columns, pageLength) {
     // Destroy existing DataTable if it exists
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().destroy();
@@ -16,6 +16,11 @@
                 $.extend(d, additionalData());
             }
         },
-        "columns": columns
+        "columns": columns,
+        "pageLength": pageLength, // Adjust the default page length
+        "lengthChange": false, // This hides the "Records per page" dropdown
+        "responsive": true,
+        "searching": false, 
+        "searchDelay": 500,
     });
 }

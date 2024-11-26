@@ -7,15 +7,16 @@
 		<mvcSiteMapNode title="New Document Upload" controller="DocumentInitiate" action="Index" imageUrl="glyphicon glyphicon-upload" description="USER" roles="USER,ADMIN,QPADM,QMSADMIN" />
 		<mvcSiteMapNode title="Existing Document Upload" controller="ExistingDocumentUpload" action="Index" imageUrl="glyphicon glyphicon-upload" description="USER" roles="USER,ADMIN,QPADM,QMSADMIN" />
 		<mvcSiteMapNode title="Inbox" controller="Inbox" action="Index" imageUrl="glyphicon glyphicon-user" description="USER" roles="USER,ADMIN,QPADM,QMSADMIN" />
-		
+		<mvcSiteMapNode title="Print Request" controller="PrintRequest" action="Index" imageUrl="glyphicon glyphicon-print" description="USER,ADMIN,QPADM,QMSADMIN" roles="USER,ADMIN,QPADM,QMSADMIN" />
 		<mvcSiteMapNode title="External Documents" controller="ExternalDocuments" action="Index" imageUrl="glyphicon glyphicon-download" description="USER" roles="USER,ADMIN,QPADM,QMSADMIN" />
 		<mvcSiteMapNode title="Download Template" controller="DownloadTemplate" action="Index" imageUrl="glyphicon glyphicon-download" description="USER" roles="USER,ADMIN,QPADM,QMSADMIN" />
 		<mvcSiteMapNode title="Approval Matrix" controller="ApprovalMatrix" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="USER,ADMIN,QPADM,QADM" roles="USER,ADMIN,QPADM,QMSADMIN" />
 		<mvcSiteMapNode clickable="false" title="Admin" controller="Admin" action="Index" imageUrl="glyphicon glyphicon-tasks" description="ADMIN,QPADM,QADM" roles="ADMIN,QPADM,QMSADMIN" >
 			<mvcSiteMapNode title="Pending Documents" controller="PendingDocuments" area="Admin" action="Index" imageUrl="glyphicon glyphicon-dashboard" description="ADMIN,QPADM,QADM" roles="ADMIN,QPADM,QADM" />
+			<mvcSiteMapNode title="DocNo Generated" controller="DocumentGenerated" area="Admin" action="Index" imageUrl="glyphicon glyphicon-dashboard" description="ADMIN,QPADM,QADM" roles="ADMIN,QPADM,QADM" />
 			<mvcSiteMapNode title="Archived Documents" controller="ArchivedDocuments" area="Admin" action="Index" imageUrl="glyphicon glyphicon-dashboard" description="ADMIN,QPADM,QADM" roles="ADMIN,QPADM,QADM" />
 			<mvcSiteMapNode title="Archived Projects" controller="ArchiveProjects" area="Admin" action="Index" imageUrl="glyphicon glyphicon-dashboard" description="ADMIN,QPADM,QADM" roles="ADMIN,QPADM,QADM" />
-			
+			<mvcSiteMapNode title="All Print Requests" controller="AllPrintRequests" area="Admin" action="Index" imageUrl="glyphicon glyphicon-print" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
 			<mvcSiteMapNode title="Document Upload" controller="DirectUpload" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
 			<mvcSiteMapNode title="Template Upload" controller="TemplateDocument" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
 			<mvcSiteMapNode title="Approval Matrix" controller="ApprovalMatrix" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QPADM,QADM" roles="ADMIN,QPADM,QMSADMIN" />
@@ -30,7 +31,7 @@
 				<mvcSiteMapNode title="Document No" controller="DocumentNo" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
 				<mvcSiteMapNode title="External Category" controller="ExternalCategory" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
 				<mvcSiteMapNode title="External SubCategory" controller="ExternalSubCategory" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
-       
+        <mvcSiteMapNode title="Function" controller="Function" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
         <mvcSiteMapNode title="PrintLocation" controller="Location" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
 			</mvcSiteMapNode>
 		</mvcSiteMapNode>		

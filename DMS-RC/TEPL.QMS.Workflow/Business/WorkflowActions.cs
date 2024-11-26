@@ -8,6 +8,7 @@ using TEPL.QMS.Common;
 using TEPL.QMS.Workflow.DAL;
 using TEPL.QMS.Workflow.Log;
 using TEPL.QMS.Workflow.Models;
+using Newtonsoft.Json;
 
 namespace TEPL.QMS.Workflow.Business
 {
@@ -34,6 +35,13 @@ namespace TEPL.QMS.Workflow.Business
             objApprovers = BindModels.ConvertDataTable<DocumentApprover>(dt);
             return objApprovers;
         }
+        public List<DocumentApprover> GetPrintWorkflowApprover(Guid RequestorID)
+        {
+            List<DocumentApprover> objApprovers = null;
+            DataTable dt = objDALWF.GetPrintWorkflowApprover(RequestorID);
+            objApprovers = BindModels.ConvertDataTable<DocumentApprover>(dt);
+            return objApprovers;
+        }
         public List<WFApprovers> GetWorkflowApprovers(Guid WorkflowID, Guid ProjectTypeID, Guid ProjectID, string DocumentLevel, Guid SectionID)
         {
             List<WFApprovers> objWFApprovers = null;
@@ -41,9 +49,81 @@ namespace TEPL.QMS.Workflow.Business
             objWFApprovers = BindModels.ConvertJSON<WFApprovers>(strReturn);
             return objWFApprovers;
         }
-        public Stage GetWorkflowStage(Guid WorkflowID, Guid CurrentStageID)
+        //public List<WFApprovers> GetWkflowApprovers(Guid WorkflowID, Guid ProjectTypeID, Guid ProjectID, string DocumentLevel, Guid SectionID, Guid LoggedInDepartmentID)
+        //{
+        //    List<WFApprovers> objWFApprovers = null;
+        //    string strReturn = objDALWF.GetWkflowApprovers(WorkflowID, ProjectTypeID, ProjectID, DocumentLevel, SectionID, LoggedInDepartmentID);
+        //    objWFApprovers = BindModels.ConvertJSON<WFApprovers>(strReturn);
+        //    return objWFApprovers;
+        //}
+        public List<WFApprovers> GetWkflowApprovers(Guid WorkflowID, Guid ProjectTypeID, Guid ProjectID, string DocumentLevel, Guid SectionID, Guid LoggedInDepartmentID)
         {
 
+            List<WFApprovers> objApprovers = null;            
+            DataTable dt = objDALWF.GetWkflowApprovers(WorkflowID, ProjectTypeID, ProjectID, DocumentLevel, SectionID, LoggedInDepartmentID);                      
+            objApprovers = PrintConvertDataTable<WFApprovers>(dt);
+            return objApprovers;
+        }
+        public static List<T> PrintConvertDataTable<T>(DataTable dt)
+        {
+            List<T> data = new List<T>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                T item = GetItem<T>(row);
+
+                if (item is WFApprovers approver)
+                {
+                    var conditionJson = row["Condition"].ToString();
+                    var wfUsersJson = row["WFUsers"].ToString();
+
+                    if (!string.IsNullOrEmpty(conditionJson))
+                    {
+                        approver.Condition = JsonConvert.DeserializeObject<List<WFCondition>>(conditionJson);
+                    }
+                    else
+                    {
+                        approver.Condition = new List<WFCondition>();
+                    }
+
+                    if (!string.IsNullOrEmpty(wfUsersJson))
+                    {
+                        approver.WFUsers = JsonConvert.DeserializeObject<List<WFUser>>(wfUsersJson);
+                    }
+                    else
+                    {
+                        approver.WFUsers = new List<WFUser>();
+                    }
+                }
+
+                data.Add(item);
+            }
+
+            return data;
+        }
+
+        public static T GetItem<T>(DataRow row)
+        {
+            var obj = Activator.CreateInstance<T>();
+            foreach (var prop in obj.GetType().GetProperties())
+            {
+                if (row.Table.Columns.Contains(prop.Name))
+                {
+                    if (prop.PropertyType.IsGenericType &&
+                        prop.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
+                    {
+                        continue;
+                    }
+
+                    prop.SetValue(obj, Convert.ChangeType(row[prop.Name], prop.PropertyType));
+                }
+            }
+            return obj;
+        }
+
+
+        public Stage GetWorkflowStage(Guid WorkflowID, Guid CurrentStageID)
+        {
             DataTable dt = objDALWF.GetWorkflowStage(WorkflowID, CurrentStageID);
             List<Stage> objSt = new List<Stage>();
             objSt = BindModels.ConvertDataTable<Stage>(dt);

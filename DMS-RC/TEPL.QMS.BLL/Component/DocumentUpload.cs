@@ -20,7 +20,8 @@ using PdfSharp.Pdf.IO;
 using PdfSharp.Pdf;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
-using TEPL.QMS.Common.Model;
+using System.Linq;
+
 
 namespace TEPL.QMS.BLL.Component
 {
@@ -66,13 +67,23 @@ namespace TEPL.QMS.BLL.Component
             }
             return ArrayOfObjects;
         }
+        public DraftDocument SaveDocumentNumber(DraftDocument objDoc)
+        {
+            try
+            {
+                objDoc.DocumentLevel = GetDocumentLevel(objDoc.DocumentCategoryCode);
+                objDoc = docOperObj.InsertDocumentNo(objDoc);
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return objDoc;
+        }
         public DraftDocument SubmitDocument(DraftDocument objDoc)
         {
             try
             {
-                LoggerBlock.WriteLog("SubmitDocument BLL Method called.");
-               
-
                 WorkflowActions objWF = new WorkflowActions();
                 DocumentResponse objRes = new DocumentResponse();
                 //docOperObj.UploadDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.DraftVersion, objDoc.EditableByteArray);
@@ -323,8 +334,29 @@ namespace TEPL.QMS.BLL.Component
                     objRequest.DocumentLevel = GetDocumentLevel(objRequest.DocumentCategoryCode);
                 else
                     objRequest.DocumentLevel = "";
-                DocumentApprover objApprover = GetDocumentApprover(objRequest.ProjectTypeID, objRequest.ProjectID, objSt.NextStageID, objRequest.DocumentLevel, objRequest.SectionID);
-                                
+                DocumentApprover objApprover;
+
+                if (objSt.DocumentApprover)
+                {
+                    objApprover = GetDocumentApprover(
+                        objRequest.ProjectTypeID,
+                        objRequest.ProjectID,
+                        objSt.NextStageID,
+                        objRequest.DocumentLevel,
+                        objRequest.SectionID
+                    );
+                   
+                }
+                else                
+                {
+
+                    objApprover = GetPrintDocumentApprover(objRequest.RequestorID);
+                }
+
+                
+                //DocumentApprover objApprover = GetDocumentApprover(objRequest.ProjectTypeID, objRequest.ProjectID, objSt.NextStageID, objRequest.DocumentLevel, objRequest.SectionID);
+                //DocumentApprover objApprover = GetPrintDocumentApprover(objRequest.RequestorID);
+
                 objWF.CreateActionForPrintRequest(new Guid(respoIDs[0]), new Guid(respoIDs[1]), objSt.NextStageID, objApprover.ApprovalUser,objRequest.RequestorID);
                 
 
@@ -438,13 +470,13 @@ namespace TEPL.QMS.BLL.Component
             try
             {
                 //Watermark text
-                string cntrWatermark = "TEPL CONFIDENTIAL";
+                string cntrWatermark = "TCPL CONFIDENTIAL";
                 // string rgtTopWatermark = "MP CONFIDENTIAL";
-                string rgtBtmWatermark = "TEPL Confidential" + System.Environment.NewLine +
+                string rgtBtmWatermark = "TCPL Confidential" + System.Environment.NewLine +
                     "No Copy/Reproduction allowed" + System.Environment.NewLine + System.Environment.NewLine +
-                    "CONTROLLED COPY" + System.Environment.NewLine + "ISSUED BY DMS" +
+                    "CONTROLLED COPY" + System.Environment.NewLine + "PUBLISHED BY DMS" +
                     System.Environment.NewLine + System.Environment.NewLine + DateTime.Now.ToString("dd-MM-yyyy") +
-                    System.Environment.NewLine + "TEPL-DCC";
+                    System.Environment.NewLine + "TCPL-DCC";
 
                 //Create a new PDF document
                 PdfDocument document = new PdfDocument();
@@ -525,13 +557,13 @@ namespace TEPL.QMS.BLL.Component
             try
             {
                 //Watermark text
-                string cntrWatermark = "TEPL CONFIDENTIAL";
+                string cntrWatermark = "TCPL CONFIDENTIAL";
                 //  string rgtTopWatermark = "MP CONFIDENTIAL";
-                string rgtBtmWatermark = "TEPL Confidential" + System.Environment.NewLine +
+                string rgtBtmWatermark = "TCPL Confidential" + System.Environment.NewLine +
                     "No Copy/Reproduction allowed" + System.Environment.NewLine + System.Environment.NewLine +
-                    "CONTROLLED COPY" + System.Environment.NewLine + "ISSUED BY DMS" +
+                    "CONTROLLED COPY" + System.Environment.NewLine + "PUBLISHED BY DMS" +
                     System.Environment.NewLine + System.Environment.NewLine + DateTime.Now.ToString("dd-MM-yyyy") +
-                    System.Environment.NewLine + "TEPL-DCC";
+                    System.Environment.NewLine + "TCPL-DCC";
 
                 //Create a new PDF document
                 PdfDocument document = new PdfDocument();
@@ -650,13 +682,13 @@ namespace TEPL.QMS.BLL.Component
             try
             {
                 //Watermark text
-                string cntrWatermark = "TEPL CONFIDENTIAL";
+                string cntrWatermark = "TCPL CONFIDENTIAL";
                 string rgtTopWatermark = "MP CONFIDENTIAL";
-                string rgtBtmWatermark = "TEPL Confidential" + System.Environment.NewLine +
+                string rgtBtmWatermark = "TCPL Confidential" + System.Environment.NewLine +
                     "No Copy/Reproduction allowed" + System.Environment.NewLine + System.Environment.NewLine +
-                    "CONTROLLED COPY" + System.Environment.NewLine + "ISSUED BY DMS" +
+                    "CONTROLLED COPY" + System.Environment.NewLine + "PUBLISHED BY DMS" +
                     System.Environment.NewLine + System.Environment.NewLine + DateTime.Now.ToString("dd-MM-yyyy") +
-                    System.Environment.NewLine + "TEPL-DCC";
+                    System.Environment.NewLine + "TCPL-DCC";
 
                 //Create a new PDF document
                 PdfDocument document = new PdfDocument();
@@ -783,15 +815,10 @@ namespace TEPL.QMS.BLL.Component
 
                     
                 }
-                if (objDoc.DocumentLevel.ToString() != "Level 4")
-                {
-                    string filePath = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
-
-                    AddWatermarkonPDF(filePath, objDoc.DocumentLevel);
-                    string filePath2 = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
-                    AddWatermarkonPDF(filePath2, objDoc.DocumentLevel);
-                }
-                
+                string filePath = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
+                AddWatermarkonPDF(filePath, objDoc.DocumentLevel);
+                string filePath2 = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
+                AddWatermarkonPDF(filePath2, objDoc.DocumentLevel);
 
                 docOperObj.DocumentDescriptionUpdate(objDoc);
                 objWF.ExecuteAction(objDoc.WFExecutionID, objDoc.CurrentStageID, objDoc.ActionedID, objDoc.Action, objDoc.ActionComments, objDoc.ActionedID, isDocumentUploaded);
@@ -864,7 +891,6 @@ namespace TEPL.QMS.BLL.Component
         {
             try
             {
-                LoggerBlock.WriteLog("PrepareandSendMail called.");
                 string emailIDs = GetEmailIDs(toemail);
 
                 StringBuilder body = new StringBuilder();
@@ -880,7 +906,6 @@ namespace TEPL.QMS.BLL.Component
                 string strMailTemplate = GetApprovalMailTempate();
                 strMailTemplate = strMailTemplate.Replace("@@MailBody@@", body.ToString());
                 CommonMethods.SendMail(emailIDs, subject, strMailTemplate);
-                LoggerBlock.WriteLog("PrepareandSendMail call end.");
             }
             catch (Exception ex)
             {
@@ -921,19 +946,24 @@ namespace TEPL.QMS.BLL.Component
         }
         private string GetDocumentLevel(string CategoryCode)
         {
-            LoggerBlock.WriteLog("GetDocumentLevel called.");
             string strDocLevel = string.Empty;
             strDocLevel = docOperObj.GetDocumentLevel(CategoryCode);
-            LoggerBlock.WriteLog("GetDocumentLevel call end");
             return strDocLevel;
         }
         private DocumentApprover GetDocumentApprover(Guid ProjectTypeID, Guid ProjectID, Guid NextStageID, string strDocLevel, Guid SectionID)
         {
-            LoggerBlock.WriteLog("GetDocumentApprover called.");
             WorkflowActions objWF = new WorkflowActions();
 
             List<DocumentApprover> objApprovers = objWF.GetWorkflowApprover(ProjectTypeID, ProjectID, NextStageID, strDocLevel, SectionID);
-            LoggerBlock.WriteLog("GetDocumentApprover called end");
+
+            return objApprovers[0];
+        }
+        private DocumentApprover GetPrintDocumentApprover(Guid RequestorID)
+        {
+            WorkflowActions objWF = new WorkflowActions();
+
+            List<DocumentApprover> objApprovers = objWF.GetPrintWorkflowApprover(RequestorID);
+
             return objApprovers[0];
         }
         public List<DraftDocument> GetRequestedDocuments(Guid CreatedID)
@@ -956,6 +986,7 @@ namespace TEPL.QMS.BLL.Component
                     obj.SectionName = dt.Rows[z]["SectionName"].ToString();
                     obj.DocumentCategoryName = dt.Rows[z]["DocumentCategoryName"].ToString();
                     obj.ProjectName = dt.Rows[z]["ProjectName"].ToString();
+                    obj.Version = Convert.ToInt32(dt.Rows[z]["Version"]);
                     obj.CreatedDate = DateTime.Parse(dt.Rows[z]["CreatedDate"].ToString());
                     obj.CurrentStage = dt.Rows[z]["CurrentStage"].ToString();
 
@@ -981,16 +1012,17 @@ namespace TEPL.QMS.BLL.Component
                 {
                     DraftDocument obj = new DraftDocument();
                     obj.SeqNo = z;
-                    obj.RequestType = dt.Rows[z]["RequestType"].ToString();
+                    //obj.RequestType = dt.Rows[z]["RequestType"].ToString();
                     obj.DocumentID = new Guid(dt.Rows[z]["DocumentID"].ToString());
                     obj.DocumentNo = dt.Rows[z]["DocumentNo"].ToString();
+                    obj.DocumentDescription = dt.Rows[z]["DocumentDescription"].ToString();
                     obj.DepartmentName = dt.Rows[z]["DepartmentName"].ToString();
                     obj.SectionName = dt.Rows[z]["SectionName"].ToString();
                     obj.DocumentCategoryName = dt.Rows[z]["DocumentCategoryName"].ToString();
                     obj.ProjectName = dt.Rows[z]["ProjectName"].ToString();
                     obj.CreatedDate = DateTime.Parse(dt.Rows[z]["CreatedDate"].ToString());
                     obj.CurrentStage = dt.Rows[z]["CurrentStage"].ToString();
-
+                    obj.Version = Convert.ToInt32(dt.Rows[z]["RevisionNo"]);
                     objDocuments.Add(obj);
                 }
             }
@@ -1112,28 +1144,90 @@ namespace TEPL.QMS.BLL.Component
             }
             return ArrayOfObjects;
         }
+        //public Object[] GetDocumentDetailsForPrintRequest(string DocumentNo, Guid UserID)
+        //{
+
+        //    Object[] ArrayOfObjects = new Object[3];
+        //    try
+        //    {
+        //        string docNumberString = string.Empty;
+        //        Boolean isMissingApprovals = false;
+        //        DraftDocument objDocuments = null;
+        //        string strReturn = docOperObj.GetDocumentDetailsForPrintRequest(DocumentNo, UserID);
+        //        List<DraftDocument> objDraft = BindModels.ConvertJSON<DraftDocument>(strReturn);
+        //        if (objDraft != null)
+        //            objDocuments = objDraft[0];
+
+        //        string DocumentLevel = GetDocumentLevel(objDocuments.DocumentCategoryCode);
+        //        WorkflowActions objWFA = new WorkflowActions();
+        //        List<WFApprovers> objApprovers = objWFA.GetWorkflowApprovers(QMSConstants.PrintWorkflowID, objDocuments.ProjectTypeID, objDocuments.ProjectID, DocumentLevel, objDocuments.SectionID);
+
+        //        foreach (WFApprovers wfApp in objApprovers)
+        //        {
+        //            if (string.IsNullOrEmpty(wfApp.ApprovalUser))
+        //            { isMissingApprovals = true; break; }
+        //        }
+        //        ArrayOfObjects[0] = isMissingApprovals;
+        //        ArrayOfObjects[1] = objDocuments;
+        //        ArrayOfObjects[2] = objApprovers;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LoggerBlock.WriteTraceLog(ex);
+        //        throw ex;
+        //    }
+        //    return ArrayOfObjects;
+        //}
+
         public Object[] GetDocumentDetailsForPrintRequest(string DocumentNo, Guid UserID)
         {
-
             Object[] ArrayOfObjects = new Object[3];
             try
             {
-                string docNumberString = string.Empty;
-                Boolean isMissingApprovals = false;
+                bool isMissingApprovals = false;
                 DraftDocument objDocuments = null;
+
+                // Fetch document details
                 string strReturn = docOperObj.GetDocumentDetailsForPrintRequest(DocumentNo, UserID);
                 List<DraftDocument> objDraft = BindModels.ConvertJSON<DraftDocument>(strReturn);
                 if (objDraft != null)
+                {
                     objDocuments = objDraft[0];
+                }
 
+                // Fetch the logged-in user's department ID from the session
+                string userID = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID].ToString();
+                if (string.IsNullOrEmpty(userID))
+                {
+                    throw new Exception("User's department ID is not available.");
+                }
+                Guid LoggedInDepartmentID = new Guid(userID);
+
+                // Determine document level
                 string DocumentLevel = GetDocumentLevel(objDocuments.DocumentCategoryCode);
+
+                // Fetch workflow approvers
                 WorkflowActions objWFA = new WorkflowActions();
-                List<WFApprovers> objApprovers = objWFA.GetWorkflowApprovers(QMSConstants.PrintWorkflowID, objDocuments.ProjectTypeID, objDocuments.ProjectID, DocumentLevel, objDocuments.SectionID);
+                List<WFApprovers> objApprovers = objWFA.GetWkflowApprovers(
+                    QMSConstants.PrintWorkflowID,
+                    objDocuments.ProjectTypeID,
+                    objDocuments.ProjectID,
+                    DocumentLevel,
+                    objDocuments.SectionID,
+                    LoggedInDepartmentID // Pass the department ID
+                );
+
+                // Check if approvals are missing
                 foreach (WFApprovers wfApp in objApprovers)
                 {
                     if (string.IsNullOrEmpty(wfApp.ApprovalUser))
-                    { isMissingApprovals = true; break; }
+                    {
+                        isMissingApprovals = true;
+                        break;
+                    }
                 }
+
+                // Prepare the return objects
                 ArrayOfObjects[0] = isMissingApprovals;
                 ArrayOfObjects[1] = objDocuments;
                 ArrayOfObjects[2] = objApprovers;
@@ -1141,10 +1235,11 @@ namespace TEPL.QMS.BLL.Component
             catch (Exception ex)
             {
                 LoggerBlock.WriteTraceLog(ex);
-                throw ex;
+                throw;
             }
             return ArrayOfObjects;
         }
+
         public DraftDocument GetDocumentDetailsByNoForRequest(string DocumentNo)
         {
             DraftDocument objDocuments = null;
@@ -1183,6 +1278,23 @@ namespace TEPL.QMS.BLL.Component
             try
             {
                 string strReturn = docOperObj.GetPrintRequestDetailsByID(role, loggedInUserID, PrintRequestID);
+                List<PrintRequest> objDraft = BindModels.ConvertJSON<PrintRequest>(strReturn);
+                if (objDraft != null)
+                    objDocuments = objDraft[0];
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return objDocuments;
+        }
+        public PrintRequest GetPrintsRequestDetailsByID(string role, Guid loggedInUserID, Guid PrintRequestID, int version,string documentNo)
+        {
+            PrintRequest objDocuments = null;
+            try
+            {
+                string strReturn = docOperObj.GetPrintsRequestDetailsByID(role, loggedInUserID, PrintRequestID,version, documentNo);
                 List<PrintRequest> objDraft = BindModels.ConvertJSON<PrintRequest>(strReturn);
                 if (objDraft != null)
                     objDocuments = objDraft[0];
@@ -1315,7 +1427,74 @@ namespace TEPL.QMS.BLL.Component
             }
             return objDocList;
         }
+        public List<DraftDocument> GetPublishedDocument(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string DocumentDescription, Guid UserID, bool IsProjectActive)
+        {
+            List<DraftDocument> objDocList = new List<DraftDocument>();
+            try
+            {
+                // Retrieve DataTable from the database
+                DataTable dt = objAdminDAL.GetPrintRequestDocuments(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode, DocumentDescription, UserID);
 
+                // Log DataTable details and columns
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    LoggerBlock.WriteLog("DataTable is null or empty.");
+                    return objDocList; // Return empty list if no data
+                }
+                else
+                {
+                    LoggerBlock.WriteLog($"DataTable has {dt.Rows.Count} rows.");
+                    LoggerBlock.WriteLog("Columns in DataTable: " + string.Join(", ", dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName)));
+                }
+
+                // Populate the document list based on the DataTable
+                objDocList = GetDocument(dt, IsProjectActive);
+
+                // Log the count of documents added
+                LoggerBlock.WriteLog($"Documents added to the list: {objDocList.Count}");
+
+                // Call to get approval mail template if needed
+                GetApprovalMailTempate();
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex); // Log any exceptions
+            }
+
+            return objDocList; // Return the populated list
+        }
+
+        public List<DraftDocument> GetDocument(DataTable dt, bool IsProjectActive)
+        {
+            List<DraftDocument> objDocList = new List<DraftDocument>();
+            try
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    // Ensure the column exists before accessing it
+                    if (dt.Columns.Contains("ProjectActive"))
+                    {
+                        bool projectActive = Convert.ToBoolean(dr["ProjectActive"]);
+                        if (projectActive == IsProjectActive)
+                        {
+                            DraftDocument objDocument = CommonMethods.CreateItemFromRow<DraftDocument>(dr);
+                            objDocList.Add(objDocument);
+                            LoggerBlock.WriteLog($"Document added: {objDocument.DocumentName}"); // Ensure this property exists
+                        }
+                    }
+                    else
+                    {
+                        LoggerBlock.WriteLog("Column 'ProjectActive' does not exist in DataTable.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw; // Consider rethrowing if you want to handle it upstream
+            }
+            return objDocList;
+        }
         public (List<DraftDocument>, int) GetNewPublishedDocuments(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string DocumentDescription, Guid UserID, bool IsProjectActive, int skip, int pageSize)
         {
             List<DraftDocument> objDocList = null;
@@ -1394,6 +1573,70 @@ namespace TEPL.QMS.BLL.Component
             return fileContent;
         }
 
+        public byte[] GetUsersDataForExcel()
+        {
+            byte[] fileContent = null;
+            try
+            {
+                string strExcelPath = QMSConstants.TempFolder + Guid.NewGuid() + ".xlsx";
+                QMSAdminDAL objAdmin  = new QMSAdminDAL();
+                DataTable dt = objAdmin.GetUsersForExport();
+                string[] selectedColumns = new[] { "ID", "LoginID", "DisplayName", "EmailID", "IsActive", "IsQMSAdmin" };
+                //DataTable dt2 = dt.AsEnumerable().Where(row => row.Field<bool>("ProjectActive") == IsProjectActive).CopyToDataTable();
+                DataTable dt1 = new DataView(dt).ToTable(false, selectedColumns);
+                dt1.TableName = "Users";
+                ExcelOperations.ExportDataSet(dt1, strExcelPath);
+                fileContent = File.ReadAllBytes(strExcelPath);
+
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return fileContent;
+        }
+        public byte[] GetExportPrintedDocuments(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string DocumentDescription, Guid UserID, bool IsProjectActive)
+        {
+            byte[] fileContent = null;
+            try
+            {
+                string strExcelPath = QMSConstants.TempFolder + Guid.NewGuid() + ".xlsx";
+
+                // Assuming `objAdminDAL.GetPrintRequestDocuments` fetches data from PrintRequest instead of PublishedDocuments
+                DataTable dt = objAdminDAL.GetPrintRequestDocuments(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode, DocumentDescription, UserID);
+
+                string[] selectedColumns = new[]
+                {
+                        "DocumentNo",           // Document Number
+                        "DepartmentName",       // Department
+                        "SectionName",          // Section
+                        "ProjectName",          // Project
+                        "DocumentDescription",
+                        "DocumentCategoryName", // Category
+                        "RevisionReason",
+                        "Version",
+                        "CreatedDate"           // Created Date
+                };
+
+                // Filter data by ProjectActive status
+                DataTable dt2 = dt.AsEnumerable().Where(row => row.Field<bool>("ProjectActive") == IsProjectActive).CopyToDataTable();
+
+                // Select only specified columns
+                DataTable dt1 = new DataView(dt2).ToTable(false, selectedColumns);
+                dt1.TableName = "PrintedDocuments";
+
+                // Export the DataTable to an Excel file
+                ExcelOperations.ExportDataSet(dt1, strExcelPath);
+                fileContent = File.ReadAllBytes(strExcelPath);
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return fileContent;
+        }
         public byte[] GetExportPendingDocuments(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string DocumentDescription, Guid UserID, bool IsProjectActive)
         {
             byte[] fileContent = null;
@@ -1454,7 +1697,7 @@ namespace TEPL.QMS.BLL.Component
                 throw ex;
             }
             return objDocList;
-        }
+        }        
 
         public DraftDocument DocumentDirectUpload(DraftDocument objDoc)
         {
@@ -1463,23 +1706,45 @@ namespace TEPL.QMS.BLL.Component
                 WorkflowActions objWF = new WorkflowActions();
                 DocumentResponse objRes = new DocumentResponse();
 
-                docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.EditVersion, objDoc.EditableByteArray);
-                docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.EditVersion, objDoc.ReadableByteArray);
+                LoggerBlock.WriteLog("UploadWithOutEncryptedDocument editable function Called.");
+                docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.EditVersion, objDoc.EditableByteArray);
+                LoggerBlock.WriteLog("UploadWithOutEncryptedDocument editable function end.");
 
-                docOperObj.DocumentUpdate(objDoc);
+                LoggerBlock.WriteLog("UploadWithOutEncryptedDocument Readable function Called.");
+                docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.EditVersion, objDoc.ReadableByteArray);
+                LoggerBlock.WriteLog("UploadWithOutEncryptedDocument Readable function end.");
 
-                Stage objSt = objWF.GetWorkflowStage(QMSConstants.WorkflowID, objDoc.CurrentStageID);
+                LoggerBlock.WriteLog("UpdateDocDetails function Called.");
+                docOperObj.UpdateDocDetails(objDoc);
+                LoggerBlock.WriteLog("UpdateDocDetails function end.");
+
+                LoggerBlock.WriteLog("GetWorkflowStage function Called.");
+                Stage objSt = objWF.GetWorkflowStage(QMSConstants.DirectUploadWorkflowID, objDoc.CurrentStageID);
+                LoggerBlock.WriteLog("GetWorkflowStage function end.");
+
+                LoggerBlock.WriteLog("GetDocumentLevel function Called.");
                 if (objSt.IsDocumentLevelRequired)
                     objDoc.DocumentLevel = GetDocumentLevel(objDoc.DocumentCategoryCode);
                 else
                     objDoc.DocumentLevel = "";
+                LoggerBlock.WriteLog("GetDocumentLevel function end.");
+
+                LoggerBlock.WriteLog("GetDocumentApprover function Called.");
                 DocumentApprover objApprover = GetDocumentApprover(objDoc.ProjectTypeID, objDoc.ProjectID, objSt.NextStageID, objDoc.DocumentLevel, objDoc.SectionID);
+                LoggerBlock.WriteLog("GetDocumentApprover function end.");
+
+                LoggerBlock.WriteLog("ExecuteAction function Called.");
                 objWF.ExecuteAction(objDoc.WFExecutionID, objDoc.CurrentStageID, objDoc.UploadedUserID, objDoc.Action, objDoc.Comments, objDoc.UploadedUserID, false);
+                LoggerBlock.WriteLog("ExecuteAction function end.");
+
+                LoggerBlock.WriteLog("CreateAction function Called.");
                 objWF.CreateAction(objDoc.WFExecutionID, objSt.NextStageID, objApprover.ApprovalUser, "", objDoc.UploadedUserID);
-                bool blAppLink = objDoc.ProjectTypeCode == "MP" ? true : false;
-                //Send email - Doc Name, Doc Num, DOc ID, receipt email, stage, uploaded by ,
-                string message = objDoc.UploadedUserName + " has uploaded a document having Document Number - <b>" + objDoc.DocumentNo + "</b>, and it is waiting for your review. Please check and take an appropriate action as applicable.";
-                PrepareandSendMail(objApprover.ApprovalUserEmail, objDoc, objDoc.DocumentNo + " - QMS Reviewer - Document ready for Review", message, "ApproveRequest", blAppLink);
+                LoggerBlock.WriteLog("CreateAction function end.");
+
+                //bool blAppLink = objDoc.ProjectTypeCode == "MP" ? true : false;
+                ////Send email - Doc Name, Doc Num, DOc ID, receipt email, stage, uploaded by ,
+                //string message = objDoc.UploadedUserName + " has uploaded a document having Document Number - <b>" + objDoc.DocumentNo + "</b>, and it is waiting for your review. Please check and take an appropriate action as applicable.";
+                //PrepareandSendMail(objApprover.ApprovalUserEmail, objDoc, objDoc.DocumentNo + " - QMS Reviewer - Document ready for Review", message, "ApproveRequest", blAppLink);
             }
             catch (Exception ex)
             {
@@ -1488,5 +1753,43 @@ namespace TEPL.QMS.BLL.Component
             }
             return objDoc;
         }
+        public (List<DraftDocument>, int) GetPendingDocumentFromServer(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string Documentno , string DocumentDescription, Guid UserID, bool IsProjectActive, int skip, int pageSize, string sortCoulmn, string sortDirection)
+        {
+            List<DraftDocument> objDocList = null;
+            int totalRows = 0;
+            try
+            {
+                (DataTable dt, int totalRow) = objAdminDAL.GetPendingDocuments_ServerSide(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode, Documentno, DocumentDescription, UserID, skip, pageSize, sortCoulmn, sortDirection);
+                totalRows = totalRow;
+                objDocList = new List<DraftDocument>();
+                objDocList = GetDocuments(dt, IsProjectActive);
+                //GetApprovalMailTempate();
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return (objDocList, totalRows);
+        }
+        public (List<DraftDocument>, int) GetNewPublishedDocuments(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string Documentno, string DocumentDescription, Guid UserID, bool IsProjectActive, int skip, int pageSize, string sortCoulmn, string sortDirection)
+        {
+            List<DraftDocument> objDocList = null;
+            int totalRows = 0;
+            try
+            {
+                (DataTable dt, int totalRow) = objAdminDAL.GetPublishedDocuments_ServerSide(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode, Documentno, DocumentDescription, UserID, skip, pageSize, sortCoulmn, sortDirection);
+                totalRows = totalRow;
+                objDocList = new List<DraftDocument>();
+                objDocList = GetDocuments(dt, IsProjectActive);
+                //GetApprovalMailTempate();
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return (objDocList, totalRows);
+        }
+
+
     }
 }

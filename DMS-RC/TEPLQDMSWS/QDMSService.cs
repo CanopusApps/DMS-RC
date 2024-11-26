@@ -9,6 +9,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using TEPL.QDMS.WindowsService.DAL;
 using TEPL.QMS.Common;
 using TEPL.QMS.Common.DAL;
 
@@ -42,7 +43,8 @@ namespace TEPLQDMSWS
         private void ProgramToRun()
         {
             LoggerBlock.WriteLog("Task Schedules started");
-            DataTable dt = ConfigDAL.GetTaskSchedules();
+            WSAdminDAL objDAL = new WSAdminDAL();
+            DataTable dt = objDAL.GetTaskSchedules();
             foreach (DataRow dr in dt.Rows)
             {
                 LoggerBlock.WriteLog(dr["ProgramName"].ToString() + " is started by Windows service");
@@ -63,11 +65,11 @@ namespace TEPLQDMSWS
                         Task st2 = new Task(unObj.SendDigestmailForPublichedDocuments);
                         st2.Start();
                         break;
-                    case "DocumentRevalidation":
-                        UserNotifications unObj1 = new UserNotifications();
-                        Task st3 = new Task(unObj1.DocumentRevalidation);
-                        st3.Start();
-                        break;
+                    //case "DocumentRevalidation":
+                    //    UserNotifications unObj1 = new UserNotifications();
+                    //    Task st3 = new Task(unObj1.DocumentRevalidation);
+                    //    st3.Start();
+                    //    break;
                 }
                 LoggerBlock.WriteLog(dr["ProgramName"].ToString() + " is ended by Windows service");
             }

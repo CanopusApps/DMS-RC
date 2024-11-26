@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -7,6 +8,7 @@ using TEPL.QMS.BLL.Component;
 using TEPL.QMS.Common;
 using TEPL.QMS.Common.Constants;
 using TEPL.QMS.Common.Models;
+using TEPLQMS.Common;
 using TEPLQMS.Controllers;
 
 namespace TEPLQMS.Areas.Admin.Controllers
@@ -17,6 +19,8 @@ namespace TEPLQMS.Areas.Admin.Controllers
         [CustomAuthorize(Roles = "QADM,QPADM")]
         public ActionResult Index()
         {
+            var pageLength = ConfigurationManager.AppSettings["PageLength"];
+            ViewBag.PageLength = pageLength; // Pass it to the view
             return View();
         }
         [HttpPost]
@@ -79,6 +83,49 @@ namespace TEPLQMS.Areas.Admin.Controllers
                 LoggerBlock.WriteTraceLog(ex);
                 return Json(new { success = true, message = "failed" }, JsonRequestBehavior.AllowGet);
             }
+        }
+        public ActionResult GetPendingDocumentDataFromServerSide()
+        {
+            int pageLength = Convert.ToInt16(ConfigurationManager.AppSettings["PageLength"]);
+            int draw = DatatableCall.GetRequestValue<int>("draw", Request);
+            int start = DatatableCall.GetRequestValue<int>("start", Request);
+            int length = DatatableCall.GetRequestValue<int>("length", Request);
+            if (start < 0) start = 0;
+            if (length <= 0) length = 10;
+            int pageNumber = (start / length) + 1;
+            string sortColumnIndex = DatatableCall.GetRequestValue<string>("order[0][column]", Request);
+            string sortColumn = DatatableCall.GetRequestValue<string>($"columns[{sortColumnIndex}][data]", Request);
+            string sortDirection = DatatableCall.GetRequestValue<string>("order[0][dir]", Request);
+            string searchValue = DatatableCall.GetRequestValue<string>("search[value]", Request);
+
+            string DepartmentCode = DatatableCall.GetRequestValue<string>("department", Request);
+            string SectionCode = DatatableCall.GetRequestValue<string>("section", Request);
+            string ProjectCode = DatatableCall.GetRequestValue<string>("project", Request);
+            string DocumentCategoryCode = DatatableCall.GetRequestValue<string>("category", Request);
+            string Documentno = DatatableCall.GetRequestValue<string>("documentno", Request);
+            string DocumentDescription = DatatableCall.GetRequestValue<string>("description", Request);
+
+            Guid LoggedInUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
+            QMSAdmin objQMSAdmin = new QMSAdmin();
+            string strRoles = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserRoles].ToString();
+            if (strRoles.Contains("QADM"))
+                ViewBag.isQMSAdmin = true;
+            else ViewBag.isQMSAdmin = false;
+
+            DocumentUpload obj = new DocumentUpload();
+            (List<DraftDocument> data, int totalpage) = obj.GetPendingDocumentFromServer(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode, Documentno, DocumentDescription, LoggedInUserID, true, pageNumber, length, sortColumn, sortDirection);
+            var recordsTotal = totalpage;//data.Count();
+            data = DatatableCall.ApplyPaging(data, start, length).ToList();
+            var response = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data
+            };
+
+            return Json(response, JsonRequestBehavior.AllowGet);
+
         }
     }
 }

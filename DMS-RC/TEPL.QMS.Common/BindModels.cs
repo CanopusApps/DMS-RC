@@ -55,7 +55,10 @@ namespace TEPL.QMS.Common
                 foreach (PropertyInfo pro in temp.GetProperties())
                 {
                     if (pro.Name == column.ColumnName)
-                        pro.SetValue(obj, dr[column.ColumnName], null);
+                    {
+                        if (dr[column.ColumnName] != DBNull.Value)
+                            pro.SetValue(obj, dr[column.ColumnName], null);
+                    }                        
                     else
                         continue;
                 }

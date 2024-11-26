@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TEPL.QDMS.WindowsService.Constants;
 using TEPL.QDMS.WindowsService.Log;
+using TEPL.QMS.Common.Constants;
 
 namespace TEPL.QDMS.WindowsService.DAL
 {
@@ -32,6 +33,7 @@ namespace TEPL.QDMS.WindowsService.DAL
             catch (Exception ex)
             {
                 LoggerBlock.WriteTraceLog(ex);
+                throw ex;
             }
             return dt;
         }
@@ -57,6 +59,7 @@ namespace TEPL.QDMS.WindowsService.DAL
             catch (Exception ex)
             {
                 LoggerBlock.WriteTraceLog(ex);
+                throw ex;
             }
             return dt;
         }
@@ -82,6 +85,7 @@ namespace TEPL.QDMS.WindowsService.DAL
             catch (Exception ex)
             {
                 LoggerBlock.WriteTraceLog(ex);
+                throw ex;
             }
             return dt;
         }
@@ -106,6 +110,7 @@ namespace TEPL.QDMS.WindowsService.DAL
             catch (Exception ex)
             {
                 LoggerBlock.WriteTraceLog(ex);
+                throw ex;
             }
             return dt;
         }
@@ -131,6 +136,61 @@ namespace TEPL.QDMS.WindowsService.DAL
             catch (Exception ex)
             {
                 LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return dt;
+        }
+
+        public string GetConfigValue(string strParamKey)
+        {
+            string strValue = string.Empty;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(WSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(WSConstants.spGetConfigValue, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ParamKey", SqlDbType.NVarChar, 100).Value = strParamKey;
+
+                        var ParamValue = cmd.Parameters.Add("@ParamValue", SqlDbType.NVarChar, -1);
+                        ParamValue.Direction = ParameterDirection.Output;
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        strValue = (string)ParamValue.Value;
+                        con.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return strValue;
+        }
+
+        public DataTable GetTaskSchedules()
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(WSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(WSConstants.spGetTaskSchedules, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
             }
             return dt;
         }

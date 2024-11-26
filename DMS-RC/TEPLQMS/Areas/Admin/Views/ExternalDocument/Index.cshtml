@@ -28,8 +28,8 @@
                             <th>
                                 Title
                             </th>
-                            <th>TEPL Document No</th>
-                            <th>Version</th>
+                            <th>TCPL Document No</th>
+                            <th>Revision</th>
 
                             <th>Department SPOC</th>
                             <th>Department</th>
@@ -61,13 +61,24 @@
         </td>
         <td>@txt.Organization</td>*@
                             <td>@txt.ResponsibleUser</td>
-                            <td>@txt.Department</td>
+                            <td>@txt.DepartmentName</td>
                             <td>
                                 @if (@txt.FileName != "")
                                 {
                                     @*<a style="text-decoration:underline" href="@txt.FileName" target="_blank">@txt.FileName</a>
             <a style="text-decoration:underline;white-space:nowrap;" href='@Url.Action("DownloadDocument", "ExternalDocument", new { filePath = @txt.FilePath,fileName=@txt.FileName })'>@txt.DocumentName</a>*@
-                                    <a title="View Document" target="_blank" style="text-decoration:underline;" href='~/PDFViewer/ConfigureDocumentURL?docURL=@TEPL.QMS.Common.Constants.QMSConstants.ExtDocumentFolder/@txt.FilePath/@txt.FileName'> View </a>
+                                    @*<a title="View Document" target="_blank" style="text-decoration:underline;" href='~/PDFViewer/ConfigureDocumentURL?docURL=@TEPL.QMS.Common.Constants.QMSConstants.ExtDocumentFolder/@txt.FilePath/@txt.FileName'> View <i class="menu-icon glyphicon glyphicon-download eye-open-font-size"></i></a>*@
+                                    <a title="View Document" target="_blank" style="text-decoration:underline;" href='~/PDFViewer/ConfigureDocumentURL?docURL=@TEPL.QMS.Common.Constants.QMSConstants.ExtDocumentFolder/@txt.FilePath/@txt.FileName'>
+                                        View @*<i class="menu-icon glyphicon glyphicon-eye-open eye-open-font-size"></i>*@
+                                    </a>
+                                    <a class="anc2" title="Download Document" style="text-decoration:underline;"
+                                       href='@Url.Action("DownloadDocument", "ExternalDocument", new {
+                                                    filePath = @txt.FilePath,
+                                                    fileName = @txt.FileName })'>
+                                        <i class="menu-icon glyphicon glyphicon-download eye-open-font-size"></i>
+                                    </a>
+
+
                                 }
                                 else
                                 {

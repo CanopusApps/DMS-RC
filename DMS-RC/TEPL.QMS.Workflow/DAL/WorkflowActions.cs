@@ -39,7 +39,6 @@ namespace TEPL.QMS.Workflow.DAL
         }
         public DataTable GetWorkflowStage(Guid WorkflowID, Guid CurrentStageID)
         {
-            LoggerBlock.WriteLog("GetWorkflowStage function called");
             DataTable dt = new DataTable();
             try
             {
@@ -61,7 +60,6 @@ namespace TEPL.QMS.Workflow.DAL
             {
                 LoggerBlock.WriteTraceLog(ex);
             }
-            LoggerBlock.WriteLog("GetWorkflowStage function called end");
             return dt;
         }
         public DataTable GetWorkflowApprover(Guid ProjectTypeID,Guid ProjectID, Guid StageID, string DocumentLevel, Guid SectionID)
@@ -92,7 +90,32 @@ namespace TEPL.QMS.Workflow.DAL
             }
             return dt;
         }
-        public string GetWorkflowApprovers(Guid WorkflowID,Guid ProjectTypeID, Guid ProjectID, string DocumentLevel, Guid SectionID)
+        public DataTable GetPrintWorkflowApprover(Guid RequestorID)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(WFConstants.WFDBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(WFConstants.spGetDcoumentApproverForPrint, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = RequestorID;
+                        
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return dt;
+        }
+        public string GetWorkflowApprovers(Guid WorkflowID, Guid ProjectTypeID, Guid ProjectID, string DocumentLevel, Guid SectionID)
         {
             string strReturn = string.Empty;
             try
@@ -106,7 +129,8 @@ namespace TEPL.QMS.Workflow.DAL
                         cmd.Parameters.Add("@ProjectTypeID", SqlDbType.UniqueIdentifier).Value = ProjectTypeID;
                         cmd.Parameters.Add("@ProjectID", SqlDbType.UniqueIdentifier).Value = ProjectID;
                         cmd.Parameters.Add("@DocumentLevel", SqlDbType.NVarChar, 10).Value = DocumentLevel;
-                        cmd.Parameters.Add("@SectionID", SqlDbType.UniqueIdentifier).Value = SectionID;
+                        cmd.Parameters.Add("@SectionID", SqlDbType.UniqueIdentifier).Value = SectionID;                        
+
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
                             DataTable dt = new DataTable();
@@ -121,7 +145,43 @@ namespace TEPL.QMS.Workflow.DAL
                 LoggerBlock.WriteTraceLog(ex);
             }
             return strReturn;
+        }        
+        public DataTable GetWkflowApprovers(Guid WorkflowID, Guid ProjectTypeID, Guid ProjectID, string DocumentLevel, Guid SectionID, Guid LoggedInUserID)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(WFConstants.WFDBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(WFConstants.spGetWFApproversForPrint, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        // Add parameters
+                        cmd.Parameters.Add("@WorkflowID", SqlDbType.UniqueIdentifier).Value = WorkflowID;
+                        cmd.Parameters.Add("@ProjectTypeID", SqlDbType.UniqueIdentifier).Value = ProjectTypeID;
+                        cmd.Parameters.Add("@ProjectID", SqlDbType.UniqueIdentifier).Value = ProjectID;
+                        cmd.Parameters.Add("@DocumentLevel", SqlDbType.NVarChar, 10).Value = DocumentLevel;
+                        cmd.Parameters.Add("@SectionID", SqlDbType.UniqueIdentifier).Value = SectionID;
+                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = LoggedInUserID;
+
+                        // Fill the DataTable
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex); 
+            }
+
+            return dt;
         }
+
         public Guid WorkflowInitate(Guid WorkflowID, Guid DocumentID, Guid WorkflowStageID, Guid ActionedID, Guid CreatedID)
         {
             Guid InstanceId = new Guid();
@@ -151,7 +211,6 @@ namespace TEPL.QMS.Workflow.DAL
         }
         public string CreateAction(Guid ExecutionID, Guid WorkflowStageID, string ActionBy,string MultipleApprovers, Guid CreatedBy)
         {
-            LoggerBlock.WriteLog("CreateAction called.");
             string strReturn = string.Empty;
             try
             {
@@ -176,7 +235,6 @@ namespace TEPL.QMS.Workflow.DAL
             {
                 LoggerBlock.WriteTraceLog(ex);
             }
-            LoggerBlock.WriteLog("CreateAction call end.");
             return strReturn;
         }
 
@@ -213,7 +271,6 @@ namespace TEPL.QMS.Workflow.DAL
 
         public string ExecuteAction(Guid ExecutionID, Guid WorkflowStageID, Guid ActionedID, string WorkflowAction, string ActionComments, Guid CreatedID, bool isDocumentUploaded)
         {
-            LoggerBlock.WriteLog("ExecuteAction called.");
             string strReturn = string.Empty;
             try
             {
@@ -243,7 +300,6 @@ namespace TEPL.QMS.Workflow.DAL
                 LoggerBlock.WriteTraceLog(ex);
                 throw ex;
             }
-            LoggerBlock.WriteLog("ExecuteAction call end");
             return strReturn;
         }
 

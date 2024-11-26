@@ -23,9 +23,9 @@ namespace TEPL.QMS.DAL.Database.Component
             try
             {
                 string spName = "";
-                //if (objDoc.DocumentLevel == "Level 1")
-                //    spName = QMSConstants.spGenerateDocumentNoLevel1;
-                //else
+                if (objDoc.DocumentLevel == "Level 1")
+                    spName = QMSConstants.spGenerateDocumentNoLevel1;
+                else
                     spName = QMSConstants.spGenerateDocumentNo;
                 using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
                 {
@@ -38,7 +38,7 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.Parameters.Add("@DepartmentCode", SqlDbType.NVarChar, 10).Value = objDoc.DepartmentCode;
                         cmd.Parameters.Add("@SectionCode", SqlDbType.NVarChar, 10).Value = objDoc.SectionCode;
                         cmd.Parameters.Add("@ProjectCode", SqlDbType.NVarChar, 10).Value = objDoc.ProjectCode;
-                        //cmd.Parameters.Add("@FunctionCode", SqlDbType.NVarChar, 10).Value = objDoc.FunctionCode;
+                        cmd.Parameters.Add("@FunctionCode", SqlDbType.NVarChar, 10).Value = objDoc.FunctionCode;
                         cmd.Parameters.Add("@DocumentCategoryCode", SqlDbType.NVarChar, 10).Value = objDoc.DocumentCategoryCode;
                         cmd.Parameters.Add("@CreatedID", SqlDbType.UniqueIdentifier).Value = objDoc.UploadedUserID;
                         cmd.Parameters.Add("@DocumentLevel", SqlDbType.NVarChar, 10).Value = objDoc.DocumentLevel;
@@ -53,6 +53,43 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.ExecuteNonQuery();
                         objDoc.DocumentNo = (string)DocumentNo.Value;
                         objDoc.DocumentID = (Guid)DocumentID.Value;
+                        objDoc.WFExecutionID = (Guid)WFExecutionID.Value;
+                        con.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return objDoc;
+        }
+        public DraftDocument InsertDocumentNo(DraftDocument objDoc)
+        {
+            try
+            {
+                string spName = "";
+                spName = QMSConstants.spInsertDocumentNo;
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(spName, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@WorkflowID", SqlDbType.UniqueIdentifier).Value = objDoc.WorkflowID;
+                        cmd.Parameters.Add("@WorkflowStageID", SqlDbType.UniqueIdentifier).Value = objDoc.CurrentStageID;
+                        cmd.Parameters.Add("@CompanyCode", SqlDbType.NVarChar, 10).Value = objDoc.CompanyCode;
+                        cmd.Parameters.Add("@DepartmentCode", SqlDbType.NVarChar, 10).Value = objDoc.DepartmentCode;
+                        cmd.Parameters.Add("@FunctionCode", SqlDbType.NVarChar, 10).Value = objDoc.FunctionCode;
+                        cmd.Parameters.Add("@SectionCode", SqlDbType.NVarChar, 10).Value = objDoc.SectionCode;
+                        cmd.Parameters.Add("@ProjectCode", SqlDbType.NVarChar, 10).Value = objDoc.ProjectCode;
+                        cmd.Parameters.Add("@DocumentCategoryCode", SqlDbType.NVarChar, 10).Value = objDoc.DocumentCategoryCode;
+                        cmd.Parameters.Add("@CreatedID", SqlDbType.UniqueIdentifier).Value = objDoc.UploadedUserID;
+                        cmd.Parameters.Add("@DocumentLevel", SqlDbType.NVarChar, 10).Value = objDoc.DocumentLevel;
+                        cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 100).Value = objDoc.DocumentNo;
+                        var WFExecutionID = cmd.Parameters.Add("@WFExecutionID", SqlDbType.UniqueIdentifier);
+                        WFExecutionID.Direction = ParameterDirection.Output;
+                        con.Open();
+                        cmd.ExecuteNonQuery();
                         objDoc.WFExecutionID = (Guid)WFExecutionID.Value;
                         con.Close();
                     }
@@ -97,8 +134,6 @@ namespace TEPL.QMS.DAL.Database.Component
         {
             try
             {
-                LoggerBlock.WriteLog("DocumentUpdate function called");
-                //objDoc.RevisionReason = "";
                 using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(QMSConstants.spDocumentUpdate, con))
@@ -123,6 +158,51 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.Parameters.Add("@Comments", SqlDbType.NVarChar, -1).Value = objDoc.Comments;
                         cmd.Parameters.Add("@CreatedID", SqlDbType.UniqueIdentifier).Value = objDoc.UploadedUserID;
                         cmd.Parameters.Add("@LastModifiedID", SqlDbType.UniqueIdentifier).Value = objDoc.UploadedUserID;
+                        
+
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        con.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            //LoggerBlock.WriteLog("DocumentUpdate function call end");
+            return objDoc;
+        }
+        public DraftDocument UpdateDocDetails(DraftDocument objDoc)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spUpdateDocDetails, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 100).Value = objDoc.DocumentNo;
+                        cmd.Parameters.Add("@DocumentPublishID", SqlDbType.UniqueIdentifier).Value = objDoc.DocumentPublishID;
+                        cmd.Parameters.Add("@EditableDocumentName", SqlDbType.NVarChar, 50).Value = objDoc.EditableDocumentName;
+                        cmd.Parameters.Add("@EditableFilePath", SqlDbType.NVarChar, 500).Value = objDoc.EditableFilePath;
+                        cmd.Parameters.Add("@ReadableDocumentName", SqlDbType.NVarChar, 50).Value = objDoc.ReadableDocumentName;
+                        cmd.Parameters.Add("@ReadableFilePath", SqlDbType.NVarChar, 500).Value = objDoc.ReadableFilePath;
+                        cmd.Parameters.Add("@DocumentDescription", SqlDbType.NVarChar, 500).Value = objDoc.DocumentDescription;
+                        cmd.Parameters.Add("@RevisionReason", SqlDbType.NVarChar, 500).Value = objDoc.RevisionReason;
+                        SqlParameter param = cmd.Parameters.Add("@DraftVersion", SqlDbType.Decimal);
+                        param.Precision = 18;
+                        param.Scale = 3;
+                        param.Value = objDoc.DraftVersion;
+                        SqlParameter paramEdit = cmd.Parameters.Add("@EditVersion", SqlDbType.Decimal);
+                        paramEdit.Precision = 18;
+                        paramEdit.Scale = 3;
+                        paramEdit.Value = objDoc.EditVersion;
+                        cmd.Parameters.Add("@Comments", SqlDbType.NVarChar, -1).Value = objDoc.Comments;
+                        cmd.Parameters.Add("@CreatedID", SqlDbType.UniqueIdentifier).Value = objDoc.UploadedUserID;
+                        cmd.Parameters.Add("@LastModifiedID", SqlDbType.UniqueIdentifier).Value = objDoc.UploadedUserID;
+                        //cmd.Parameters.Add("@FunctionCode", SqlDbType.NVarChar,10).Value = objDoc.FunctionCode;
+
 
                         con.Open();
                         cmd.ExecuteNonQuery();
@@ -137,6 +217,7 @@ namespace TEPL.QMS.DAL.Database.Component
             LoggerBlock.WriteLog("DocumentUpdate function call end");
             return objDoc;
         }
+
         public DraftDocument DocumentUpdatePublised(DraftDocument objDoc, Boolean isDocUploaded, string Comments)
         {
             try
@@ -409,6 +490,38 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.Parameters.Add("@PrintRequestID", SqlDbType.UniqueIdentifier).Value = PrintRequestID;
                         cmd.Parameters.Add("@Role", SqlDbType.NVarChar, 10).Value = role;
                         cmd.Parameters.Add("@LoginUserID", SqlDbType.UniqueIdentifier).Value = loggedInUserID;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            DataTable dt = new DataTable();
+                            sda.Fill(dt);
+                            strReturn = dt.Rows[0][0].ToString();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return strReturn;
+        }
+        public string GetPrintsRequestDetailsByID(string role, Guid loggedInUserID, Guid PrintRequestID, int version, string documentNo)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetPrintsRequestDetailsByID, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@PrintRequestID", SqlDbType.UniqueIdentifier).Value = PrintRequestID;
+                        cmd.Parameters.Add("@Role", SqlDbType.NVarChar, 10).Value = role;
+                        cmd.Parameters.Add("@LoginUserID", SqlDbType.UniqueIdentifier).Value = loggedInUserID;
+                        cmd.Parameters.Add("@Revision", SqlDbType.Int).Value = version;
+                        cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 70).Value = documentNo;
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
                             DataTable dt = new DataTable();
@@ -828,7 +941,6 @@ namespace TEPL.QMS.DAL.Database.Component
         }
         public string UploadWithOutEncryptedDocument(string StoragePath, string baseFolder, string folderPath, string filename, Decimal DocVerions, byte[] byteArray)
         {
-            LoggerBlock.WriteLog("UploadWithOutEncryptedDocument Method called.");
             try
             {
                 string filePath = CommonMethods.CombineUrl(StoragePath, baseFolder, folderPath);
@@ -860,7 +972,6 @@ namespace TEPL.QMS.DAL.Database.Component
                 {
                     fsCrypt.Close();
                 }
-                LoggerBlock.WriteLog("UploadWithOutEncryptedDocument Method end.");
                 return cryptFile;
             }
             catch (Exception ex)

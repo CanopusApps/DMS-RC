@@ -57,29 +57,62 @@ namespace TEPLQMS.Areas.Admin.Controllers
                 return Json(new { success = true, message = "" }, JsonRequestBehavior.AllowGet);
             }
         }
+        public ActionResult ValidateDoc()
+        {
+            try
+            {
+                string DocumentNumber = Request.Form["DocumentNumber"].ToString();
+                string SerialNumber = Request.Form["SerialNumber"].ToString();
+                int sNo = Convert.ToInt32(SerialNumber);
+                SerialNumber = SerialNumber.PadLeft(4, '0');
+                DocumentNumber = DocumentNumber + SerialNumber;
 
+                QMSAdmin objAdmin = new QMSAdmin();
+                string result = objAdmin.ValidateDocNo(DocumentNumber);
+                return Json(new { success = true, message = result }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                return Json(new { success = true, message = "" }, JsonRequestBehavior.AllowGet);
+            }
+        }
         [HttpPost]
         public ActionResult SubmitDocument()
         {
             string result = "";
             try
             {
-                StringBuilder strMessage = new StringBuilder();
+                LoggerBlock.WriteLog("SubmitDocument function called.");
+                LoggerBlock.WriteLog("GetDocumentObject function called.");
+
                 DraftDocument objDoc = CommonMethods.GetDocumentObject(Request.Form);
 
+                LoggerBlock.WriteLog("GetDocumentObject function end.");
+                StringBuilder strMessage = new StringBuilder();
+                string DocumentNumber = Request.Form["DocumentNumber"].ToString();
                 string SerialNumber = Request.Form["SerialNumber"].ToString();
                 int sNo = Convert.ToInt32(SerialNumber);
                 SerialNumber = SerialNumber.PadLeft(4, '0');
-                objDoc.DocumentNo = objDoc.DocumentNo + SerialNumber;
+                DocumentNumber = DocumentNumber + SerialNumber;
+                objDoc.DocumentNo = DocumentNumber;
+                objDoc.CompanyCode = QMSConstants.CompanyCode;
+                objDoc.WorkflowID = QMSConstants.DirectUploadWorkflowID;
+                objDoc.CurrentStageID = CurrentStageID;
+                objDoc.UploadedUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
+                DocumentUpload bllOBJ = new DocumentUpload();
+                LoggerBlock.WriteLog("SaveDocumentNumber function called.");
+                objDoc = bllOBJ.SaveDocumentNumber(objDoc);
+                LoggerBlock.WriteLog("SaveDocumentNumber function end.");
 
                 objDoc.CompanyCode = QMSConstants.CompanyCode;
                 objDoc.UploadedUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
                 objDoc.UploadedUserName = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserDisplayName].ToString();
                 objDoc.RevisionReason = "";
                 objDoc.CurrentStageID = CurrentStageID;
-                objDoc.DraftVersion = 0.001m;
+                objDoc.DraftVersion = Convert.ToDecimal(Request.Form["DocumentVersion"].ToString());
                 objDoc.Action = "Submitted";
-                
+
                 HttpFileCollectionBase files = Request.Files;
                 for (int i = 0; i < files.Count; i++)
                 {
@@ -94,6 +127,7 @@ namespace TEPLQMS.Areas.Admin.Controllers
                     }
                     else
                     {
+                        LoggerBlock.WriteLog("Document save function called.");
                         flname = file.FileName;
                         byte[] fileByteArray = new byte[file.ContentLength];
                         file.InputStream.Read(fileByteArray, 0, file.ContentLength);
@@ -112,11 +146,11 @@ namespace TEPLQMS.Areas.Admin.Controllers
                             objDoc.ReadableFilePath = CommonMethods.CombineUrl(objDoc.ProjectID.ToString(), QMSConstants.ReadableFolder);
                         }
                     }
+                    LoggerBlock.WriteLog("Document save function end.");
                 }
-
-                DocumentUpload bllOBJ = new DocumentUpload();
+                LoggerBlock.WriteLog("DocumentDirectUpload function Called.");
                 bllOBJ.DocumentDirectUpload(objDoc);
-
+                LoggerBlock.WriteLog("DocumentDirectUpload function end.");
                 result = "success";
             }
             catch (Exception ex)
@@ -127,5 +161,6 @@ namespace TEPLQMS.Areas.Admin.Controllers
             }
             return Json(new { success = true, message = result }, JsonRequestBehavior.AllowGet);
         }
+
     }
 }

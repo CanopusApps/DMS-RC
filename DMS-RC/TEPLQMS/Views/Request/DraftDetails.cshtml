@@ -6,7 +6,7 @@
     <div class="col-lg-12 col-sm-12 col-xs-12">
         <div class="widget">
             <div class="cuwidget-header bordered-bottom bordered-blue">
-                <span class="cuwidget-caption"> <b>Request Details - Version @{ @ViewBag.Data.DraftVersion.ToString().Split('.')[0] 
+                <span class="cuwidget-caption"> <b>Request Details - Revision @{ @ViewBag.Data.DraftVersion.ToString().Split('.')[0] 
                     if (@ViewBag.isArchived == true) {<span style="background-color:yellow">[Archived]</span>}
                     }</b></span>                
                 <div class="widget-buttons">
@@ -23,7 +23,7 @@
                                     if (Convert.ToInt32(@ViewBag.Data.DraftVersion.ToString().Split('.')[0].ToString()) > 1)
                                     {
                                         <a id="ancReplaceUser" href="History?ID=@ViewBag.Data.DocumentID" class="btn btn-azure btn-sm">
-                                            <i class="fa fa-history"></i> Version History
+                                            <i class="fa fa-history"></i> Revision History
                                         </a>
                                     }
                                     <a href="javascript:ArchiveDocument();" class="btn btn-redcolor btn-sm add">
@@ -41,7 +41,7 @@
                                     if (Convert.ToInt32(@ViewBag.Data.DraftVersion.ToString().Split('.')[0].ToString()) > 1)
                                     {
                                         <a id="ancReplaceUser" href="History?ID=@ViewBag.Data.DocumentID" class="btn btn-azure btn-sm">
-                                            <i class="fa fa-history"></i> Version History
+                                            <i class="fa fa-history"></i> Revision History
                                         </a>
                                     }
                                     <a href="javascript:DeleteDocument();" class="btn btn-redcolor btn-sm add">
@@ -164,7 +164,7 @@
                                     </div>
                                     <div class="col-lg-6 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <label class="control-label col-lg-4"><strong>Version</strong></label>
+                                            <label class="control-label col-lg-4"><strong>Revision</strong></label>
                                             <label class=" col-lg-7 control-label text-align-left">@ViewBag.Data.DraftVersion.ToString().Split('.')[0]</label>
                                         </div>
                                     </div>

@@ -11,6 +11,8 @@ namespace TEPL.QMS.Workflow.Models
         public Guid ID { get; set; }
         public string StageName { get; set; }
         public string ApprovalUser { get; set; }
+
+        public Guid ApprovalUserID { get; set; }
         public string ApprovalUserEmail { get; set; }
 
     }
