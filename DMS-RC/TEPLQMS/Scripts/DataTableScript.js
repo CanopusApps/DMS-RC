@@ -432,7 +432,7 @@ var InitiateAllPrintRequestDataTable = function () {
                     null,
                     null,
                     null,
-                    //null,
+                    null,
                     { "bSortable": false }
                 ]
             });
@@ -1215,7 +1215,9 @@ var InitiatePublishedDataTable = function () {
                     null,
                     null,
                     null,
-                    null
+                    null,
+                    //null,
+                    
                 ]
             });
         }
@@ -1547,6 +1549,50 @@ var InitiateDepartmentDataTable = function () {
                     null,
                     null,
                     { "bSortable": false }
+                ]
+            });
+        }
+    };
+}();
+var InitiateDocumentNoGenratedDataTable = function () {
+    return {
+        init: function () {
+            //Datatable Initiating
+            var oTable = $('#editabledatatable').dataTable({
+                "ordering": false, 
+                "aLengthMenu": [
+                    [10, 15, 20, 100, -1],
+                    [10, 15, 20, 100, "All"]
+                ],
+                "iDisplayLength": 15,
+                "sPaginationType": "bootstrap",
+                "sDom": "Tflt<'row DTTTFooter'<'col-sm-6'i><'col-sm-6'p>>",
+                "oTableTools": {
+                    "aButtons": [
+                        //"copy",
+                        //"print",                           
+                        //{
+                        //    "sExtends": "collection",
+                        //    "sButtonText": "Save <i class=\"fa fa-angle-down\"></i>",
+                        //    "aButtons": ["csv", "xls", "pdf"]
+                        //}
+                    ],
+                    "sSwfPath": "assets/swf/copy_csv_xls_pdf.swf"
+                },
+                "language": {
+                    "search": "",
+                    "sLengthMenu": "_MENU_",
+                    "oPaginate": {
+                        "sPrevious": "Prev",
+                        "sNext": "Next"
+                    }
+                },
+                "aoColumns": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
                 ]
             });
         }
@@ -2183,17 +2229,13 @@ var InitiateUserApprovalMatrixTable = function () {
                 "aoColumns": [
                     { "bVisible": false },
                     null,
+                    null,                                        
                     null,
                     null,
                     null,
                     null,
                     null,
-                    null,
-                    { "bSortable": false },
-                    { "bVisible": false },
-                    { "bVisible": false },
-                    { "bVisible": false },
-                    { "bVisible": false }
+                    { "bSortable": false }
                 ]
             });
 
@@ -2333,6 +2375,7 @@ var InitiateSystemUsersTable = function () {
                 },
                 "aoColumns": [
                     { "bVisible": false },
+                    null,
                     null,
                     null,
                     null,

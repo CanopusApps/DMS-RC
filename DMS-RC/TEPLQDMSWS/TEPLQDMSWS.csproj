@@ -86,6 +86,7 @@
     <Compile Include="Constants\WSConstants.cs" />
     <Compile Include="DAL\WSAdminDAL.cs" />
     <Compile Include="Log\LoggerBlock.cs" />
+    <Compile Include="SendEmail.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -131,17 +132,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TEPL.QMS.BLL\TEPL.QMS.BLL.csproj">
-      <Project>{f4511f3b-34e2-463d-a9d8-02031bf0c913}</Project>
-      <Name>TEPL.QMS.BLL</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TEPL.QMS.Common\TEPL.QMS.Common.csproj">
       <Project>{79cdce82-380d-48d2-ac4d-9919e209f5f2}</Project>
       <Name>TEPL.QMS.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TEPL.QMS.DAL\TEPL.QMS.DAL.csproj">
-      <Project>{43d70504-b6b4-45f4-b268-8912dca49c89}</Project>
-      <Name>TEPL.QMS.DAL</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -81,10 +81,24 @@ namespace TEPLQMS.Areas.Admin.Controllers
             {
                 Guid LoggedInUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
                 QMSAdmin objBLL = new QMSAdmin();
+
+                // Extract IsQMSAdmin
                 bool IsQMSAdmin = false;
                 if (arr[4].ToString().ToLower() == "true")
-                    IsQMSAdmin = true;
-                strReturn = objBLL.AddUser(arr[1].ToString(), arr[2].ToString(), arr[3].ToString(), IsQMSAdmin, LoggedInUserID);
+                    IsQMSAdmin = true;               
+                Guid DepartmentID;
+                if (!Guid.TryParse(arr[5], out DepartmentID))
+                {
+                    throw new ArgumentException("Invalid DepartmentID. It must be a valid GUID.");
+                }              
+                strReturn = objBLL.AddUser(
+                    arr[1].ToString(), // LoginID
+                    arr[2].ToString(), // DisplayName
+                    arr[3].ToString(), // EmailID
+                    IsQMSAdmin,        // IsQMSAdmin
+                    LoggedInUserID,    // LoggedInUserID
+                    DepartmentID     
+                );
             }
             catch (Exception ex)
             {

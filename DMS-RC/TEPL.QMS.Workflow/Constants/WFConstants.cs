@@ -12,8 +12,7 @@ namespace TEPL.QMS.Workflow.Constants
 
         //Stored procedure
         public static string spWFInitiate = "spWFInitiate";
-        public static string spCreateAction = "spCreateAction"; 
-        public static string sp_upload_bulkdata = "sp_upload_bulkdata";
+        public static string spCreateAction = "spCreateAction";
         public static string spCreateActionForPrintRequest = "spCreateActionForPrintRequest";
         public static string spExecuteAction = "spExecuteAction";
         public static string spExecutePrintRequestAction = "spExecutePrintRequestAction";
@@ -33,8 +32,10 @@ namespace TEPL.QMS.Workflow.Constants
         public static string spDeleteWFApprovalMatrix = "spDeleteWFApprovalMatrix";
         public static string spDeleteWFApprovalMatrixItem = "spDeleteWFApprovalMatrixItem";
         public static string spDownloadWFApprovalMatrix = "spDownloadWFApprovalMatrix";
-        public static string spGetApprovalMatrixForUser = "spGetApprovalMatrixForUser";
+        public static string spGetApprovalMatrixForUser = "spGetApprovalMatrixForUser"; 
+        public static string spGetPendingWorkflowsForUser = "spGetPendingWorkflowsForUser"; 
         public static string spGetUserApprovalItemsForReplace = "spGetUserApprovalItemsForReplace";
         public static string spUpdateUserApprovalItemsForReplace = "spUpdateUserApprovalItemsForReplace";
+        public static string spReplaceUserForWorkflows = "spReplaceUserForWorkflows";
     }
 }

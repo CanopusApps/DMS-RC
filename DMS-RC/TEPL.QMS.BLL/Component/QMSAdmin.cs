@@ -18,13 +18,13 @@ namespace TEPL.QMS.BLL.Component
     {
         QMSAdminDAL objAdmin = new QMSAdminDAL();
         DAL.Database.Component.DocumentOperations docOperObj = new DAL.Database.Component.DocumentOperations();
-        public List<DocumentNumbers> GetDocumentNumbers(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode)
+        public List<DocumentNumbers> GetDocumentNumbers(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string FunctionCode)
         {
             List<DocumentNumbers> list = new List<DocumentNumbers>();
             try
             {
                 //DataTable dt = lstOp.GetListData(SharePointConstants.siteURL, listName, SharePointConstants.mstListViewFields, SharePointConstants.mstListCondition);
-                DataTable dt = objAdmin.GetDocumentNumbers(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode);
+                DataTable dt = objAdmin.GetDocumentNumbers(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode, FunctionCode);
                 //dt.DefaultView.Sort = "Title ASC";
                 //dt = dt.DefaultView.ToTable();
                 for (int z = 0; z < dt.Rows.Count; z++)
@@ -39,8 +39,8 @@ namespace TEPL.QMS.BLL.Component
                     itm.ProjectName = dt.Rows[z]["ProjectName"].ToString();
                     itm.DocumentCategoryCode = dt.Rows[z]["DocumentCategoryCode"].ToString();
                     itm.DocumentCategoryName = dt.Rows[z]["DocumentCategoryName"].ToString();
-                    //itm.FunctionCode = dt.Rows[z]["FunctionCode"].ToString();
-                    //itm.FunctionName = dt.Rows[z]["FunctionName"].ToString();
+                    itm.FunctionCode = dt.Rows[z]["FunctionCode"].ToString();
+                    itm.FunctionName = dt.Rows[z]["FunctionName"].ToString();
                     itm.DocumentLevel = dt.Rows[z]["DocumentLevel"].ToString();
                     itm.SerialNo = dt.Rows[z]["SerialNo"].ToString();
                     list.Add(itm);
@@ -192,6 +192,69 @@ namespace TEPL.QMS.BLL.Component
             {
                 LoggerBlock.WriteTraceLog(ex);
             }
+            return list;
+        }
+        public List<DocumentNumbers> GetDocumentNumberGenerated()
+        {
+            List<DocumentNumbers> list = new List<DocumentNumbers>();
+            try
+            {
+                //DataTable dt = lstOp.GetListData(SharePointConstants.siteURL, listName, SharePointConstants.mstListViewFields, SharePointConstants.mstListCondition);
+                DataTable dt = objAdmin.GetDocumentNoGenrated();
+                //dt.DefaultView.Sort = "Title ASC";
+                //dt = dt.DefaultView.ToTable();
+                for (int z = 0; z < dt.Rows.Count; z++)
+                {
+                    DocumentNumbers itm = new DocumentNumbers();
+                    itm.DocumentNumber = dt.Rows[z]["txtDocumentNo"].ToString();
+                    itm.DepartmentName = dt.Rows[z]["Dept"].ToString();
+                    itm.SectionName =    dt.Rows[z]["Section"].ToString();
+                    itm.CreatedBy = dt.Rows[z]["CreatedBy"].ToString();
+                    itm.CreatedDate = DateTime.Parse(dt.Rows[z]["CreatedDate"].ToString()).ToString("dd-MM-yyyy");
+
+                    list.Add(itm);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return list;
+        }
+
+        public List<Departments> GetUserDepartments(Guid userID)
+        {
+            List<Departments> list = new List<Departments>();
+
+            try
+            {
+                // Call the GetUserDepartments method to fetch data
+                DataTable dt = objAdmin.GetUserDepartment(userID);
+
+                // Iterate through the rows of the DataTable and map them to Department objects
+                for (int z = 0; z < dt.Rows.Count; z++)
+                {
+                    Departments itm = new Departments();
+                    itm.ID = new Guid(dt.Rows[z]["ID"].ToString());
+                    itm.Code = dt.Rows[z]["Code"].ToString();
+                    itm.Title = dt.Rows[z]["Title"].ToString();
+                    if (dt.Rows[z]["HODName"] != null)
+                        itm.HODName = dt.Rows[z]["HODName"].ToString();
+                    if (!string.IsNullOrEmpty(dt.Rows[z]["HODID"].ToString()))
+                        itm.HODID = new Guid(dt.Rows[z]["HODID"].ToString());
+                    if (Convert.ToBoolean(dt.Rows[z]["IsActive"].ToString()) == true)
+                        itm.Active = true;
+                    else
+                        itm.Active = false;
+                    list.Add(itm);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for troubleshooting
+                LoggerBlock.WriteTraceLog(ex);
+            }
+
             return list;
         }
 
@@ -673,32 +736,38 @@ namespace TEPL.QMS.BLL.Component
             }
             return list;
         }
+        
         public List<Sections> GetSectionsForDept(Guid deptID)
         {
             List<Sections> list = new List<Sections>();
             try
             {
-                //string strCondition = @"<Where><And><Eq><FieldRef Name='Active' /><Value Type='Boolean'>1</Value></Eq><Eq><FieldRef Name='Department' LookupId='TRUE'/><Value Type='Lookup'>" + deptID + "</Value></Eq></And></Where>";
-                //DataTable dt = lstOp.GetListData(SharePointConstants.siteURL, listName, SharePointConstants.mstListViewFields, strCondition);
+                if (deptID == Guid.Empty)
+                    throw new ArgumentException("Department ID cannot be empty.");
+
                 DataTable dt = objAdmin.GetSectionsForDept(deptID);
-                if (dt != null)
+                if (dt != null && dt.Rows.Count > 0)
                 {
-                    for (int z = 0; z < dt.Rows.Count; z++)
+                    foreach (DataRow row in dt.Rows)
                     {
-                        Sections itm = new Sections();
-                        itm.ID = new Guid(dt.Rows[z]["ID"].ToString());
-                        itm.Code = dt.Rows[z]["Code"].ToString();
-                        itm.Title = dt.Rows[z]["Title"].ToString();
+                        Sections itm = new Sections
+                        {
+                            ID = new Guid(row["ID"].ToString()),
+                            Code = row["Code"].ToString(),
+                            Title = row["Title"].ToString()
+                        };
                         list.Add(itm);
                     }
                 }
             }
             catch (Exception ex)
             {
-                LoggerBlock.WriteTraceLog(ex);
+               // LoggerBlock.WriteTraceLog($"Error in GetSectionsForDept for DepartmentID: {deptID} - {ex}");
+                throw;
             }
             return list;
         }
+
         public LoginUser GetUserDetails(string LoginId)
         {
             LoginUser objUser = new LoginUser();
@@ -894,6 +963,55 @@ namespace TEPL.QMS.BLL.Component
             }
             return number;
         }
+        public List<ExternalDocument> GetExternalDocumentsForUsers(Guid loggedInUserID, string loggedInUserRole/*,  string selectedCategoryName = null*/)
+        {
+            List<ExternalDocument> list = new List<ExternalDocument>();
+            try
+            {
+                DataTable dt = objAdmin.GetExternalDocumentsForUsers(loggedInUserID, loggedInUserRole/*, selectedCategoryName*/);
+                dt.DefaultView.Sort = "Title ASC";
+                dt = dt.DefaultView.ToTable();
+
+                for (int z = 0; z < dt.Rows.Count; z++)
+                {
+                    ExternalDocument itm = new ExternalDocument();
+                    var idValue = dt.Rows[z]["ID"].ToString();
+                    if (string.IsNullOrEmpty(idValue))
+                    {
+                        // Log or handle the error
+                        throw new ArgumentNullException("ID is null or empty");
+                    }
+                    itm.ID = new Guid(idValue);
+                    itm.Title = dt.Rows[z]["Title"].ToString();
+                    itm.CategoryName = dt.Rows[z]["CategoryName"].ToString();
+                    itm.SubCategoryName = dt.Rows[z]["SubCategoryName"].ToString();
+                    itm.DocumentNo = dt.Rows[z]["DocumentNo"].ToString();
+                    if (!string.IsNullOrEmpty(dt.Rows[z]["Version"].ToString()))
+                        itm.Version = dt.Rows[z]["Version"].ToString();
+                    if (!string.IsNullOrEmpty(dt.Rows[z]["VersionDate"].ToString()))
+                        itm.VersionDate = DateTime.Parse(dt.Rows[z]["VersionDate"].ToString());
+                    itm.Organization = dt.Rows[z]["Organization"].ToString();
+                    if (!string.IsNullOrEmpty(dt.Rows[z]["ResponsibleUserID"].ToString()))
+                        itm.ResponsibleUserID = new Guid(dt.Rows[z]["ResponsibleUserID"].ToString());
+                    if (!string.IsNullOrEmpty(dt.Rows[z]["Department"].ToString()))
+                        itm.Department = new Guid(dt.Rows[z]["Department"].ToString());
+                    itm.DepartmentName = dt.Rows[z]["DepartmentName"].ToString();
+                    itm.DocumentName = dt.Rows[z]["DocumentName"].ToString();
+                    itm.FileName = dt.Rows[z]["FileName"].ToString();
+                    itm.FilePath = dt.Rows[z]["FilePath"].ToString();
+                    itm.FileURL = dt.Rows[z]["FileURL"].ToString();
+                    if (dt.Rows[z]["ResponsibleUserName"] != null)
+                        itm.ResponsibleUser = dt.Rows[z]["ResponsibleUserName"].ToString();
+                    itm.Active = dt.Rows[z]["flgActive"].ToString().ToLower() == "true";
+                    list.Add(itm);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return list;
+        }
 
         public List<ExternalDocument> GetAllExternalDocuments()
         {
@@ -919,7 +1037,9 @@ namespace TEPL.QMS.BLL.Component
                     itm.Organization = dt.Rows[z]["Organization"].ToString();
                     if (!string.IsNullOrEmpty(dt.Rows[z]["ResponsibleUserID"].ToString()))
                         itm.ResponsibleUserID = new Guid(dt.Rows[z]["ResponsibleUserID"].ToString());
-                    itm.Department = dt.Rows[z]["Department"].ToString();
+                    if (!string.IsNullOrEmpty(dt.Rows[z]["Department"].ToString()))
+                        itm.Department = new Guid(dt.Rows[z]["Department"].ToString());
+                    itm.DepartmentName = dt.Rows[z]["txtName"].ToString();
                     itm.DocumentName = dt.Rows[z]["DocumentName"].ToString();
                     itm.FileName = dt.Rows[z]["FileName"].ToString();
                     itm.FilePath = dt.Rows[z]["FilePath"].ToString();
@@ -1087,7 +1207,9 @@ namespace TEPL.QMS.BLL.Component
                     itm.Organization = dt.Rows[z]["Organization"].ToString();
                     if (!string.IsNullOrEmpty(dt.Rows[z]["ResponsibleUserID"].ToString()))
                         itm.ResponsibleUserID = new Guid(dt.Rows[z]["ResponsibleUserID"].ToString());
-                    itm.Department = dt.Rows[z]["Department"].ToString();
+                    if (!string.IsNullOrEmpty(dt.Rows[z]["DepartmentID"].ToString()))
+                        itm.DepartmentID = new Guid(dt.Rows[z]["DepartmentID"].ToString());
+                    itm.DepartmentName = dt.Rows[z]["DepartmentName"].ToString();
                     itm.DocumentName = dt.Rows[z]["DocumentName"].ToString();
                     itm.FileName = dt.Rows[z]["FileName"].ToString();
                     itm.FilePath = dt.Rows[z]["FilePath"].ToString();
@@ -1316,6 +1438,7 @@ namespace TEPL.QMS.BLL.Component
             }
             return objUsers;
         }
+        
 
         public List<User> GetUserData(Guid UserID)
         {
@@ -1330,10 +1453,13 @@ namespace TEPL.QMS.BLL.Component
             }
             return objUsers;
         }
-        public string AddUser(string LoginID, string DisplayName, string Email, bool IsQMSAdmin, Guid CreatedID)
+        public string AddUser(string LoginID, string DisplayName, string Email, bool IsQMSAdmin, Guid CreatedID, Guid DepartmentID)
         {
             string strReturn = string.Empty;
-            strReturn = objAdmin.AddUser(LoginID, DisplayName, Email, IsQMSAdmin, CreatedID);
+
+            // Call the AddUser method in your data access layer (objAdmin)
+            strReturn = objAdmin.AddUser(LoginID, DisplayName, Email, IsQMSAdmin, CreatedID, DepartmentID);
+
             return strReturn;
         }
 
@@ -1658,6 +1784,20 @@ namespace TEPL.QMS.BLL.Component
                 DataTable dt = objAdmin.ValidateDocumentNumber(documentNumber, serialNo, catCode, projCode, deptCode, secCode);
                 if (dt.Rows.Count > 0)
                     strReturn = dt.Rows[0][0].ToString();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return strReturn;
+        }
+        public string ValidateDocNo(string documentNumber)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                strReturn = objAdmin.ValidateInputDocNumber(documentNumber);
+
             }
             catch (Exception ex)
             {

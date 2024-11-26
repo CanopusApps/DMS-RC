@@ -39,7 +39,6 @@ namespace TEPL.QMS.Workflow.DAL
         }
         public DataTable GetWorkflowStage(Guid WorkflowID, Guid CurrentStageID)
         {
-            LoggerBlock.WriteLog("GetWorkflowStage function called");
             DataTable dt = new DataTable();
             try
             {
@@ -61,7 +60,6 @@ namespace TEPL.QMS.Workflow.DAL
             {
                 LoggerBlock.WriteTraceLog(ex);
             }
-            LoggerBlock.WriteLog("GetWorkflowStage function called end");
             return dt;
         }
         public DataTable GetWorkflowApprover(Guid ProjectTypeID,Guid ProjectID, Guid StageID, string DocumentLevel, Guid SectionID)
@@ -151,7 +149,6 @@ namespace TEPL.QMS.Workflow.DAL
         }
         public string CreateAction(Guid ExecutionID, Guid WorkflowStageID, string ActionBy,string MultipleApprovers, Guid CreatedBy)
         {
-            LoggerBlock.WriteLog("CreateAction called.");
             string strReturn = string.Empty;
             try
             {
@@ -176,7 +173,6 @@ namespace TEPL.QMS.Workflow.DAL
             {
                 LoggerBlock.WriteTraceLog(ex);
             }
-            LoggerBlock.WriteLog("CreateAction call end.");
             return strReturn;
         }
 
@@ -213,7 +209,6 @@ namespace TEPL.QMS.Workflow.DAL
 
         public string ExecuteAction(Guid ExecutionID, Guid WorkflowStageID, Guid ActionedID, string WorkflowAction, string ActionComments, Guid CreatedID, bool isDocumentUploaded)
         {
-            LoggerBlock.WriteLog("ExecuteAction called.");
             string strReturn = string.Empty;
             try
             {
@@ -243,7 +238,6 @@ namespace TEPL.QMS.Workflow.DAL
                 LoggerBlock.WriteTraceLog(ex);
                 throw ex;
             }
-            LoggerBlock.WriteLog("ExecuteAction call end");
             return strReturn;
         }
 

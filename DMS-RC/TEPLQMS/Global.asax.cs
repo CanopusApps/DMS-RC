@@ -16,7 +16,6 @@ using TEPL.QMS.Common.Models;
 using TEPL.QMS.Common;
 using TEPL.QMS.Common.Constants;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
-using OfficeOpenXml;
 
 namespace TEPLQMS
 {
@@ -29,7 +28,6 @@ namespace TEPLQMS
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             Logger.SetLogWriter(new LogWriterFactory().Create());
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         }
 
         //public static void RegisterGlobalFilters(GlobalFilterCollection filters)

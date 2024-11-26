@@ -20,32 +20,54 @@ namespace TEPLQMS.Controllers
         public ActionResult Index()
         {
             return View();
-        }
-
+        }       
+        
         public ActionResult Details()
         {
             DocumentUpload obj = new DocumentUpload();
             string strID = "";
+            string documentNo = ""; 
+            int version = 0; // Declare variable for Version
+
             if (Request.QueryString["ID"] != null)
                 strID = Request.QueryString["ID"].ToString();
-            if (strID != "")
+
+            if (Request.QueryString["documentNo"] != null) // Retrieve DocumentNo from query string
+                documentNo = Request.QueryString["documentNo"].ToString();
+
+            if (Request.QueryString["version"] != null) // Retrieve Version from query string
+                int.TryParse(Request.QueryString["version"], out version);
+            
+            if (!string.IsNullOrEmpty(strID))
             {
                 Guid loggedUsedID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
-                PrintRequest request = obj.GetPrintRequestDetailsByID("Approver", loggedUsedID, new Guid(strID));
+
+                
+                PrintRequest request = obj.GetPrintsRequestDetailsByID("User", loggedUsedID, new Guid(strID), version, documentNo);
+
+                // Set the ViewBag.Data
                 ViewBag.Data = request;
+
+                // Determine if the document is a history document based on the RevisionNo
+                if (request != null)
+                {                    
+                  
+                    ViewBag.Data.IsHistory = (!request.IsLatest);
+
+                }
             }
             else
             {
                 ViewBag.Data = null;
+
             }
-            ViewBag.DisplayDownload = false;
-            if (Request.QueryString["display"] != null)
-            {
-                if(Request.QueryString["display"].ToString() == "true")
-                    ViewBag.DisplayDownload = true;
-            }
-            
+
+            // Handle download display
+            ViewBag.DisplayDownload = Request.QueryString["display"] != null && Request.QueryString["display"].ToString() == "true";
+
+            // Set the viewer URL
             ViewBag.ViewerURL = ConfigurationManager.AppSettings["ViewerURL"].ToString();
+
             return View();
         }
 

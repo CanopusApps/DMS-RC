@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TEPL.QMS.Common;
 using TEPL.QMS.Common.Constants;
+using TEPL.QMS.Common.Models;
 using TEPL.QMS.Workflow.DAL;
 using TEPL.QMS.Workflow.Log;
 using TEPL.QMS.Workflow.Models;
@@ -46,6 +47,10 @@ namespace TEPL.QMS.Workflow.Business
         public string UpdateUserApprovalItemsForReplace(string strCondition, Guid CurrentUserID, Guid NewUserID)
         {
             return objAdminDALWF.UpdateUserApprovalItemsForReplace(strCondition, CurrentUserID, NewUserID);
+        }
+        public string ReplaceUserForWorkflows(string IDs, Guid CurrentUserID, Guid NewUserID)
+        {
+            return objAdminDALWF.ReplaceUserForWorkflows(IDs, CurrentUserID, NewUserID);
         }
         public string DeleteWFApprovalMatrix(Guid ID)
         {
@@ -101,6 +106,49 @@ namespace TEPL.QMS.Workflow.Business
             }
             return list;
         }
+
+        public List<DraftDocument> GetPendingWorkflowsForUser(Guid UserID, Guid ProjectID, bool IsProjectActive)
+        {
+            List<DraftDocument> objDocList = null;
+            try
+            {
+                DataTable dt;
+                dt = objAdminDALWF.GetPendingWorkflowsForUser(UserID, ProjectID);
+                objDocList = new List<DraftDocument>();
+                objDocList = GetDocuments(dt, IsProjectActive);
+            }
+            catch (Exception ex)
+            {
+                Common.LoggerBlock.WriteLog("in Exception in GetPendingWorkflowsForUser and Message is " + ex.InnerException.Message.ToString());
+                Common.LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return objDocList;
+        }
+
+        public List<DraftDocument> GetDocuments(DataTable dt, bool IsProjectActive)
+        {
+            List<DraftDocument> objDocList = new List<DraftDocument>();
+            try
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (Convert.ToBoolean(dr["ProjectActive"].ToString()) == IsProjectActive)
+                    {
+                        DraftDocument objDocument = CommonMethods.CreateItemFromRow<DraftDocument>(dr); // CommonMethods.GetDocumentObject(dr);
+                        objDocList.Add(objDocument);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Common.LoggerBlock.WriteLog("In exception in GetDocuments in DocumentUpload Class and Message is " + ex.InnerException.Message.ToString());
+                Common.LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return objDocList;
+        }
+
         public string InsertWFApprovalMatrix(ApprovalMatrix objAM)
         {
             return objAdminDALWF.InsertWFApprovalMatrix(objAM);

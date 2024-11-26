@@ -84,6 +84,17 @@
                                 <div class="row">
                                     <div class="col-lg-12 col-sm-12 col-xs-12">
                                         <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <div class="col-lg-1"></div>
+                                                <div class="col-lg-9">
+                                                    <label><strong>Function</strong><span class="mandatory">*</span></label>
+                                                    <select class="form-control manfield manfieldG" title="Function" name="Function" data-bv-field="Function" id="ddlFunction">
+                                                        <option value="0">Select a value</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
                                             <div class="form-group" style="">
                                                 <div class="col-lg-1"></div>
                                                 <div class=" col-lg-7" style="padding-right:1px !important">
@@ -101,15 +112,6 @@
                                                     <label style="color:white">TEPL DMS System QMS</label>
                                                     <button class="btn btn-blue " type="button" id="btnValidate">Validate</button>
                                                     @*<button class="btn btn-yellow " type="button" id="btnCopy">Copy</button>*@
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <div class="col-lg-1"></div>
-                                                <div class=" col-lg-9">
-                                                    <label><strong>Document Description</strong><span class="mandatory">*</span></label>
-                                                    <input title="Document Description" class="form-control manfield" id="DocumentDescription" name="Name" type="text" value="">
                                                 </div>
                                             </div>
                                         </div>
@@ -132,6 +134,28 @@
                                                 <div class=" col-lg-9">
                                                     <label><strong>Readable Document</strong><span class="mandatory">*</span></label>
                                                     <input class="form-control manfield" id="DOCFile2" name="DOC2" type="file" value="" title="Readable Document">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12 col-xs-12">
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <div class="col-lg-1"></div>
+                                                <div class=" col-lg-9">
+                                                    <label><strong>Version</strong><span class="mandatory">*</span></label>
+                                                    <input title="Document Version" class="form-control manfield" id="DocumentVersion" name="Name" type="text" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <div class="col-lg-1"></div>
+                                                <div class=" col-lg-9">
+                                                    <label><strong>Document Description</strong><span class="mandatory">*</span></label>
+                                                    <input title="Document Description" class="form-control manfield" id="DocumentDescription" name="Name" type="text" value="">
                                                 </div>
                                             </div>
                                         </div>
@@ -174,7 +198,7 @@
     <script>
         $(document).ready(function () {
             $("#btnSubmit").hide();
-            BindDropDownBoxes("/DocumentInitiate/GetDropDownBoxes", $('#ddlDepartment'), $('#ddlDocCategory'), $('#ddlProject'),'', 'Select a value');
+            BindDropDownBoxes("/DocumentInitiate/GetDropDownBoxes", $('#ddlDepartment'), $('#ddlDocCategory'), $('#ddlProject'), $('#ddlFunction'), 'Select a value');
         });
         $("#ddlDepartment").change(function () {
             BindSectionsForDept("/DocumentInitiate/GetSectionsForDepartment", $('#ddlSection'), $('#ddlDepartment').val(), 'Select a value');
@@ -185,7 +209,10 @@
             var cat = '';
             var proj = '';
             var dept = '';
+            var func = '';
             var sec = '';
+
+            // Fetch selected values with code attribute or default to empty string
             if ($("#ddlDocCategory").val() != '' && $("#ddlDocCategory option:selected").attr('code') != undefined) {
                 cat = $("#ddlDocCategory option:selected").attr('code');
             }
@@ -195,24 +222,89 @@
             if ($("#ddlDepartment").val() != '' && $("#ddlDepartment option:selected").attr('code') != undefined) {
                 dept = $("#ddlDepartment option:selected").attr('code');
             }
+            if ($("#ddlFunction").val() != '' && $("#ddlFunction option:selected").attr('code') != undefined) {
+                func = $("#ddlFunction option:selected").attr('code');
+            }
             if ($("#ddlSection").val() != '' && $("#ddlSection option:selected").attr('code') != undefined) {
                 sec = $("#ddlSection option:selected").attr('code');
             }
-            var docNumber = 'TEPL-' + proj + '-' + dept + '-' + sec + '-' + cat + '-';
+
+            // Generate document number in the specified format
+            var docNumber = 'TCPL-' + proj + '-' + dept + '-' + func + '-' + sec + '-' + cat + '-';
+
+            // Assign generated docNumber to the DocumentNo field
             $("#DocumentNo").val(docNumber);
         }
-                
+
         $("#btnValidate").click(function () {
+            //if (ValidateFormFields(".manfieldG")) {
+            //    var fileData = new FormData();
+            //    fileData.append('DocumentNumber', $("#DocumentNo").val());
+            //    fileData.append('SerialNumber', $("#DocumentNo1").val());
+            //    fileData.append('CategoryCode', $("#ddlDocCategory option:selected").attr('code'));
+            //    fileData.append('ProjectCode', $("#ddlProject option:selected").attr('code'));
+            //    fileData.append('DepartmentCode', $("#ddlDepartment option:selected").attr('code'));
+            //    fileData.append('SectionCode', $("#ddlSection option:selected").attr('code'));
+            //    $.ajax({
+            //        url: "/DirectUpload/ValidateDocumentNumber",
+            //        dataType: "json",
+            //        type: "POST",
+            //        beforeSend: function () {
+            //            $("#overlay").show();
+            //            $("#overlay").addClass('modal-backdrop fade in');
+            //            $("#sidebar").addClass('modal-backdrop fade in');
+            //        },
+            //        complete: function () {
+            //            $("#overlay").hide();
+            //            $("#overlay").removeClass('modal-backdrop fade in');
+            //            $("#sidebar").removeClass('modal-backdrop fade in');
+            //        },
+            //        contentType: false,
+            //        processData: false,
+            //        cache: false,
+            //        data: fileData,
+            //        success: function (data) {
+            //            if (data.success) {
+            //                //alert(data.message);
+            //                var results = data.message;
+            //                var docExists = results.toString().split('#')[0];
+            //                var snoresp = results.toString().split('#')[1];
+            //                var serino = results.toString().split('#')[2];
+            //                var altMessage = '';
+            //                if (docExists == 'doc exists') {
+            //                    altMessage = 'Not Possible to Proceed as Document Already Exists';
+            //                    $("#btnSubmit").hide();
+            //                    $('.btn-warning').trigger('click');
+            //                    $('.modal-body').html(altMessage);
+            //                }
+            //                else {
+            //                    if (snoresp == 'sno updated') {
+            //                        altMessage = 'Current Serial Number - ' + serino;
+            //                        altMessage += '<br />';
+            //                        altMessage += 'Serial number will be Updated when you submit';
+            //                        $('.btn-warning').trigger('click');
+            //                        $('.modal-body').html(altMessage);
+            //                    }
+            //                    else {
+            //                        altMessage = 'You can proceed and submit the Document';
+            //                        $('.btn-success').trigger('click');
+            //                        $('.modal-body').html(altMessage);
+            //                    }
+            //                    $("#btnSubmit").show();
+            //                }
+            //            }
+            //        },
+            //        error: function (xhr) {
+            //            alert('error ' + xhr.message);
+            //        }
+            //    });
+            //}
             if (ValidateFormFields(".manfieldG")) {
                 var fileData = new FormData();
                 fileData.append('DocumentNumber', $("#DocumentNo").val());
                 fileData.append('SerialNumber', $("#DocumentNo1").val());
-                fileData.append('CategoryCode', $("#ddlDocCategory option:selected").attr('code'));
-                fileData.append('ProjectCode', $("#ddlProject option:selected").attr('code'));
-                fileData.append('DepartmentCode', $("#ddlDepartment option:selected").attr('code'));
-                fileData.append('SectionCode', $("#ddlSection option:selected").attr('code'));
                 $.ajax({
-                    url: "/DirectUpload/ValidateDocumentNumber",
+                    url: "/DirectUpload/ValidateDoc",
                     dataType: "json",
                     type: "POST",
                     beforeSend: function () {
@@ -233,31 +325,19 @@
                         if (data.success) {
                             //alert(data.message);
                             var results = data.message;
-                            var docExists = results.toString().split('#')[0];
-                            var snoresp = results.toString().split('#')[1];
-                            var serino = results.toString().split('#')[2];
                             var altMessage = '';
-                            if (docExists == 'doc exists') {
+                            if (results == 'Document No already exists.') {
                                 altMessage = 'Not Possible to Proceed as Document Already Exists';
                                 $("#btnSubmit").hide();
                                 $('.btn-warning').trigger('click');
                                 $('.modal-body').html(altMessage);
                             }
-                            else {                                
-                                if (snoresp == 'sno updated') {
-                                    altMessage = 'Current Serial Number - ' + serino;
-                                    altMessage += '<br />';
-                                    altMessage += 'Serial number will be Updated when you submit';
-                                    $('.btn-warning').trigger('click');
-                                    $('.modal-body').html(altMessage);
-                                }
-                                else {
-                                    altMessage = 'You can proceed and submit the Document';
-                                    $('.btn-success').trigger('click');
-                                    $('.modal-body').html(altMessage);
-                                }
+                            else {
+                                altMessage = 'You can proceed and submit the Document';
+                                $('.btn-success').trigger('click');
+                                $('.modal-body').html(altMessage);
                                 $("#btnSubmit").show();
-                            }                            
+                            }
                         }
                     },
                     error: function (xhr) {
@@ -284,6 +364,11 @@
                     fileData.append('DepartmentCode', $("#ddlDepartment option:selected").attr('code'));
                     fileData.append('DepartmentName', $("#ddlDepartment option:selected").text());
                 }
+                if ($("#ddlFunction").val() != '') {
+                    fileData.append('FunctionID', $("#ddlFunction").val());
+                    fileData.append('FunctionCode', $("#ddlFunction option:selected").attr('code'));
+                    fileData.append('FunctionName', $("#ddlFunction option:selected").text());
+                }
                 if ($("#ddlSection").val() != '') {
                     fileData.append('SectionID', $("#ddlSection").val());
                     fileData.append('SectionCode', $("#ddlSection option:selected").attr('code'));
@@ -297,8 +382,11 @@
                     fileData.append('ProjectTypeID', $("#ddlProject option:selected").attr('projTypeID'));
                     fileData.append('ProjectTypeCode', $("#ddlProject option:selected").attr('projTypeCode'));
                 }
-                fileData.append('DocumentNo', $("#DocumentNo").val().trim());
-                fileData.append('DocumentSerialNo', $("#DocumentNo1").val().trim());
+                if ($("#DocumentVersion").val() != '') {
+                    fileData.append('DocumentVersion', $("#DocumentVersion").val().trim());
+                }
+                fileData.append('DocumentNumber', $("#DocumentNo").val());
+                fileData.append('SerialNumber', $("#DocumentNo1").val().trim());
                 fileData.append('DocumentDescription', $("#DocumentDescription").val().trim());
                 fileData.append('Comments', $("#txtComments").val().trim());
 
@@ -391,6 +479,7 @@
             }
             return false;
         });
+        
         function copyToClipboard(text) {
             var sampleTextarea = document.createElement("textarea");
             document.body.appendChild(sampleTextarea);
@@ -419,14 +508,26 @@
             //$("#DocumentNo").val('');
             GenerateForDocNumber();
         });
+        $("#ddlFunction").change(function () {
+            //$("#DocumentNo").val('');
+            GenerateForDocNumber();
+        });
+        //$("#ddlDepartment").change(function () {
+        //    //$("#DocumentNo").val('');
+        //    GenerateForDocNumber
+        //});
         function clearFields() {
             $("#ddlDocCategory").val(0);
+            $("#DocumentVersion").val('');
             $("#ddlDepartment").val(0);
             $("#ddlSection").val(0);
             $("#ddlProject").val(0);
+            $("#ddlFunction").val(0);
             $("#DocumentNo").val('');
             $("#DOCFile").val('');
+            $("#DOCFile2").val('');
             $("#txtComments").val('');
+            $("#DocumentNo1").val('');
             $("#DocumentDescription").val('');
         }
 
@@ -438,16 +539,16 @@
                 $(window).scrollLeft()) + "px");
             return this;
         }
-        $("#ddlDocCategory").change(function () {
-            if ($("#ddlDocCategory option:selected").attr('code') == 'FR') {
-                $("#DOCFile2").removeClass('manfield');
-                $("#divReadbleDoc").hide();
-            }
-            else {
-                $("#DOCFile2").addClass('manfield');
-                $("#divReadbleDoc").show();
-            }
-        });
-        
+        //$("#ddlDocCategory").change(function () {
+        //    if ($("#ddlDocCategory option:selected").attr('code') == 'FR') {
+        //        $("#DOCFile2").removeClass('manfield');
+        //        $("#divReadbleDoc").hide();
+        //    }
+        //    else {
+        //        $("#DOCFile2").addClass('manfield');
+        //        $("#divReadbleDoc").show();
+        //    }
+        //});
+
     </script>
 }

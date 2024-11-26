@@ -67,7 +67,7 @@ namespace TEPLQMS.Controllers
             try
             {                
 
-                return Json(new { success = true, message = "http://localhost:61245/Default.htm?documentURL=PublishedDocuments/2f464a59-1d69-4772-9219-b5928defed60/ReadableDocuments/16b0896b-cc50-4851-9d57-c79aa647b3ff/TEPL-PJ0001-EG-ATE-PCY-0001.pdf" }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, message = "http://localhost:61245/Default.htm?documentURL=PublishedDocuments/2f464a59-1d69-4772-9219-b5928defed60/ReadableDocuments/16b0896b-cc50-4851-9d57-c79aa647b3ff/TCPL-PJ0001-EG-ATE-PCY-0001.pdf" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

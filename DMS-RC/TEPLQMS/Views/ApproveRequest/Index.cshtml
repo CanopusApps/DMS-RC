@@ -42,8 +42,8 @@
                     <div id="divDocumentCategoryCode">@ViewBag.Data.DocumentCategoryCode</div>
                     <div id="divDocumentCategoryName">@ViewBag.Data.DocumentCategoryName</div>
                     <div id="divDocumentLevel">@ViewBag.Data.DocumentLevel</div>
-                    @*<div id="divFunctionCode">@ViewBag.Data.FunctionCode</div>
-                    <div id="divFunctionName">@ViewBag.Data.FunctionName</div>*@
+                    <div id="divFunctionCode">@ViewBag.Data.FunctionCode</div>
+                    <div id="divFunctionName">@ViewBag.Data.FunctionName</div>
                     <div id="divDepartmentCode">@ViewBag.Data.DepartmentCode</div>
                     <div id="divDepartmentName">@ViewBag.Data.DepartmentName</div>
                     <div id="divSectionCode">@ViewBag.Data.SectionCode</div>
@@ -291,23 +291,15 @@
             $("#DOCFile").removeClass("manfieldredborder"); $("#DOCFile2").removeClass("manfieldredborder");
             var catCode = '';
             catCode = $("#divDocumentCategoryCode").text();
-            var DocumentLevel = $("#divDocumentLevel").text();
+
             //Files Validation
-            var fileUpload2;
             var fileUpload = $("#DOCFile").get(0);
             var files = fileUpload.files;
-            if (DocumentLevel != "Level 4")
-            {
-                fileUpload2 = $("#DOCFile2").get(0);
-            }
-            
+            var fileUpload2 = $("#DOCFile2").get(0);
             var files2;
-
-            if (DocumentLevel != "Level 4" && fileUpload2 != undefined)
+            if (fileUpload2 != undefined)
                 files2 = fileUpload2.files;
-           
-
-            if (DocumentLevel != "Level 4") {
+            if (catCode != "FR") {
                 if ((files.length > 0 && files2.length == 0) || (files.length == 0 && files2.length > 0)) {
                     if (files.length == 0) {
                         $("#DOCFile").addClass("manfieldredborder");
@@ -321,8 +313,7 @@
                     }
                     return false;
                 }
-            }
-            
+            }                    
             
             var fileData = new FormData();
             fileData.append("DocumentID", $("#divDocumentID").text());
@@ -345,8 +336,8 @@
             fileData.append('DocumentCategoryCode', $("#divDocumentCategoryCode").text()); 
             fileData.append('DocumentCategoryName', $("#divDocumentCategoryName").text());
             fileData.append('DocumentLevel', $("#divDocumentLevel").text());
-            //fileData.append('FunctionCode', $("#divFunctionCode").text());
-            //fileData.append('FunctionName', $("#divFunctionName").text());
+            fileData.append('FunctionCode', $("#divFunctionCode").text());
+            fileData.append('FunctionName', $("#divFunctionName").text());
             fileData.append('DepartmentCode', $("#divDepartmentCode").text());
             fileData.append('DepartmentName', $("#divDepartmentName").text());
             fileData.append('SectionCode', $("#divSectionCode").text());
@@ -385,20 +376,10 @@
                 }
             }
             fileData.append('EditableDocumentUploaded', isExist);
-            if (DocumentLevel == "Level 4" && isExist == "yes")
-            {
-                if ($("#txtComments").val().trim() == '') {
-                    $("#txtComments").addClass("manfieldredborder");
-                    $('.btn-warning').trigger('click');
-                    $('.modal-body').html('Comments mandatory when you upload the Documents');
-                    isProceed = false;
-                    return false;
-                }    
-            }
             isExist = 'no';
             //Files - Readable Document            
             var ext2 = ''; var fileSize2 = 0;
-            if (DocumentLevel != "Level 4" && files2 != undefined) {
+            if (files2 != undefined) {
                 if (files2.length > 0) {
                     for (var z = 0; z < files2.length; z++) {
                         ext2 = files2[z].name.substr(files2[z].name.lastIndexOf('.') + 1).toLowerCase();
@@ -408,7 +389,7 @@
                     }
                     //File Type Check
                     //isProceed = IsFileTypeAllowed($("#divReadableFileTypes").text(), ext2);
-                    if (DocumentLevel == "Level 4")
+                    if (catCode == 'FR')
                         isProceed = IsFileTypeAllowed($("#divFormsFileTypes").text(), ext2);
                     else
                         isProceed = IsFileTypeAllowed($("#divReadableFileTypes").text(), ext2);
@@ -486,7 +467,6 @@
             PublishRequest();
             return false;
         });
-        
 
         $("#btnConvertFile").click(function () {
             ConvertToPDF();

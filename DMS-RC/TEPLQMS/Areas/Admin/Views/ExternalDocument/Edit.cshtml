@@ -52,18 +52,18 @@
                             <div class="row ">
                                 <div class="col-lg-6 col-sm-6 col-xs-12">
                                     <div class="form-group">
-                                        <label class="control-label col-lg-4">Title<span class="mandatory">*</span></label>
+                                        <label class="control-label col-lg-4">Department</label>
                                         <div class=" col-lg-8">
-                                            <input title="Title" class="form-control manfield" id="txtTitle" name="txtTitle" type="text" maxlength="200" placeholder="Title">
+                                            <input title="Department" class="form-control manfield" id="txtDepartment" name="txtDepartment" type="text" maxlength="100" placeholder="Department">
 
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-sm-6 col-xs-12">
                                     <div class="form-group">
-                                        <label class="control-label col-lg-4">Organization<span class="mandatory">*</span></label>
+                                        <label class="control-label col-lg-4">Title<span class="mandatory">*</span></label>
                                         <div class=" col-lg-8">
-                                            <input title="Organization" class="form-control manfield" id="txtOrganization" name="txtVersion" type="text" maxlength="200" placeholder="Organization">
+                                            <input title="Title" class="form-control manfield" id="txtTitle" name="txtTitle" type="text" maxlength="200" placeholder="Title">
 
                                         </div>
                                     </div>
@@ -72,7 +72,7 @@
                             <div class="row">
                                 <div class="col-lg-6 col-sm-6 col-xs-12">
                                     <div class="form-group">
-                                        <label class="control-label col-lg-4">TEPL Document No<span class="mandatory">*</span></label>
+                                        <label class="control-label col-lg-4">TCPL Document No<span class="mandatory">*</span></label>
                                         <div class=" col-lg-8">
                                             <input title="Document No" class=" form-control manfield" id="txtDocumentNo" name="txtDocumentNo" type="text" maxlength="100" placeholder="Document No">
                                         </div>
@@ -90,18 +90,18 @@
                             <div class="row ">
                                 <div class="col-lg-6 col-sm-6 col-xs-12">
                                     <div class="form-group">
-                                        <label class="control-label col-lg-4">Version<span class="mandatory">*</span></label>
+                                        <label class="control-label col-lg-4">Revision<span class="mandatory">*</span></label>
                                         <div class=" col-lg-8">
-                                            <input title="Version" class="form-control manfield" id="txtVersion" name="txtVersion" type="text" maxlength="10" placeholder="Version">
+                                            <input title="Revision" class="form-control manfield" id="txtVersion" name="txtVersion" type="text" maxlength="10" placeholder="Revision">
 
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-sm-6 col-xs-12">
                                     <div class="form-group">
-                                        <label class="control-label col-lg-4">Version Date<span class="mandatory">*</span></label>
+                                        <label class="control-label col-lg-4">Revision Date<span class="mandatory">*</span></label>
                                         <div class=" col-lg-6" style="padding-right:0px;">
-                                            <input readonly="readonly" class="form-control date-picker" id="date1" type="text" data-date-format="dd-mm-yyyy" placeholder=" Version Date">
+                                            <input readonly="readonly" class="form-control date-picker" id="date1" type="text" data-date-format="dd-mm-yyyy" placeholder=" Revision Date">
                                         </div>
                                         <div class=" col-lg-1" style="padding-left:0px;">
                                             <span class="input-group-addon">
@@ -125,9 +125,9 @@
                                 </div>
                                 <div class="col-lg-6 col-sm-6 col-xs-12">
                                     <div class="form-group">
-                                        <label class="control-label col-lg-4">Department</label>
+                                        <label class="control-label col-lg-4">Organization<span class="mandatory">*</span></label>
                                         <div class=" col-lg-8">
-                                            <input title="Department" class="form-control manfield" id="txtDepartment" name="txtDepartment" type="text" maxlength="100" placeholder="Department">
+                                            <input title="Organization" class="form-control manfield" id="txtOrganization" name="txtVersion" type="text" maxlength="200" placeholder="Organization">
 
                                         </div>
                                     </div>
@@ -328,14 +328,17 @@
                 success: function (data) {
                     if (data.success) {
                         $("#txtTitle").val(data.message.Title);
-                        //alert(data.message.CategoryID);
-                        //alert(data.message.SubCategoryID);
-                        $("#Category").val(data.message.CategoryID).prop("disabled","disabled");
+                        $("#Category").val(data.message.CategoryID).prop("disabled", "disabled");
+
+                        // Bind subcategories for category
                         BindSubCatsForCategory("/ExternalDocument/GetSubCategoriesForCategory", $('#SubCategory'), data.message.CategoryID, 'Select a value');
-                        
+
+                        // Set the SubCategory if available
                         if (data.message.SubCategoryName != '' && data.message.SubCategoryName != null)
                             $("#SubCategory").val(data.message.SubCategoryID);
                         $("#SubCategory").prop("disabled", "disabled");
+
+                        // Set Document No, Version, Dates, etc.
                         $("#txtDocumentNo").val(data.message.DocumentNo).prop("readonly", "readonly");
                         $("#txtExternalDocumentNo").val(data.message.ExternalDocumentNo);
                         $("#txtVersion").val(data.message.Version);
@@ -343,25 +346,32 @@
                         $("#txtOrganization").val(data.message.Organization);
                         $("#txtResponsibleUser").val(data.message.ResponsibleUser);
                         $("#divselectedUserID").text(data.message.ResponsibleUserID);
-                        $("#txtDepartment").val(data.message.Department);
+
+                        // Set Department Name (not ID)
+                        $("#txtDepartment").val(data.message.DepartmentName).prop("disabled", "disabled");
+
+                        // Handle File Upload / URL logic
                         if (data.message.FileName == "") {
                             $("#rbnURL").prop("checked", true);
-                            $("#divUpload").hide(); $("#divURL").show();
+                            $("#divUpload").hide();
+                            $("#divURL").show();
                             $("#txtFileURL").val(data.message.FileURL);
-                        }
-                        else {
+                        } else {
                             $("#rbnUpload").prop("checked", true);
-                            $("#divUpload").show(); $("#divURL").hide();
+                            $("#divUpload").show();
+                            $("#divURL").hide();
                             $("#divOLDFileName").text(data.message.FileName);
                             $("#divOLDFilePath").text(data.message.FilePath);
                             $("#divOLDDocumentName").text(data.message.DocumentName);
                         }
 
-                        //if (data.message.IsActive == true)
-                        //    $("#chk1").prop("checked", "checked");
-                        //else
-                        //    $("#chk1").prop("checked", "");
+                        // Handle IsActive checkbox
+                        // if (data.message.IsActive == true)
+                        //     $("#chk1").prop("checked", "checked");
+                        // else
+                        //     $("#chk1").prop("checked", "");
                     }
+
                 },
                 error: function (xhr) {
                     alert('error');
@@ -515,7 +525,7 @@
                 fileData.append("Organization", $("#txtOrganization").val());
                 fileData.append("ResponsibleUser", $("#txtResponsibleUser").val());
                 fileData.append("ResponsibleUserID", $("#divselectedUserID").text());
-                fileData.append("Department", $("#txtDepartment").val());
+                //fileData.append("Department", $("#txtDepartment").val());
                 //fileData.append("OLDFileName", $("#divOLDFileName").text());
                 fileData.append("ExternalDocumentID", $("#divExternalDocumentID").text());
                 var oldfileName = $("#divOLDFileName").text();

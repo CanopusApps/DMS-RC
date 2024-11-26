@@ -9,7 +9,7 @@
                 <span class="widget-caption topfocus" tabindex='1'><b>Users</b></span>
                 <div class="widget-buttons">
                     <div>
-                        <a id="ancbacktoList" href="/Admin/Users2" class="btn btn-azure btn-xs" style="font-size:13px;font-weight:bold;">
+                        <a id="ancbacktoList" href="/Admin/Users" class="btn btn-azure btn-xs" style="font-size:13px;font-weight:bold;">
                             <i class="fa fa-arrow-circle-left"></i> Back to list
                         </a>
 
@@ -41,7 +41,7 @@
                                                 <div class="col-lg-1"></div>
                                                 <div class=" col-lg-9">
                                                     <label><strong>Login ID</strong><span class="mandatory">*</span></label>
-                                                    <input readonly="readonly" title="Login ID" class="form-control" id="LoginID" name="LoginID" type="text" value="" maxlength="50">
+                                                    <input title="Login ID" class="form-control" id="LoginID" name="LoginID" type="text" value="" maxlength="50">
                                                 </div>
                                             </div>
                                         </div>
@@ -55,54 +55,67 @@
                                                 <div class="col-lg-1"></div>
                                                 <div class=" col-lg-9">
                                                     <label><strong>Email ID</strong><span class="mandatory">*</span></label>
-                                                    <input readonly="readonly" title="Email ID" class="form-control" id="EmailID" name="EmailID" type="text" value="">
+                                                    <input title="Email ID" class="form-control" id="EmailID" name="EmailID" type="text" value="">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3 col-sm-3 col-xs-12">
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <div class="col-lg-1"></div>
                                                 <div class=" col-lg-9">
-                                                    <label style="color:white">TEPL</label>
-                                                    <div class="form-group">
-                                                        <label class="col-lg-7 control-label"><strong>Is QMS Admin</strong></label>
-                                                        <div class="col-lg-5">
-                                                            <div class="checkbox">
-                                                                <label>
-                                                                    <input id="chk2" type="checkbox">
-                                                                    <span class="text"></span>
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    <label><strong>Department</strong><span class="mandatory">*</span></label>
+                                                    <select class="form-control" name="Department" data-bv-field="Department" id="ddlDepartment" title="Department">
+                                                        <option value="0">Select a value</option>
+                                                        <!-- Other options will be added here dynamically -->
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3 col-sm-3 col-xs-12">
-                                            <div class="form-group" id="divIsActive">
-                                                <div class="col-lg-1"></div>
-                                                <div class=" col-lg-9">
-                                                    <label style="color:white">TEPL</label>
-                                                    <div class="form-group">
-                                                        <label class="col-lg-5 control-label"><strong>Is Active</strong></label>
-                                                        <div class="col-lg-7">
-                                                            <div class="checkbox">
-                                                                <label>
-                                                                    <input id="chk1" type="checkbox" checked="checked">
-                                                                    <span class="text"></span>
-                                                                </label>
-                                                            </div>
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-sm-3 col-xs-12">
+                                        <div class="form-group">
+                                            <div class="col-lg-1"></div>
+                                            <div class=" col-lg-9">
+                                                <label style="color:white">TEPL</label>
+                                                <div class="form-group">
+                                                    <label class="col-lg-7 control-label"><strong>Is QMS Admin</strong></label>
+                                                    <div class="col-lg-5">
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input id="chk2" type="checkbox">
+                                                                <span class="text"></span>
+                                                            </label>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-lg-3 col-sm-6">
+                                        <div class="form-group">
+                                            <div class="col-lg-1"></div>
+                                            <div class="col-lg-9">
+                                                <label class="col-lg-5 control-label"><strong>Is Active</strong></label>
+                                                <div class="col-lg-7">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input id="chk1" type="checkbox" checked="checked">
+                                                            <span class="text"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 col-sm-12 col-xs-12">
                                         <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            
+
                                         </div>
                                         <div class="col-lg-6 col-sm-6 col-xs-12 col-sm-offset-8">
                                             <button class="btn btn-azure" id="btnCreate" type="button">Create</button>
@@ -122,42 +135,37 @@
                         <thead>
                             <tr role="row">
                                 <th>ID</th>
-                                <th>
-                                    Login ID
-                                </th>
-                                <th>
-                                    Display Name
-                                </th>
-                                <th>
-                                    EMail ID
-                                </th>
+                                <th>Login ID</th>
+                                <th>Display Name</th>
+                                <th>Email ID</th>
                                 <th nowrap>Is QMS Admin</th>
                                 <th>Is Active</th>
-                                <th>
-                                    Delete
-                                </th>
+                                <th>Department</th> <!-- New column for Department -->
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var txt in ViewBag.Data)
                             {
-                            <tr>
-                                <td>@txt.ID</td>
-                                <td>@txt.LoginID</td>
-                                <td>@txt.DisplayName</td>
-                                <td>@txt.EmailID</td>
-                                <td>@txt.IsQMSAdmin</td>
-                                <td>@txt.IsActive</td>
-                                <td>
-                                    <a href="#" class="btn btn-azure btn-xs edit"><i class="fa fa-edit"></i> Edit</a>
-                                    @*<a href="#" class="btn btn-redcolor btn-xs delete"><i class="fa fa-trash-o"></i> Delete</a>*@
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td>@txt.ID</td>
+                                    <td>@txt.LoginID</td>
+                                    <td>@txt.DisplayName</td>
+                                    <td>@txt.EmailID</td>
+                                    <td>@txt.IsQMSAdmin</td>
+                                    <td>@txt.IsActive</td>
+                                    <td>@txt.DepartmentName</td> <!-- Display the Department Name -->
+                                    <td>
+                                        <a href="#" class="btn btn-azure btn-xs edit"><i class="fa fa-edit"></i> Edit</a>
+                                        <!-- <a href="#" class="btn btn-redcolor btn-xs delete"><i class="fa fa-trash-o"></i> Delete</a> -->
+                                    </td>
+                                </tr>
                             }
                         </tbody>
                     </table>
                 </div>
             </div>
+
 
         </div>
     </div>
@@ -187,6 +195,10 @@
     <script src="~/assets/js/datetime/bootstrap-timepicker.js"></script>
 
     <script>
+        $(document).ready(function () {
+            BindDropDownBoxes("/DocumentInitiate/GetDropDownBoxes", $('#ddlDepartment'), '', '', '', 'Select a value');
+
+        });
         function backtoList() {
             $("#divnew").hide();
             $("#divGrid").show();
@@ -313,6 +325,7 @@
                     isQMSChecked = true;
                 }
                 arrData[4] = isQMSChecked;
+                arrData[5] = $("#ddlDepartment").val();
                 
                 $.ajax({
                     url: '/Users2/InsertRecord',

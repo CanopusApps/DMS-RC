@@ -48,14 +48,14 @@
                     </label>
                 </div>
             </div>
-            @*<div class="col-lg-6 col-sm-6 col-xs-12">
+            <div class="col-lg-6 col-sm-6 col-xs-12">
                 <div class="form-group">
                     <label class="col-lg-4 control-label"><strong>Function</strong></label>
                     <label class="col-lg-7 control-label text-align-left">
                         @ViewBag.Data.FunctionName
                     </label>
                 </div>
-            </div>*@
+            </div>
         </div>
         <div class="row">
             <div class="col-lg-6 col-sm-6 col-xs-12">
@@ -68,7 +68,7 @@
             </div>
             <div class="col-lg-6 col-sm-6 col-xs-12">
                 <div class="form-group">
-                    <label class="control-label col-lg-4"><strong>New Version</strong></label>
+                    <label class="control-label col-lg-4"><strong>New Revision</strong></label>
                     <label class=" col-lg-7 control-label text-align-left">
                         @ViewBag.DraftVersion
                     </label>
@@ -171,18 +171,15 @@
                     </div>
                 </div>
             </div>
-            @if (ViewBag.Data != null && ViewBag.Data.DocumentLevel != "Level 4")
-            {
-                <div class="col-lg-6 col-sm-6 col-xs-12">
-                    <div class="form-group">
-                        <label class="control-label col-lg-4"><strong>Readable Document</strong></label>
-                        <div class=" col-lg-7">
-                            <input class="form-control" id="DOCFile2" name="DOC2" type="file" value="">
-                        </div>
+            <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-4"><strong>Readable Document</strong></label>
+                    <div class=" col-lg-7">
+                        <input class="form-control" id="DOCFile2" name="DOC2" type="file" value="">
                     </div>
-
                 </div>
-            }
+
+            </div>
         </div>
         @if (@ViewBag.Data.DocumentPublishID.ToString() == "00000000-0000-0000-0000-000000000000")
         {

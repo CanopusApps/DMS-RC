@@ -23,16 +23,19 @@ namespace TEPLQDMSWS
             };
             ServiceBase.Run(ServicesToRun);
 
+            //UnComment Below Lines to test from the Code - START
             //ApproverReminder arObj = new ApproverReminder();
             //arObj.GetApproverReminderDocuments();
             //arObj.GetApproverEsclationDocuments();
 
-            ////Weekly Mail
+            //Weekly Mail
             //UserNotifications usObj = new UserNotifications();
             //usObj.SendDigestmailForPublichedDocuments();
 
-            ////Document Revalidation
+            //Document Revalidation
             //usObj.DocumentRevalidation();
+
+            //UnComment Lines to test from the Code - END
         }
     }
 }

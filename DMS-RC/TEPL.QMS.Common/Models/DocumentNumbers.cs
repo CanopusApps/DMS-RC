@@ -9,6 +9,7 @@ namespace TEPL.QMS.Common.Models
     public class DocumentNumbers
     {
         public Guid ID { get; set; }
+        public string DocumentNumber { get; set; }
         public string DepartmentCode { get; set; }
         public string DepartmentName { get; set; }
         public string SectionCode { get; set; }
@@ -24,6 +25,7 @@ namespace TEPL.QMS.Common.Models
         public bool Active { get; set; }
         public string CreatedBy { get; set; }
         public DateTime Created { get; set; }
+        public string CreatedDate { get; set; }
         public string ModifiedBy { get; set; }
         public DateTime Modified { get; set; }
     }

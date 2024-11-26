@@ -202,6 +202,35 @@ namespace TEPL.QMS.Workflow.DAL
             return strReturn;
         }
 
+        public string ReplaceUserForWorkflows(string WFExecutionDetailIDs, Guid CurrentUserID, Guid NewUserID)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(WFConstants.WFDBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(WFConstants.spReplaceUserForWorkflows, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@WFExecutionDetailIDs", SqlDbType.NVarChar, -1).Value = WFExecutionDetailIDs;
+                        cmd.Parameters.Add("@CurrentUserID", SqlDbType.UniqueIdentifier).Value = CurrentUserID;
+                        cmd.Parameters.Add("@NewUserID", SqlDbType.UniqueIdentifier).Value = NewUserID;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            DataTable dt = new DataTable();
+                            sda.Fill(dt);
+                            strReturn = dt.Rows[0][0].ToString();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return strReturn;
+        }
+
         public DataTable GetApprovalMatrixForUser(Guid UserID, Guid projectTypeID, Guid projectID)
         {
             DataTable dt = new DataTable();
@@ -219,6 +248,32 @@ namespace TEPL.QMS.Workflow.DAL
                         {
                             sda.Fill(dt);
                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dt;
+        }
+
+        public DataTable GetPendingWorkflowsForUser(Guid UserID, Guid projectID)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(WFConstants.WFDBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(WFConstants.spGetPendingWorkflowsForUser, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserID;
+                        cmd.Parameters.Add("@ProjectID", SqlDbType.UniqueIdentifier).Value = projectID;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
                     }
                 }
             }

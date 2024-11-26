@@ -37,6 +37,7 @@ namespace TEPL.QMS.Common.Constants
         public static string ExtDocumentFolder = Convert.ToString(ConfigurationManager.AppSettings["ExtDocumentFolder"]);
         public static string EncryptionKey = Convert.ToString(ConfigurationManager.AppSettings["EncryptionKey"]);
         public static Guid WorkflowID = Guid.Parse(ConfigurationManager.AppSettings["WorkflowID"]);
+        public static Guid DirectUploadWorkflowID = Guid.Parse(ConfigurationManager.AppSettings["DirectUploadWorkflowID"]);
         public static Guid PrintWorkflowID = Guid.Parse(ConfigurationManager.AppSettings["PrintWorkflowID"]);
         public static string QMSHeadEmail = Convert.ToString(ConfigurationManager.AppSettings["QMSHeadEmail"]);
         public static string AuthCookieName = Convert.ToString(ConfigurationManager.AppSettings["AuthCookieName"]);
@@ -45,14 +46,17 @@ namespace TEPL.QMS.Common.Constants
         public const string LoggedInUserDisplayName = "LoggedInUserDisplayName";
         public const string LoggedInUserProjects = "LoggedInUserProjects";
         public const string LoggedInUserRoles = "LoggedInUserRoles";
-        
+
 
         //StoredProcedures
+        public static string spGetpendingDocumentsfromServer = "spGetpendingDocumentsfromServer";
         public static string spGenerateDocumentNo = "spGenerateDocumentNo";
+        public static string spInsertDocumentNo = "spInsertDocumentNo";
         public static string spGenerateDocumentNoLevel1 = "spGenerateDocumentNoLevel1";
         public static string spGetDocumentNumbers = "spGetDocumentNumbers";
-        public static string spGetDocumentLevel = "spGetDocumentLevel";
         public static string spDocumentUpdate = "spDocumentUpdate";
+        public static string spGetDocumentLevel = "spGetDocumentLevel";
+        public static string spUpdateDocDetails = "spUpdateDocDetails";
         public static string spDocumentUpdatePublished = "spDocumentUpdatePublished";
         public static string spDocumentDescriptionUpdate = "spDocumentDescriptionUpdate";
         public static string spDocumentVersionUpdate = "spDocumentVersionUpdate";
@@ -60,6 +64,7 @@ namespace TEPL.QMS.Common.Constants
         public static string spGetApprovedPrintRequests = "spGetApprovedPrintRequests";
         public static string spGetDocumentDetailsByID = "spGetDocumentDetailsByID";
         public static string spGetPrintRequestDetailsByID = "spGetPrintRequestDetailsByID";
+        public static string spGetPrintsRequestDetailsByID = "spGetPrintsRequestDetailsByID";
         public static string spGetPublishedDocuments = "spGetPublishedDocuments";
         public static string spGetPublishedDocuments_ServerSide = "spGetPublishedDocuments_ServerSide";
         public static string spGetArchivedDocuments = "spGetArchivedDocuments";
@@ -69,10 +74,12 @@ namespace TEPL.QMS.Common.Constants
         public static string spGetDocumentDetailsByNo = "spGetDocumentDetailsByNo";
         public static string spGetDocumentDetailsForPrintRequest = "spGetDocumentDetailsForPrintRequest";
         public static string spGetApprovalPendingDocuments = "spGetApprovalPendingDocuments";
+        public static string spGetApprovedPrintRequest = "spGetApprovedPrintRequest";
         public static string spGetApprovedDocuments = "spGetApprovedDocuments";
         public static string spGetDraftDocuments = "spGetDraftDocuments";
         public static string spDocumentPublish = "spDocumentPublish";
         public static string spGetDepartments = "spGetDepartments";
+        public static string GetUserDepartment = "GetUserDepartment";
         public static string spGetActiveLocations = "spGetActiveLocations";
         public static string spGetActiveDepartments = "spGetActiveDepartments";
         public static string spGetActiveFunctions = "spGetActiveFunctions";
@@ -120,6 +127,7 @@ namespace TEPL.QMS.Common.Constants
         public static string spArchiveDocument = "spArchiveDocument";
         public static string spArchivePendingDocument = "spArchivePendingDocument";
         public static string spGetAllExternalDocuments = "spGetAllExternalDocuments";
+        public static string spGetAllExternalDocumentForUsers = "spGetAllExternalDocumentForUsers";
         public static string spGetExternalDocumentSeqNumber = "spGetExternalDocumentSeqNumber";
         public static string spGetExternalDocumentDetailsForID = "spGetExternalDocumentDetailsForID";
         public static string spIsExternalDocumentExists = "spIsExternalDocumentExists";
@@ -141,6 +149,7 @@ namespace TEPL.QMS.Common.Constants
         public static string spUpdateDocumentNo = "spUpdateDocumentNo";
         public static string spGetUserApprovalItemsForAMID = "spGetUserApprovalItemsForAMID";
         public static string spValidateDocumentNumber = "spValidateDocumentNumber";
+        public static string CheckDocumentExistence = "CheckDocumentExistence";
         public static string spCreatePrintRequest = "spCreatePrintRequest";
         public static string spAddFunction = "spAddFunction";
         public static string spUpdateFunction = "spUpdateFunction";
@@ -151,5 +160,6 @@ namespace TEPL.QMS.Common.Constants
         public static string spDeleteLocation = "spDeleteLocation";
         public static string spGetLocation = "spGetLocation";
         public static string spGetAchievedDocumentDetailsByID = "spGetAchievedDocumentDetailsByID";
+        public static string spGetDocumentNoGenerated = "spGetDocumentNoGenerated";
     }
 }

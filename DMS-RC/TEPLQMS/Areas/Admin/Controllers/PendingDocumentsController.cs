@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -7,6 +8,7 @@ using TEPL.QMS.BLL.Component;
 using TEPL.QMS.Common;
 using TEPL.QMS.Common.Constants;
 using TEPL.QMS.Common.Models;
+using TEPLQMS.Common;
 using TEPLQMS.Controllers;
 
 namespace TEPLQMS.Areas.Admin.Controllers
@@ -17,6 +19,8 @@ namespace TEPLQMS.Areas.Admin.Controllers
         [CustomAuthorize(Roles = "QADM,QPADM")]
         public ActionResult Index()
         {
+            var pageLength = ConfigurationManager.AppSettings["PageLength"];
+            ViewBag.PageLength = pageLength; // Pass it to the view
             return View();
         }
         [HttpPost]
@@ -79,6 +83,66 @@ namespace TEPLQMS.Areas.Admin.Controllers
                 LoggerBlock.WriteTraceLog(ex);
                 return Json(new { success = true, message = "failed" }, JsonRequestBehavior.AllowGet);
             }
+        }
+        public ActionResult GetPendingDocumentDataFromServerSide()
+        {
+            int pageLength = Convert.ToInt16(ConfigurationManager.AppSettings["PageLength"]);
+            var draw = Convert.ToInt32(Request.Form["draw"]); // The draw parameter for DataTables
+            var start = Convert.ToInt32(Request.Form["start"]); // The starting row for pagination
+            var length = Convert.ToInt32(Request.Form["length"]); // The number of records per page
+            if (start < 0) start = 0;
+            if (length <= 0) length = pageLength; // Default to 10 if length is 0 or negative
+            int pageNumber = (start / length) + 1;
+            string searchValue = DatatableCall.GetRequestValue<string>("search[value]", Request);
+            var sortColumnIndex = Convert.ToInt32(Request.Form["order[0][column]"]);
+            string sortColumn = DatatableCall.GetRequestValue<string>($"columns[{sortColumnIndex}][data]", Request);
+            var sortDirection = Request.Form["order[0][dir]"];
+            if (sortColumnIndex < 0) sortColumnIndex = 0; 
+
+            if (sortDirection != "asc" && sortDirection != "desc")
+            {
+                sortDirection = "asc"; // Default to ascending if the direction is not valid
+            }
+
+            var filters = new Dictionary<string, string>
+            {
+                { "DepartmentCode", DatatableCall.GetRequestValue < string >("department", Request) },
+                { "SectionCode", DatatableCall.GetRequestValue < string >("section", Request) },
+                { "ProjectCode", DatatableCall.GetRequestValue < string >("project", Request) },
+                { "DocumentCategoryName", DatatableCall.GetRequestValue < string >("category", Request) },
+                { "DocumentDescription", DatatableCall.GetRequestValue < string >("description", Request) }
+            };
+
+
+
+            // Get data from your data source (e.g., database)
+
+            Guid LoggedInUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
+            QMSAdmin objQMSAdmin = new QMSAdmin();
+            string strRoles = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserRoles].ToString();
+            if (strRoles.Contains("QADM"))
+                ViewBag.isQMSAdmin = true;
+            else ViewBag.isQMSAdmin = false;
+
+            DocumentUpload obj = new DocumentUpload();
+            (List<DraftDocument> data, int totalpage) = obj.GetPendingDocumentFromServer("","","","","",LoggedInUserID, true, pageNumber, length);
+            
+
+            // Apply filters, sorting, and paging
+            data = DatatableCall.ApplyFilters(data, filters).ToList();
+            data = DatatableCall.ApplySorting(data, sortColumn, sortDirection).ToList();
+            var recordsTotal = totalpage;
+            data = DatatableCall.ApplyPaging(data, start, length).ToList();
+
+            // Prepare the response
+            return Json(new
+            {
+                draw = draw,
+                recordsTotal = recordsTotal, // Total records (without filtering)
+                recordsFiltered = recordsTotal, // For this example, filtered count equals total count
+                data = data // The list of documents for this page
+            }, JsonRequestBehavior.AllowGet);
+
         }
     }
 }

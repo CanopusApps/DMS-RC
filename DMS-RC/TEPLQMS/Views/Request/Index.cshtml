@@ -120,14 +120,14 @@
                                             </label>
                                         </div>
                                     </div>
-                                    @*<div class="col-lg-6 col-sm-6 col-xs-12">
+                                    <div class="col-lg-6 col-sm-6 col-xs-12">
                                         <div class="form-group">
                                             <label class="col-lg-4 control-label"><strong>Function</strong></label>
                                             <label class="col-lg-7 control-label text-align-left">
                                                 @ViewBag.Data.FunctionName
                                             </label>
                                         </div>
-                                    </div>*@
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-6 col-sm-6 col-xs-12">
@@ -140,7 +140,7 @@
                                     </div>
                                     <div class="col-lg-6 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <label class="control-label col-lg-4"><strong>New Version</strong></label>
+                                            <label class="control-label col-lg-4"><strong>New Revision</strong></label>
                                             <label class=" col-lg-7 control-label text-align-left">
                                                 @ViewBag.DraftVersion
                                             </label>
@@ -196,14 +196,47 @@
                                         <div class="form-group">
                                             <label class="col-lg-4 control-label"><strong>Editable Document</strong></label>
                                             <label class="col-lg-7 control-label text-align-left">
-                                                @{
-                                                    @ViewBag.Data.EditableDocumentName
+                                                @*@{
+            @ViewBag.Data.EditableDocumentName
 
-                                                    if (@ViewBag.isQMSAdmin == true || ViewBag.Data.DocumentLevel == "Level 4")
+            if (@ViewBag.isQMSAdmin == true || ViewBag.Data.DocumentLevel == "Level 4")
+            {
+                <a style="text-decoration:underline;" href='@Url.Action("DownloadDocument", "Dashboard", new { folderPath = @ViewBag.Data.EditableFilePath, folder = TEPL.QMS.Common.Constants.QMSConstants.DraftFolder, versionNo= @ViewBag.Data.DraftVersion, fileName= @ViewBag.Data.EditableDocumentName })'><i class="menu-icon glyphicon glyphicon-download eye-open-font-size"></i></a>
+            }
+        }*@
+                                                @{
+                                                    if (@ViewBag.Data.CurrentStage == "Completed")
                                                     {
-                                                        <a style="text-decoration:underline;" href='@Url.Action("DownloadDocument", "Dashboard", new { folderPath = @ViewBag.Data.EditableFilePath, folder = TEPL.QMS.Common.Constants.QMSConstants.DraftFolder, versionNo= @ViewBag.Data.DraftVersion, fileName= @ViewBag.Data.EditableDocumentName })'><i class="menu-icon glyphicon glyphicon-download eye-open-font-size"></i></a>
+                                                        <span>@ViewBag.Data.EditableDocumentName</span>
+                                                        if (ViewBag.isQMSAdmin == true || ViewBag.Data.DocumentLevel == "Level 4")
+                                                        {
+                                                            <a style="text-decoration:underline;"
+                                                               href='@Url.Action("DownloadDocument", "Dashboard", new {
+                   folderPath = @ViewBag.Data.EditableFilePath,
+                   folder = TEPL.QMS.Common.Constants.QMSConstants.PublishedFolder,
+                   versionNo = @ViewBag.Data.OriginalVersion,
+                   fileName = @ViewBag.Data.EditableDocumentName })'>
+                                                                <i class="menu-icon glyphicon glyphicon-download eye-open-font-size"></i>
+                                                            </a>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@ViewBag.Data.EditableDocumentName</span>
+                                                        if (ViewBag.isQMSAdmin == true || ViewBag.Data.DocumentLevel == "Level 4")
+                                                        {
+                                                            <a style="text-decoration:underline;"
+                                                               href='@Url.Action("DownloadDocument", "Dashboard", new {
+                   folderPath = @ViewBag.Data.EditableFilePath,
+                   folder = TEPL.QMS.Common.Constants.QMSConstants.DraftFolder,
+                   versionNo = @ViewBag.Data.DraftVersion,
+                   fileName = @ViewBag.Data.EditableDocumentName })'>
+                                                                <i class="menu-icon glyphicon glyphicon-download eye-open-font-size"></i>
+                                                            </a>
+                                                        }
                                                     }
                                                 }
+
                                             </label>
                                         </div>
                                     </div>
@@ -366,12 +399,13 @@
                 var fileData = new FormData();
                 var catCode = '';
                 catCode = $("#divCatCode").text();
-                fileData.append("documentguid", $("#divDocumentID").text());
+                fileData.append("DocumentID", $("#divDocumentID").text());
                 fileData.append("WFExecutionID", $("#divWFExecutionID").text());
-                fileData.append('doccategorycode', $("#divCatCode").text());
+                fileData.append('DocumentCategoryCode', catCode);
                 fileData.append('doccategoryname', $("#divCatName").text());
                 fileData.append('departmentcode', $("#divDeptCode").text());
                 fileData.append('departmentname', $("#divDeptName").text());
+                fileData.append('SectionID', $("#divSecID").text());
                 fileData.append('sectioncode', $("#divSecCode").text());
                 fileData.append('sectionname', $("#divSecName").text());
                 fileData.append('projectcode', $("#divProjCode").text());

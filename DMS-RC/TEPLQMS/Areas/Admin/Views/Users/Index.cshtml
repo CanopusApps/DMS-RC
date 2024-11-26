@@ -13,6 +13,9 @@
                             <i class="fa fa-arrow-circle-left"></i> Back to list
                         </a>
 
+                        <a  href="javascript:ExportToExcel();" class="btn btn-azure" style="font-size:13px;font-weight:bold;">
+                            <i class="fa fa-plus-circle"></i> Export To Excel
+                        </a>
                         <a id="ancaddNew" href="javascript:displayAddDiv();" class="btn btn-azure btn-xs add" style="font-size:13px;font-weight:bold;">
                             <i class="fa fa-plus-circle"></i> Add User
                         </a>
@@ -32,7 +35,7 @@
                                                 <div class="col-lg-1"></div>
                                                 <div class=" col-lg-9">
                                                     <label><strong>Name</strong><span class="mandatory">*</span></label>
-                                                    <input title="Display Name" class="form-control" id="DisplayName" name="DisplayName" type="text" value="">                                                    
+                                                    <input title="Display Name" class="form-control" id="DisplayName" name="DisplayName" type="text" value="">
                                                 </div>
                                             </div>
                                         </div>
@@ -59,50 +62,58 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3 col-sm-3 col-xs-12">
+                                        <div class="col-lg-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <div class="col-lg-1"></div>
                                                 <div class=" col-lg-9">
-                                                    <label style="color:white">TEPL</label>
-                                                    <div class="form-group">
-                                                        <label class="col-lg-7 control-label"><strong>Is QMS Admin</strong></label>
-                                                        <div class="col-lg-5">
-                                                            <div class="checkbox">
-                                                                <label>
-                                                                    <input id="chk2" type="checkbox">
-                                                                    <span class="text"></span>
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    <label><strong>Department</strong><span class="mandatory">*</span></label>
+                                                    <select class="form-control" name="Department" data-bv-field="Department" id="ddlDepartment" title="Department">
+                                                        <option value="0">Select a value</option>
+                                                        <!-- Other options will be added here dynamically -->
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3 col-sm-3 col-xs-12">
-                                            <div class="form-group" id="divIsActive">
-                                                <div class="col-lg-1"></div>
-                                                <div class=" col-lg-9">
-                                                    <label style="color:white">TEPL</label>
-                                                    <div class="form-group">
-                                                        <label class="col-lg-5 control-label"><strong>Is Active</strong></label>
-                                                        <div class="col-lg-7">
-                                                            <div class="checkbox">
-                                                                <label>
-                                                                    <input id="chk1" type="checkbox" checked="checked">
-                                                                    <span class="text"></span>
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 col-sm-12 col-xs-12">
+                                        <div class="col-lg-3 col-sm-3 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="col-lg-7 control-label"><strong>Is QMS Admin</strong></label>
+                                                <div class="col-lg-5">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input id="chk2" type="checkbox">
+                                                            <span class="text"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="col-lg-5 control-label"><strong>Is Active</strong></label>
+                                                <div class="col-lg-7">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input id="chk1" type="checkbox" checked="checked">
+                                                            <span class="text"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- This extra col-lg-6 div can be removed if it's not needed -->
+                                        <div class="col-lg-6 col-sm-6 col-xs-12"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12 col-xs-12">
                                         <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            
+
                                         </div>
                                         <div class="col-lg-6 col-sm-6 col-xs-12 col-sm-offset-8">
                                             <button class="btn btn-azure" id="btnCreate" type="button">Create</button>
@@ -122,42 +133,37 @@
                         <thead>
                             <tr role="row">
                                 <th>ID</th>
-                                <th>
-                                    Login ID
-                                </th>
-                                <th>
-                                    Display Name
-                                </th>
-                                <th>
-                                    EMail ID
-                                </th>
+                                <th>Login ID</th>
+                                <th>Display Name</th>
+                                <th>Email ID</th>
                                 <th nowrap>Is QMS Admin</th>
                                 <th>Is Active</th>
-                                <th>
-                                    Delete
-                                </th>
+                                <th>Department</th> <!-- New column for Department -->
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var txt in ViewBag.Data)
                             {
-                            <tr>
-                                <td>@txt.ID</td>
-                                <td>@txt.LoginID</td>
-                                <td>@txt.DisplayName</td>
-                                <td>@txt.EmailID</td>
-                                <td>@txt.IsQMSAdmin</td>
-                                <td>@txt.IsActive</td>
-                                <td>
-                                    <a href="#" class="btn btn-azure btn-xs edit"><i class="fa fa-edit"></i> Edit</a>
-                                    @*<a href="#" class="btn btn-redcolor btn-xs delete"><i class="fa fa-trash-o"></i> Delete</a>*@
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td>@txt.ID</td>
+                                    <td>@txt.LoginID</td>
+                                    <td>@txt.DisplayName</td>
+                                    <td>@txt.EmailID</td>
+                                    <td>@txt.IsQMSAdmin</td>
+                                    <td>@txt.IsActive</td>
+                                    <td>@txt.DepartmentName</td> <!-- Display the Department Name -->
+                                    <td>
+                                        <a href="#" class="btn btn-azure btn-xs edit"><i class="fa fa-edit"></i> Edit</a>
+                                    </td>
+                                </tr>
                             }
                         </tbody>
                     </table>
+
                 </div>
             </div>
+
 
         </div>
     </div>
@@ -185,8 +191,15 @@
     <script src="~/assets/js/datetime/bootstrap-datepicker.js"></script>
     <!--Bootstrap Time Picker-->
     <script src="~/assets/js/datetime/bootstrap-timepicker.js"></script>
-
+    
     <script>
+        $(document).ready(function () {
+            BindDropDownBoxes("/DocumentInitiate/GetDropDownBoxes", $('#ddlDepartment'), '', '', '', 'Select a value');
+            //$('#editabledatatable').DataTable();
+
+
+        });  
+
         function backtoList() {
             $("#divnew").hide();
             $("#divGrid").show();
@@ -201,32 +214,42 @@
 
 
             $("#DisplayName").autocomplete({
-                source: function (request, response) {                    
+                source: function (request, response) {
                     $.ajax({
-                        url: "/Users/GetUsersFromADUsingPrincipalContext", //GetUsersFromADUsingDirectorySearch & GetUsersFromADUsingPrincipalContext
+                        url: "/Users/GetUsersFromADUsingPrincipalContext", // Ensure this endpoint returns department info
                         type: "POST",
                         dataType: "json",
                         data: { Name: request.term },
                         success: function (data) {
                             response($.map(data.message, function (item) {
-                                //alert(item.DisplayName);
-                                return { label: item.DisplayName, value: item.DisplayName, id: item.ID, email: item.EmailID, loginid: item.LoginID };
-                            }))
-
+                                return {
+                                    label: item.DisplayName,
+                                    value: item.DisplayName,
+                                    id: item.ID,
+                                    email: item.EmailID,
+                                    loginid: item.LoginID,
+                                    //departmentID: item.DepartmentID,  // Include DepartmentID
+                                    //departmentName: item.DepartmentName  // Include DepartmentName
+                                };
+                            }));
                         }
-                    })
+                    });
                 },
                 select: function (event, ui) {
-                    //alert(ui.item.label + '-' + ui.item.id + '-' + ui.item.email + '-' + ui.item.loginid);
-                    //$("#divselectedUserID").text(ui.item.id);
-                    $("#DisplayName").text(ui.item.label);
+                    // Set the selected values for DisplayName, EmailID, LoginID
+                    $("#DisplayName").val(ui.item.label);  // Corrected: Use .val() instead of .text()
                     $("#EmailID").val(ui.item.email);
                     $("#LoginID").val(ui.item.loginid);
+                    // Set the DepartmentID in the dropdown (ddlDepartment)
+                    $("#ddlDepartment").val(ui.item.departmentID);  // Set the DepartmentID to the dropdown                    
                 },
                 messages: {
-                    noResults: "", results: ""
+                    noResults: "",
+                    results: ""
                 }
             });
+
+
         });
 
         function removeAllUsers() {
@@ -271,6 +294,7 @@
             else {
                 $("#LoginID").removeClass("manfieldredborder");
             }
+
             if ($("#DisplayName").val().trim() == '') {
                 ermsg += $("#DisplayName").prop("title") + '<br />';
                 $("#DisplayName").addClass("manfieldredborder");
@@ -278,6 +302,7 @@
             else {
                 $("#DisplayName").removeClass("manfieldredborder");
             }
+
             if ($("#EmailID").val().trim() == '') {
                 ermsg += $("#EmailID").prop("title") + '<br />';
                 $("#EmailID").addClass("manfieldredborder");
@@ -290,8 +315,14 @@
                 }
                 else
                     $("#EmailID").removeClass("manfieldredborder");
+            }            
+            if ($("#ddlDepartment").val() == '' || $("#ddlDepartment").val() == '0') {
+                ermsg += $("#ddlDepartment").prop("title") + '<br />';
+                $("#ddlDepartment").addClass("manfieldredborder");
             }
-
+            else {
+                $("#ddlDepartment").removeClass("manfieldredborder");
+            }
             if (ermsg != '') {
                 $('.btn-warning').trigger('click');
                 $('.modal-body').html(ermsg);
@@ -303,30 +334,32 @@
         $("#btnCreate").click(function () {
             if (ValidateFieldValues()) {
                 var arrData = new Array();
-                arrData[0] = ""; //We will keep empty this and we can use at the time of update of item.
+                arrData[0] = ""; // Placeholder for update
                 arrData[1] = $("#LoginID").val().trim();
                 arrData[2] = $("#DisplayName").val().trim();
                 arrData[3] = $("#EmailID").val().trim();
-                var isQMSChecked = false;
-                if ($("#chk2").prop("checked")) {
-                    isQMSChecked = true;
-                }
+
+                // Check if "Is QMS Admin" checkbox is checked
+                var isQMSChecked = $("#chk2").prop("checked") ? true : false;
                 arrData[4] = isQMSChecked;
-                
+
+                // Get the DepartmentID from the dropdown
+                arrData[5] = $("#ddlDepartment").val(); // Assuming `ddlDepartment` holds the DepartmentID
+
                 $.ajax({
                     url: '/Users/InsertRecord',
                     dataType: "json",
                     type: "POST",
                     beforeSend: ShowProgressBar(),
                     complete: HideProgressBar(),
-                    async: false,
+                    async: true,  // Ensure async request
                     contentType: 'application/json; charset=utf-8',
                     cache: false,
                     data: JSON.stringify({ arr: arrData }),
                     success: function (data) {
                         if (data.success) {
                             retmsg = data.message;
-                            
+
                             $('.btn-success').trigger('click');
                             $('.modal-body').html(data.message);
 
@@ -337,12 +370,15 @@
                         $('.btn-danger').trigger('click');
                         $('.modal-body').html('Error while saving user');
                     }
+
                 });
             }
         });
+
+
         $("#btnUpdate").click(function () {
             //alert($("#chk1").prop("checked"));
-            if (ValidateFieldValues()) {        
+            if (ValidateFieldValues()) {
                 var arrData = new Array();
                 arrData[0] = $("#divID").html().trim();
                 arrData[1] = $("#LoginID").val().trim();
@@ -361,7 +397,7 @@
                 else {
                     arrData[5] = false;
                 }
-                
+
                 $.ajax({
                     url: '/Users/InsertRecord',
                     dataType: "json",
@@ -382,25 +418,27 @@
                                     var nRow = $(this);
                                     var aData = oTable.fnGetData(nRow);
                                     if (aData[0] == $("#divID").html().trim()) {
-                                        oTable.fnUpdate(arrData[1], nRow, 1, false);
-                                        oTable.fnUpdate(arrData[2], nRow, 2, false);
-                                        oTable.fnUpdate(arrData[3], nRow, 3, false);
+                                        oTable.fnUpdate(arrData[1], nRow, 1, false); // Update Login ID
+                                        oTable.fnUpdate(arrData[2], nRow, 2, false); // Update Display Name
+                                        oTable.fnUpdate(arrData[3], nRow, 3, false); // Update Email ID
                                         if ($("#chk2").prop("checked") == true) {
-                                            oTable.fnUpdate('True', nRow, 4, false);
-                                        }
-                                        else {
+                                            oTable.fnUpdate('True', nRow, 4, false); // Update Is QMS Admin
+                                        } else {
                                             oTable.fnUpdate('False', nRow, 4, false);
                                         }
                                         if ($("#chk1").prop("checked") == true) {
-                                            oTable.fnUpdate('True', nRow, 5, false);
-                                        }
-                                        else {
+                                            oTable.fnUpdate('True', nRow, 5, false); // Update Is Active
+                                        } else {
                                             oTable.fnUpdate('False', nRow, 5, false);
                                         }
+                                        // Update Department
+                                        var selectedDepartment = $("#ddlDepartment option:selected").text(); // Get selected department name
+                                        oTable.fnUpdate(selectedDepartment, nRow, 6, false); // Update Department column
                                     }
                                 });
                                 ClearFieldValues();
                             }
+
                             $('.btn-success').trigger('click');
                             $('.modal-body').html(retmsg);
 
@@ -441,6 +479,7 @@
             $("#LoginID").val('');
             $("#DisplayName").val('');
             $("#EmailID").val('');
+            $("#ddlDepartment").val('0');
             $("#chk1").prop('checked', true);
         }
 
@@ -448,7 +487,53 @@
             $("#LoginID").val('');
             $("#DisplayName").val('');
             $("#EmailID").val('');
+            $("#ddlDepartment").val('0');
         }
+
+        function ExportToExcel() {
+
+            $.ajax({
+                url: "/Users/GetDataForExcel",
+                dataType: "text",
+                type: "POST",                
+                contentType: 'application/json; charset=utf-8',
+                //data: JSON.stringify({  }),
+                success: function (data) {
+                    var fileName = "Users.xlsx";
+                    var bytes = Base64ToBytes(data);
+
+                    //Convert Byte Array to BLOB.
+                    var blob = new Blob([bytes], { type: "application/octetstream" });
+
+                    //Check the Browser type and download the File.
+                    var isIE = false || !!document.documentMode;
+                    if (isIE) {
+                        window.navigator.msSaveBlob(blob, fileName);
+                    } else {
+                        var url = window.URL || window.webkitURL;
+                        link = url.createObjectURL(blob);
+                        var a = $("<a />");
+                        a.attr("download", fileName);
+                        a.attr("href", link);
+                        $("body").append(a);
+                        a[0].click();
+                        $("body").remove(a);
+                    }
+                },
+                error: function (xhr) {
+                    $('.btn-danger').trigger('click');
+                    $('.modal-body').html('Error while downloading file.');
+                }
+            });
+        }
+        function Base64ToBytes(base64) {
+            var s = window.atob(base64);
+            var bytes = new Uint8Array(s.length);
+            for (var i = 0; i < s.length; i++) {
+                bytes[i] = s.charCodeAt(i);
+            }
+            return bytes;
+        };
     </script>
 }
 

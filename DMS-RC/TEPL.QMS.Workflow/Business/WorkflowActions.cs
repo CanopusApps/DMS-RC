@@ -43,7 +43,6 @@ namespace TEPL.QMS.Workflow.Business
         }
         public Stage GetWorkflowStage(Guid WorkflowID, Guid CurrentStageID)
         {
-
             DataTable dt = objDALWF.GetWorkflowStage(WorkflowID, CurrentStageID);
             List<Stage> objSt = new List<Stage>();
             objSt = BindModels.ConvertDataTable<Stage>(dt);

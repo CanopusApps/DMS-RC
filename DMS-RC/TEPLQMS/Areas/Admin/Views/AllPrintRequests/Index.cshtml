@@ -5,36 +5,133 @@
 <div class="row">
     <div class="col-xs-12 col-md-12">
         <div class="widget">
+            @*<div class="widget-header">
+                    <span class="widget-caption topfocus" tabindex='1' style="font-size:25px !important;"><b>All Approved Print Requests</b></span>
+                </div>*@
             <div class="widget-header">
                 <span class="widget-caption topfocus" tabindex='1' style="font-size:25px !important;"><b>All Approved Print Requests</b></span>
+
+                @if (ViewBag.isQMSAdmin == true)
+                {
+                    @*<div class="widget-buttons" id="QMSDashBoard">
+                            <div class="" style="display:inline-flex">
+                                <div style="padding-right:10px;font-size:18px !important;"><b> Show Pending Documents</b></div>
+                                <div class="checkbox" style="margin-top:0px !important;">
+                                    <label>
+                                        <input class="checkbox-slider  colored-blue" id="form-field-checkbox" name="form-field-checkbox" type="checkbox" value="true">
+                                        <input name="form-field-checkbox" type="hidden" value="false"><span class="text"></span>
+                                    </label>
+                                </div>
+
+                            </div>
+                        </div>*@
+                    <div style="display:none" id="divQMSAdmin">yes</div>
+                }
+                else
+                {
+                    <div style="display:none" id="divQMSAdmin"></div>
+                }
             </div>
             <div class="widget-body">
-                
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12 col-xs-12">
+                            <div class="row">
+                                <div class="col-lg-12 col-sm-12 col-xs-12">
+                                    <div class="col-lg-3 col-sm-3 col-xs-12">
+                                        <div class="form-group">
+                                            <label>Department</label>
+                                            <select class="form-control" name="department" data-bv-field="department" id="ddlDepartment">
+                                                <option value="0">All</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-3 col-xs-12">
+                                        <div class="form-group">
+                                            <label>Section</label>
+                                            <select class="form-control" name="section" data-bv-field="section" id="ddlSection">
+                                                <option value="0">All</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-3 col-xs-12">
+                                        <div class="form-group">
+                                            <label>Project</label>
+                                            <select class="form-control" name="project" data-bv-field="project" id="ddlProject">
+                                                <option value="0">All</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-3 col-xs-12">
+                                        <div class="form-group">
+                                            <label>Category</label>
+                                            <select class="form-control" name="category" data-bv-field="category" id="ddlDocCategory">
+                                                <option value="0">All</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-sm-12 col-xs-12">
+                                    <div class="col-lg-3 col-sm-3 col-xs-12">
+                                        <div class="form-group">
+                                            <label>Document Description</label>
+                                            <input type="text" value="" class="form-control" name="description" id="txtDescription" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-1 col-sm-1 col-xs-12">
+                                        <div class="form-group">
+                                            <label style="color:white;">TEPL</label>
+                                            <button class="btn btn-azure" id="btnGetData" type="button">Get Data</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-1 col-sm-1 col-xs-12">
+                                        <div class="form-group">
+                                            @if (ViewBag.isQMSAdmin == true)
+                                            {
+                                                <label style="color:white;">TEPL</label>
+                                                <button class="btn btn-azure" id="btnExportData" type="button">Export Data</button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="widget-body">
+
                 <div class="row">
                     <div class="col-lg-12 col-sm-12 col-xs-12">
                         <div style="border: 1px solid #e5e5e5;padding: 10px;">
 
                             <div>
                                 @*<div class="row">
-                                    <div class="col-lg-12 col-sm-12 col-xs-12">
-                                        <div style="text-align: center; font-size: 16px; background-color: lightblue; padding-top: 5px; padding-bottom: 5px; color: black;"><strong>Requests created by Me</strong></div>
+                                        <div class="col-lg-12 col-sm-12 col-xs-12">
+                                            <div style="text-align: center; font-size: 16px; background-color: lightblue; padding-top: 5px; padding-bottom: 5px; color: black;"><strong>Requests created by Me</strong></div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 col-sm-12 col-xs-12">
-                                        <br />
-                                    </div>
-                                </div>*@
+                                    <div class="row">
+                                        <div class="col-lg-12 col-sm-12 col-xs-12">
+                                            <br />
+                                        </div>
+                                    </div>*@
                                 <div class="row">
                                     <div class="col-lg-12 col-sm-12 col-xs-12">
                                         <table class="table table-striped table-hover table-bordered" id="editabledatatable">
                                             <thead>
                                                 <tr role="row">
                                                     <th>SeqNo</th>
-                                                    <th>ID</th>
-                                                    <th>Request Type</th>
+                                                    <th>ID</th>                                                    
                                                     <th nowrap>
                                                         Document Number
+                                                    </th>
+                                                    <th>
+                                                        Document Description
+                                                    </th>
+                                                    <th>
+                                                        Revision
                                                     </th>
                                                     <th>
                                                         Department
@@ -88,12 +185,109 @@
     <script src="~/assets/js/bootbox/bootbox.js"></script>
 
     <script>
+        
         $(document).ready(function () {
-            InitiateAllPrintRequestDataTable.init();            
-            $("#editabledatatable_filter").find('input[type="search"]').css("width", "250px"); 
+            InitiateAllPrintRequestDataTable.init();
+            $("#editabledatatable_filter").find('input[type="search"]').css("width", "250px");
+            // Bind dropdown boxes (this is fine if you need it for multiple dropdowns)
+            BindDropDownBoxes("/DocumentInitiate/GetDropDownBoxes", $('#ddlDepartment'), $('#ddlDocCategory'), $('#ddlProject'), '', 'All');
             GetUserRequests();
         });
 
+        $("#ddlDepartment").change(function () {
+            if ($('#ddlDepartment').val() != 0)
+                BindSectionsForDept("/DocumentInitiate/GetSectionsForDepartment", $('#ddlSection'), $('#ddlDepartment').val(), 'All');
+            else {
+                //Clear all Section values except first
+                $('#ddlSection').find("option").remove();
+                $('#ddlSection').append('<option title="All" value="0">All</option>');
+            }
+        });
+        $("#btnGetData").click(function () {
+            var dept = ''; var sec = ''; var category = ''; var project = '';
+            if ($("#ddlDepartment option:selected").text() != 'All')
+                dept = $("#ddlDepartment option:selected").attr('code');
+            if ($("#ddlSection option:selected").text() != 'All')
+                sec = $("#ddlSection option:selected").attr('code');
+            if ($("#ddlDocCategory option:selected").text() != 'All')
+                category = $("#ddlDocCategory option:selected").attr('code');
+            if ($("#ddlProject option:selected").text() != 'All')
+                project = $("#ddlProject option:selected").attr('code');
+
+            GetPublishedDocument(dept, sec, category, project);
+        });
+
+        function GetPublishedDocument(dept, sec, category, project) {
+
+            $("#editabledatatable").dataTable().fnDeleteRow();
+
+            $.ajax({
+                url: "/AllPrintRequests/GetPublishedDocument",
+                dataType: "json",
+                type: "POST",
+                beforeSend: function () {
+                    $("#overlay").show();
+                    $("#overlay").addClass('modal-backdrop fade in');
+                    $("#sidebar").addClass('modal-backdrop fade in');
+                },
+                complete: function () {
+                    $("#overlay").hide();
+                    $("#overlay").removeClass('modal-backdrop fade in');
+                    $("#sidebar").removeClass('modal-backdrop fade in');
+                },
+                contentType: 'application/json; charset=utf-8',
+                cache: false,
+                data: JSON.stringify({ department: dept, section: sec, category: category, project: project, DocumentDescription: $("#txtDescription").val().trim(), IsProjectActive: true }),
+                success: function (data) {
+                    if (data.success) {
+                        if (data.message == 'error') {
+                            $('.btn-danger').trigger('click');
+                            $('.modal-body').html('Error While getting the published documents.');
+                        }
+                        else {
+                            //Bind the data
+                            for (var z = 0; z < data.message.length; z++) {
+                                var detailsLink = '';
+
+                                if (data.message[z].RequestType == 'Document Publish') {
+                                    detailsLink = '<a  style="text-decoration:underline;" href="#" onclick="showDetails(\'' + data.message[z].DocumentID + '\',\'' + data.message[z].CurrentStage + '\');">View Details</a>';
+                                }
+                                else {
+                                    /*detailsLink = '<a  style="text-decoration:underline;" href="#" onclick="showPrintDetails(\'' + data.message[z].DocumentID + '\',\'' + data.message[z].CurrentStage + '\');">View Details</a>';*/
+                                    detailsLink = '<a style="text-decoration:underline;" href="#" onclick="showPrintDetails(\''
+                                        + data.message[z].DocumentID + '\',\''
+                                        + data.message[z].CurrentStage + '\',\''
+                                        + data.message[z].DocumentNo + '\','
+                                        + data.message[z].Version + ');">View Details</a>';
+                                }
+
+                                var record = [
+                                    z + 1, 
+                                    data.message[z].DocumentID, // ID
+                                    //"Document Print", // Request Type
+                                    data.message[z].DocumentNo,
+                                    data.message[z].DocumentDescription,
+                                    data.message[z].Version,
+                                    data.message[z].DepartmentName, // Department
+                                    data.message[z].SectionName, // Section
+                                    data.message[z].ProjectName, // Project
+                                    data.message[z].DocumentCategoryName, // Category
+                                    ToJavaScriptDate(data.message[z].CreatedDate),
+                                    data.message[z].CurrentStage, // Stage
+                                    detailsLink // View Details
+                                ];
+
+                                var nRow = $("#editabledatatable").dataTable().fnAddData(record);
+                            }
+                        }
+                    }
+                },
+                error: function (xhr) {
+                    $('.btn-danger').trigger('click');
+                    $('.modal-body').html('Error while getting Publishing documents.');
+                }
+            });
+        }
         function GetUserRequests() {
             //Delete all existing records
             //var table = $("#editabledatatable").dataTable();
@@ -125,7 +319,7 @@
                     if (data.success) {
                         if (data.message == 'error') {
                             $('.btn-danger').trigger('click');
-                            $('.modal-body').html('Error While getting the user requests.');
+                            $('.modal-body').html('Error While getting the published documents.');
                         }
                         else {
                             //Bind the data
@@ -136,27 +330,111 @@
                                     detailsLink = '<a  style="text-decoration:underline;" href="#" onclick="showDetails(\'' + data.message[z].DocumentID + '\',\'' + data.message[z].CurrentStage + '\');">View Details</a>';
                                 }
                                 else {
-                                    detailsLink = '<a  style="text-decoration:underline;" href="#" onclick="showPrintDetails(\'' + data.message[z].DocumentID + '\',\'' + data.message[z].CurrentStage + '\');">View Details</a>';
+                                    /*detailsLink = '<a  style="text-decoration:underline;" href="#" onclick="showPrintDetails(\'' + data.message[z].DocumentID + '\',\'' + data.message[z].CurrentStage + '\');">View Details</a>';*/
+                                    detailsLink = '<a style="text-decoration:underline;" href="#" onclick="showPrintDetails(\''
+                                        + data.message[z].DocumentID + '\',\''
+                                        + data.message[z].CurrentStage + '\',\''
+                                        + data.message[z].DocumentNo + '\','
+                                        + data.message[z].Version + ');">View Details</a>';
                                 }
 
-                                var record = [data.message[z].SeqNo, data.message[z].DocumentID, data.message[z].RequestType, data.message[z].DocumentNo, data.message[z].DepartmentName, data.message[z].SectionName, data.message[z].ProjectName, data.message[z].DocumentCategoryName, ToJavaScriptDate(data.message[z].CreatedDate), data.message[z].CurrentStage, detailsLink];
-                                $("#editabledatatable").dataTable().fnAddData(record);
+                                var record = [
+                                    z + 1, // SeqNo: Assuming this is a sequential number
+                                    data.message[z].DocumentID, // ID
+                                   // "Document Print", // Request Type
+                                    data.message[z].DocumentNo,
+                                    data.message[z].DocumentDescription,
+                                    data.message[z].Version,
+                                    data.message[z].DepartmentName, // Department
+                                    data.message[z].SectionName, // Section
+                                    data.message[z].ProjectName, // Project
+                                    data.message[z].DocumentCategoryName, // Category
+                                    ToJavaScriptDate(data.message[z].CreatedDate),
+                                    data.message[z].CurrentStage, // Stage
+                                    detailsLink // View Details
+                                ];
+
+                                var nRow = $("#editabledatatable").dataTable().fnAddData(record);
                             }
                         }
                     }
-                },
+                },                
                 error: function (xhr) {
                     $('.btn-danger').trigger('click');
                     $('.modal-body').html('Error while getting User Request.');
                 }
             });
-        } 
-        
-        function showPrintDetails(docID, stage) {
-            //alert(docID + '-' + stage);
-            window.location = '/PrintRequest/Details?ID=' + docID + '&stage=' + stage +'&display=true';
         }
-        
+
+        $("#btnExportData").click(function () {
+            var dept = '', sec = '', category = '', project = '';
+
+            if ($("#ddlDepartment option:selected").text() != 'All')
+                dept = $("#ddlDepartment option:selected").attr('code');
+            if ($("#ddlSection option:selected").text() != 'All')
+                sec = $("#ddlSection option:selected").attr('code');
+            if ($("#ddlDocCategory option:selected").text() != 'All')
+                category = $("#ddlDocCategory option:selected").attr('code');
+            if ($("#ddlProject option:selected").text() != 'All')
+                project = $("#ddlProject option:selected").attr('code');
+
+            $.ajax({
+                url: "/AllPrintRequests/GetExportPrintedDocuments",
+                dataType: "text",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ department: dept, section: sec, category: category, project: project, DocumentDescription: $("#txtDescription").val().trim(), IsProjectActive: true }),
+
+                success: function (data) {
+                    var fileName = "PrintDocuments.xlsx";
+                    var bytes = Base64ToBytes(data);
+
+                    // Convert Byte Array to BLOB.
+                    var blob = new Blob([bytes], { type: "application/octetstream" });
+
+                    // Check the Browser type and download the File.
+                    var isIE = false || !!document.documentMode;
+                    if (isIE) {
+                        window.navigator.msSaveBlob(blob, fileName);
+                    } else {
+                        var url = window.URL || window.webkitURL;
+                        link = url.createObjectURL(blob);
+                        var a = $("<a />");
+                        a.attr("download", fileName);
+                        a.attr("href", link);
+                        $("body").append(a);
+                        a[0].click();
+                        $("body").remove(a);
+                    }
+                },
+
+                error: function (xhr) {
+                    $('.btn-danger').trigger('click');
+                    $('.modal-body').html('Error while downloading file.');
+                }
+            });
+        });
+
+        // Function to convert Base64 string to Byte Array.
+        function Base64ToBytes(base64) {
+            var s = window.atob(base64);
+            var bytes = new Uint8Array(s.length);
+            for (var i = 0; i < s.length; i++) {
+                bytes[i] = s.charCodeAt(i);
+            }
+            return bytes;
+        };
+
+        //function showPrintDetails(docID, stage) {
+        //    //alert(docID + '-' + stage);
+        //    window.location = '/PrintRequest/Details?ID=' + docID + '&stage=' + stage +'&display=true';
+        //}
+        function showPrintDetails(docID, stage, documentNo, version) {
+            // Optional: Log the parameters for debugging
+            // alert(docID + '-' + stage + '-' + documentNo + '-' + version);
+            window.location = '/PrintRequest/Details?ID=' + docID + '&stage=' + stage + '&documentNo=' + encodeURIComponent(documentNo) + '&version=' + version + '&display=true';
+        }
+
     </script>
 }
 
